@@ -1,0 +1,21 @@
+{
+  "name": "coremotion-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CoreMotion web — Next.js frontend + Express backend monorepo",
+  "scripts": {
+    "dev": "concurrently -n frontend,backend -c blue,green \"npm:dev:frontend\" \"npm:dev:backend\"",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build && npm --prefix backend run build",
+    "start": "concurrently -n frontend,backend -c blue,green \"npm:start:frontend\" \"npm:start:backend\"",
+    "start:frontend": "npm --prefix frontend run start",
+    "start:backend": "npm --prefix backend run start",
+    "lint": "npm --prefix frontend run lint",
+    "typecheck": "npm --prefix backend run typecheck",
+    "install:all": "npm install && npm --prefix frontend install && npm --prefix backend install"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.0"
+  }
+}
