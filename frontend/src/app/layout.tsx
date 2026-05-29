@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Cairo } from "next/font/google";
-import { cookies } from "next/headers";
 
 import { LanguageProvider } from "@/components/providers/language-provider";
-import { getDirection, LOCALE_COOKIE, resolveLocale } from "@/i18n/config";
+import { defaultLocale, getDirection } from "@/i18n/config";
 import { dictionaries } from "@/i18n/dictionaries";
 
 import "./globals.css";
@@ -24,24 +23,22 @@ const cairo = Cairo({
   weight: ["400", "500", "600", "700", "800"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const cookieStore = await cookies();
-  const locale = resolveLocale(cookieStore.get(LOCALE_COOKIE)?.value);
-  const t = dictionaries[locale];
+// A static export can't read the locale cookie at request time, so metadata and
+// the initial <html> use the default locale; the LanguageProvider restores the
+// visitor's saved choice on the client after hydration.
+const t = dictionaries[defaultLocale];
 
-  return {
-    title: `${t.brand} — ${t.hero.headlineLead} ${t.hero.headlineAccent}`,
-    description: t.hero.subheadline,
-  };
-}
+export const metadata: Metadata = {
+  title: `${t.brand} — ${t.hero.headlineLead} ${t.hero.headlineAccent}`,
+  description: t.hero.subheadline,
+};
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const locale = resolveLocale(cookieStore.get(LOCALE_COOKIE)?.value);
+  const locale = defaultLocale;
 
   return (
     <html

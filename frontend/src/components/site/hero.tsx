@@ -6,23 +6,27 @@ import { useLanguage } from '@/components/providers/language-provider';
 import LogoLoop, { type LogoItem } from '@/components/LogoLoop';
 import Silk from '@/components/Silk';
 
+// On GitHub Pages the site is served from /<repo>, so public assets referenced
+// in plain <img> tags must be prefixed manually (Next only rewrites next/image).
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+
 /** Research bodies & journals the program draws on — rendered as a marquee. */
 const sourceLogos: LogoItem[] = [
-  { src: '/logos/pubmed.svg', alt: 'PubMed', title: 'PubMed', href: 'https://pubmed.ncbi.nlm.nih.gov' },
-  { src: '/logos/elsevier.svg', alt: 'Elsevier', title: 'Elsevier', href: 'https://www.elsevier.com' },
+  { src: `${basePath}/logos/pubmed.svg`, alt: 'PubMed', title: 'PubMed', href: 'https://pubmed.ncbi.nlm.nih.gov' },
+  { src: `${basePath}/logos/elsevier.svg`, alt: 'Elsevier', title: 'Elsevier', href: 'https://www.elsevier.com' },
   {
-    src: '/logos/nsca.svg',
+    src: `${basePath}/logos/nsca.svg`,
     alt: 'National Strength and Conditioning Association',
     title: 'NSCA',
     href: 'https://www.nsca.com',
   },
   {
-    src: '/logos/taylor-and-francis.svg',
+    src: `${basePath}/logos/taylor-and-francis.svg`,
     alt: 'Taylor & Francis',
     title: 'Taylor & Francis',
     href: 'https://taylorandfrancis.com',
   },
-  { src: '/logos/sbs.avif', alt: 'Stronger By Science', title: 'Stronger By Science', href: 'https://www.strongerbyscience.com' },
+  { src: `${basePath}/logos/sbs.avif`, alt: 'Stronger By Science', title: 'Stronger By Science', href: 'https://www.strongerbyscience.com' },
 ];
 
 export function Hero() {

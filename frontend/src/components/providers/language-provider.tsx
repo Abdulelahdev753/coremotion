@@ -13,6 +13,7 @@ import {
 import {
   defaultLocale,
   getDirection,
+  isLocale,
   LOCALE_COOKIE,
   type Direction,
   type Locale,
@@ -30,6 +31,19 @@ type LanguageContextValue = {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
+
+/** Read the persisted language choice on the client (localStorage, then cookie). */
+function readStoredLocale(): Locale | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const fromStorage = window.localStorage.getItem(LOCALE_COOKIE);
+    if (isLocale(fromStorage)) return fromStorage;
+  } catch {
+    /* storage may be unavailable (private mode) — fall back to the cookie */
+  }
+  const fromCookie = document.cookie.match(/(?:^|;\s*)NEXT_LOCALE=([^;]+)/)?.[1];
+  return isLocale(fromCookie) ? fromCookie : null;
+}
 
 function persistLocale(locale: Locale) {
   if (typeof document !== 'undefined') {
@@ -64,9 +78,16 @@ export function LanguageProvider({
     });
   }, []);
 
-  // Keep <html lang/dir> in sync. The initial SSR value already comes from the
-  // cookie (set in the root layout), so the first paint is correct and this only
-  // matters when the visitor toggles languages at runtime.
+  // The static export renders with the default locale, so restore the visitor's
+  // saved choice once on the client after hydration.
+  useEffect(() => {
+    const stored = readStoredLocale();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe one-time restore
+    if (stored && stored !== locale) setLocaleState(stored);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- intentionally run once on mount
+
+  // Keep <html lang/dir> in sync with the active locale (initial paint uses the
+  // default; this also covers runtime language toggles and the restore above).
   useEffect(() => {
     const root = document.documentElement;
     root.lang = locale;
