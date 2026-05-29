@@ -9,6 +9,10 @@ import { LanguageToggle } from '@/components/site/language-toggle';
 import GlassSurface from '@/components/ui/glass-surface';
 import { cn } from '@/lib/utils';
 
+// On GitHub Pages the site is served from /<repo>. next/image does not apply
+// basePath to unoptimized images (used for static export), so prefix manually.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+
 export function Navbar() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
@@ -48,7 +52,7 @@ export function Navbar() {
               className="group inline-flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
             >
               <Image
-                src="/brand/motioncore-logo.svg"
+                src={`${basePath}/brand/motioncore-logo.svg`}
                 alt=""
                 width={36}
                 height={29}
