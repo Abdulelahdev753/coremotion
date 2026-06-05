@@ -52,12 +52,12 @@ export function Navbar() {
               className="group inline-flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
             >
               <Image
-                src={`${basePath}/brand/motioncore-logo.svg`}
+                src={`${basePath}/logos/green-logo-transparent.svg`}
                 alt=""
                 width={36}
-                height={29}
+                height={36}
                 priority
-                className="h-7 w-auto brightness-0 invert transition-transform duration-300 group-hover:scale-105"
+                className="h-8 w-auto transition-transform duration-300 group-hover:scale-105"
               />
               <span className="text-[1.05rem] font-semibold tracking-tight text-white">
                 {t.brand}
