@@ -35,7 +35,7 @@ export type Dictionary = {
 export const dictionaries: Record<Locale, Dictionary> = {
   ar: {
     dir: 'rtl',
-    brand: 'MotionCore',
+    brand: 'UltraFit',
     nav: {
       products: 'المنتجات',
       useCases: 'حالات الاستخدام',
@@ -64,7 +64,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
   },
   en: {
     dir: 'ltr',
-    brand: 'MotionCore',
+    brand: 'UltraFit',
     nav: {
       products: 'Products',
       useCases: 'Use Cases',
