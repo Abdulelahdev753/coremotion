@@ -7,8 +7,10 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const nextConfig: NextConfig = {
   // The site is often previewed from an iPhone over the local network.
-  // Without this, Next blocks dev-only resources when Safari opens the LAN IP.
-  allowedDevOrigins: ["localhost", "127.0.0.1", "192.168.100.197"],
+  // Without this, Next blocks dev-only resources when the LAN IP is opened —
+  // the page then renders but never hydrates (buttons focus yet do nothing).
+  // The wildcard covers the whole subnet so DHCP lease changes don't break it.
+  allowedDevOrigins: ["localhost", "127.0.0.1", "192.168.100.*"],
   // This app is self-contained inside the monorepo; pin Turbopack's root
   // to silence the multi-lockfile workspace-root inference warning.
   turbopack: {

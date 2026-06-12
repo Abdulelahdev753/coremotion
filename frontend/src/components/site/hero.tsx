@@ -1,6 +1,7 @@
 'use client';
 
 import { PlayCircle } from 'lucide-react';
+import Link from 'next/link';
 
 import { useLanguage } from '@/components/providers/language-provider';
 import LogoLoop, { type LogoItem } from '@/components/LogoLoop';
@@ -73,12 +74,12 @@ export function Hero() {
 
         {/* CTAs */}
         <div className="mt-9 flex animate-in fade-in slide-in-from-bottom-3 flex-col items-center gap-3 fill-mode-both delay-300 duration-700 sm:flex-row">
-          <a
-            href="#get-the-guide"
+          <Link
+            href="/motioncore"
             className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-black shadow-[0_10px_40px_-10px_#d6ec1b] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_50px_-8px_#d6ec1b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0b0d]"
           >
             {t.hero.cta}
-          </a>
+          </Link>
           <a
             href="#use-cases"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-base font-medium text-white/85 transition-colors hover:border-white/30 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
