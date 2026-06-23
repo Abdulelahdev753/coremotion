@@ -150,3 +150,352 @@
     scroll-behavior: auto;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Pricing tiers — dark glossy glass cards
+   Each card is themed at runtime via --tier-color / --tier-rgb set inline.
+   Hard rules from the design:
+     • cards never lift or glow on hover;
+     • the "Add to cart" button stays a neutral white glossy chip — no colored
+       bottom strip and no colored shadow (only the "Buy now" button is colored).
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pricing-stage {
+  width: 100%;
+  padding: 6rem 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  scroll-margin-top: 5.5rem;
+}
+
+.pricing-stage__intro {
+  margin: 0 auto 3rem;
+  max-width: 42rem;
+  text-align: center;
+}
+
+.pricing-stage__heading {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.pricing-stage__subheading {
+  margin-top: 0.85rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Latin tracking breaks the connected Arabic script. */
+html[lang="ar"] .pricing-stage__heading {
+  letter-spacing: normal;
+}
+
+.tier-cards {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 20px;
+}
+
+@media (max-width: 960px) {
+  .tier-cards {
+    grid-template-columns: 1fr;
+    max-width: 30rem;
+  }
+}
+
+/* ── Card shell ──────────────────────────────────────────────────────────── */
+.tier-card {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 32px;
+  color: #fff;
+}
+
+/* Keep card content above the decorative tier-glow pseudo-elements. */
+.tier-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.glass-shell {
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  background:
+    radial-gradient(ellipse at 94% 3%, rgba(255, 255, 255, 0.16), transparent 10rem),
+    radial-gradient(ellipse at 88% 108%, rgba(var(--tier-rgb), 0.38), transparent 17rem),
+    linear-gradient(118deg, #020204 0%, #05040a 44%, rgba(var(--tier-rgb), 0.035) 74%, rgba(255, 255, 255, 0.035) 100%),
+    rgba(8, 7, 15, 0.96);
+  box-shadow:
+    0 26px 74px rgba(0, 0, 0, 0.5),
+    0 18px 60px rgba(var(--tier-rgb), 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.64),
+    inset 0 -16px 34px rgba(var(--tier-rgb), 0.36),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px) saturate(1.45);
+  -webkit-backdrop-filter: blur(18px) saturate(1.45);
+}
+
+/* Tier-colored light leaks: a warped wash at the top-right and a glow strip at
+   the bottom. Decorative only — clipped by the card's overflow:hidden. */
+.tier-card::before,
+.tier-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tier-card::before {
+  width: 58%;
+  height: 62%;
+  top: -7%;
+  right: -3%;
+  border-radius: 42% 58% 52% 48%;
+  background:
+    radial-gradient(ellipse at 82% 10%, rgba(255, 255, 255, 0.34), transparent 20%),
+    linear-gradient(132deg, transparent 16%, rgba(var(--tier-rgb), 0.08) 34%, rgba(var(--tier-rgb), 0.62) 50%, rgba(255, 255, 255, 0.26) 58%, rgba(var(--tier-rgb), 0.18) 66%, transparent 82%);
+  filter: blur(17px);
+  opacity: 0.615;
+  transform: rotate(17deg);
+  mix-blend-mode: screen;
+}
+
+.tier-card::after {
+  width: 96%;
+  height: 26%;
+  left: 6%;
+  bottom: -8%;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse at 88% 30%, rgba(255, 255, 255, 0.38) 0%, rgba(var(--tier-rgb), 0.76) 16%, rgba(var(--tier-rgb), 0.42) 36%, rgba(var(--tier-rgb), 0.14) 58%, transparent 78%),
+    linear-gradient(90deg, transparent 0%, rgba(var(--tier-rgb), 0.24) 28%, rgba(var(--tier-rgb), 0.62) 76%, rgba(255, 255, 255, 0.32) 100%);
+  filter: blur(18px);
+  opacity: 0.48;
+  mix-blend-mode: screen;
+}
+
+/* Hard requirement: cards must NOT lift or glow on hover — hover === resting. */
+.tier-card:hover {
+  transform: none;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.tier-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: clamp(22px, 3vw, 32px) clamp(22px, 3vw, 32px) 0;
+}
+
+.tier-card__badge {
+  width: max-content;
+  margin: 0;
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: rgba(var(--tier-rgb), 0.13);
+  color: var(--tier-color);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Latin tracking breaks the connected Arabic script. */
+html[lang="ar"] .tier-card__badge {
+  letter-spacing: normal;
+}
+
+.tier-card__name {
+  margin: 8px 0 0;
+  color: #fff;
+  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.tier-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  color: var(--tier-color);
+  font-size: clamp(2rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* Keep the price number before the currency word in RTL. */
+html[lang="ar"] .tier-card__price {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.tier-card__price span {
+  font-size: 0.88rem;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.tier-card__tagline {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.tier-card__divider {
+  height: 1px;
+  margin: clamp(16px, 2.5vw, 24px) clamp(22px, 3vw, 32px);
+  background: linear-gradient(90deg, transparent, rgba(var(--tier-rgb), 0.15), transparent);
+}
+
+/* ── Features ────────────────────────────────────────────────────────────── */
+.tier-card__features {
+  flex: 1; /* grows so footers align across cards of different lengths */
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0 clamp(22px, 3vw, 32px);
+  list-style: none;
+}
+
+.tier-card__includes {
+  margin-bottom: 2px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(var(--tier-rgb), 0.08);
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 0.91rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.34);
+}
+
+.tier-card__feature {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: start;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.42);
+}
+
+.tier-card__check {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(var(--tier-rgb), 0.1);
+  color: var(--tier-color);
+}
+
+/* ── Footer + CTA ────────────────────────────────────────────────────────── */
+.tier-card__footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(18px, 2.5vw, 24px) clamp(22px, 3vw, 32px) clamp(22px, 3vw, 32px);
+}
+
+.tier-card__note {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.tier-card__actions {
+  display: grid;
+  gap: 10px;
+}
+
+.tier-card__cta {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  width: 100%;
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 14px 22px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.35;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+
+.tier-card__cta:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.34);
+  outline-offset: 4px;
+}
+
+.tier-card__cta-label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Single clean white surface with a transparent border — no layered/rim border. */
+.tier-card__cta--add {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+  color: #0a0b0d;
+  border-color: transparent;
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.tier-card__cta--add:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+  transform: translateY(-1px);
+}
+
+.tier-card__cta--add:active {
+  background: linear-gradient(180deg, #f2f2f3 0%, #ffffff 100%);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  transform: scale(0.995);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tier-card__cta {
+    transition: none;
+  }
+
+  .tier-card__cta--add:hover {
+    transform: none;
+  }
+}

@@ -3,6 +3,18 @@ import type { Direction, Locale } from './config';
 /** A choice rendered as a selectable card in the MotionCore assessment. */
 type OptionText = { label: string; description: string };
 
+/** One pricing tier's translatable copy (visuals/price are set in the component). */
+type PricingTier = {
+  badge: string;
+  name: string;
+  tagline: string;
+  /** Shown above the feature list on upper tiers, e.g. "Everything in Basic". */
+  includes?: string;
+  features: string[];
+  /** Optional closing line under the features. */
+  note?: string;
+};
+
 export type Dictionary = {
   dir: Direction;
   brand: string;
@@ -24,6 +36,19 @@ export type Dictionary = {
   };
   sections: {
     comingSoon: string;
+  };
+  pricing: {
+    heading: string;
+    subheading: string;
+    /** Currency label shown after each price. */
+    currency: string;
+    addToCart: string;
+    buyNow: string;
+    tiers: {
+      basic: PricingTier;
+      pro: PricingTier;
+      elite: PricingTier;
+    };
   };
   actions: {
     openMenu: string;
@@ -217,6 +242,56 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     sections: {
       comingSoon: 'قريبًا',
+    },
+    pricing: {
+      heading: 'اختر باقة UltraFit المناسبة لك',
+      subheading: 'ثلاث باقات مبنية حول هدفك — ابدأ ببساطة أو انطلق بالكامل.',
+      currency: 'ر.س',
+      addToCart: 'أضف إلى السلة',
+      buyNow: 'اشترِ الآن',
+      tiers: {
+        basic: {
+          badge: 'أساسية',
+          name: 'UltraFit الأساسية',
+          tagline: 'ابدأ رحلتك الرياضية بالطريقة الصحيحة.',
+          features: [
+            'خطة تمارين مخصصة لك',
+            'هدف تنشيف أو تضخيم أو ثبات الوزن',
+            'هيكل مناسب للمبتدئين',
+            'إرشادات أداء التمارين',
+            'متابعة التقدم',
+            'توجيه غذائي مبسّط',
+          ],
+          note: 'مثالية للمبتدئين ولكل من يريد فهم التمارين بشكل صحيح.',
+        },
+        pro: {
+          badge: 'برو',
+          name: 'UltraFit برو',
+          tagline: 'تحدٍّ مدته 12 أسبوعًا لتحويل جسمك خطوة بخطوة.',
+          includes: 'كل ما في الباقة الأساسية',
+          features: [
+            'برنامج تحوّل كامل مدته 12 أسبوعًا',
+            'مراحل تدرّج أسبوعية',
+            'خطة كارديو متدرّجة لكل مرحلة',
+            'تحسين تقسيم التمارين',
+            'هيكل غذائي متكامل',
+            'نظام للعادات والالتزام',
+          ],
+        },
+        elite: {
+          badge: 'النخبة',
+          name: 'UltraFit النخبة',
+          tagline: 'النظام المتكامل للوصول إلى هدفك.',
+          includes: 'كل ما في باقة برو',
+          features: [
+            'نظام تدريب وتغذية متقدّم',
+            'تحدّي 12 أسبوعًا كاملًا يشمل التمارين والتغذية والكارديو',
+            'تخصيص حسب هدفك',
+            'هيكل وإرشاد متميّز',
+          ],
+          note: 'الخيار الأفضل لمن يريد خطة تدريب وتغذية متكاملة في مكان واحد.',
+        },
+      },
     },
     actions: {
       openMenu: 'فتح القائمة',
@@ -418,6 +493,56 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     sections: {
       comingSoon: 'Coming soon',
+    },
+    pricing: {
+      heading: 'Choose your UltraFit plan',
+      subheading: 'Three plans built around your goal — start simple or go all in.',
+      currency: 'SAR',
+      addToCart: 'Add to cart',
+      buyNow: 'Buy now',
+      tiers: {
+        basic: {
+          badge: 'Basic',
+          name: 'Ultra Fit Basic',
+          tagline: 'Start your fitness journey the right way.',
+          features: [
+            'Personalized workout plan',
+            'Cutting, bulking, or weight maintenance goal',
+            'Beginner-friendly structure',
+            'Exercise guidance',
+            'Progress tracking',
+            'Simple nutrition direction',
+          ],
+          note: 'Perfect for beginners and anyone who wants to understand training properly.',
+        },
+        pro: {
+          badge: 'Pro',
+          name: 'Ultra Fit Pro',
+          tagline: '12-week challenge to transform your body step by step.',
+          includes: 'Everything in the Basic package',
+          features: [
+            'Full 12-week transformation program',
+            'Weekly progression phases',
+            'Progressive cardio plan for each phase',
+            'Training split optimization',
+            'Nutrition structure',
+            'Habit and accountability system',
+          ],
+        },
+        elite: {
+          badge: 'Elite',
+          name: 'Ultra Fit Elite',
+          tagline: 'The complete system to reach your goal.',
+          includes: 'Everything in the Pro package',
+          features: [
+            'Advanced training and nutrition system',
+            'Complete 12-week challenge including training, nutrition, and cardio',
+            'Goal-based customization',
+            'Premium structure and guidance',
+          ],
+          note: 'Best choice for those wanting a complete training and nutrition plan in one place.',
+        },
+      },
     },
     actions: {
       openMenu: 'Open menu',
