@@ -1,8 +1,7 @@
 import { Hero } from '@/components/site/hero';
 import { Navbar } from '@/components/site/navbar';
+import { PackagesSection } from '@/components/site/packages-section';
 import { PlaceholderSections } from '@/components/site/placeholder-sections';
-import { PricingCards } from '@/components/site/pricing-cards';
-import { WhatYouGet } from '@/components/site/what-you-get';
 
 export default function Home() {
   return (
@@ -10,8 +9,7 @@ export default function Home() {
       <Navbar />
       <main className="flex flex-col">
         <Hero />
-        <PricingCards />
-        <WhatYouGet />
+        <PackagesSection />
         <PlaceholderSections />
       </main>
     </>

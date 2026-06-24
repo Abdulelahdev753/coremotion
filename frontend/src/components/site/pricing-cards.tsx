@@ -1,7 +1,7 @@
 'use client';
 
 import { Check } from 'lucide-react';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
 
@@ -25,9 +25,14 @@ type PricingCardsProps = {
    * this is the seam to wire one into.
    */
   onAddToCart?: (planId: PlanId) => void;
+  /**
+   * Optional Men/Women selector, rendered centered directly above the cards.
+   * The selector owns the audience state and drives the package sections.
+   */
+  selector?: ReactNode;
 };
 
-export function PricingCards({ onAddToCart }: PricingCardsProps) {
+export function PricingCards({ onAddToCart, selector }: PricingCardsProps) {
   const { t } = useLanguage();
   const p = t.pricing;
 
@@ -37,6 +42,8 @@ export function PricingCards({ onAddToCart }: PricingCardsProps) {
         <h2 className="pricing-stage__heading">{p.heading}</h2>
         <p className="pricing-stage__subheading">{p.subheading}</p>
       </div>
+
+      {selector && <div className="pricing-stage__selector">{selector}</div>}
 
       <div className="tier-cards" aria-label={p.heading}>
         {tierStyles.map((style) => {

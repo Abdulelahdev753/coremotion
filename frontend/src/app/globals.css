@@ -192,6 +192,13 @@ html[lang="ar"] .pricing-stage__heading {
   letter-spacing: normal;
 }
 
+/* Men/Women pill: sits centered between the intro and the cards. */
+.pricing-stage__selector {
+  margin: 0 auto 2.75rem;
+  display: flex;
+  justify-content: center;
+}
+
 .tier-cards {
   width: 100%;
   max-width: 72rem;

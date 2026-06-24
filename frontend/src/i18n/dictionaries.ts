@@ -37,6 +37,13 @@ export type Dictionary = {
   sections: {
     comingSoon: string;
   };
+  /** Men/Women selector that drives both the pricing and "what you'll get" sections. */
+  packages: {
+    /** Group label for assistive tech on the audience pill. */
+    audienceLabel: string;
+    men: string;
+    women: string;
+  };
   /** "What you'll get" — package mockups (one per tier × gender) with captions. */
   whatYouGet: {
     heading: string;
@@ -244,11 +251,16 @@ export const dictionaries: Record<Locale, Dictionary> = {
       subheadline:
         'بدلًا من تضييع الأشهر في التمارين الخاطئة، احصل على نظام تدريبي واضح مع شرح تفصيلي لكل حركة.',
       cta: 'احصل على الدليل',
-      secondaryCta: 'شاهد كيف يعمل',
+      secondaryCta: 'نظام motioncore التحليلي',
       trustedBy: 'مبني على أبحاث ومراجع موثوقة',
     },
     sections: {
       comingSoon: 'قريبًا',
+    },
+    packages: {
+      audienceLabel: 'اختر فئة الباقات',
+      men: 'رجال',
+      women: 'نساء',
     },
     whatYouGet: {
       heading: 'ماذا ستحصل عليه',
@@ -525,11 +537,16 @@ export const dictionaries: Record<Locale, Dictionary> = {
       subheadline:
         'Instead of wasting months on the wrong exercises, get a clear training system with a detailed breakdown of every movement.',
       cta: 'Get the Guide',
-      secondaryCta: 'See how it works',
+      secondaryCta: 'MotionCore analysis system',
       trustedBy: 'Built on trusted research & references',
     },
     sections: {
       comingSoon: 'Coming soon',
+    },
+    packages: {
+      audienceLabel: 'Choose package audience',
+      men: 'Men',
+      women: 'Women',
     },
     whatYouGet: {
       heading: "What You'll Get",
