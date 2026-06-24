@@ -23,7 +23,7 @@ export function Navbar() {
   const links = [
     { href: '/motioncore', label: t.nav.motioncore },
     { href: '/#products', label: t.nav.products },
-    { href: '/#use-cases', label: t.nav.useCases },
+    { href: '/#what-you-get', label: t.nav.whatYouGet },
     { href: '/#about', label: t.nav.about },
   ];
 

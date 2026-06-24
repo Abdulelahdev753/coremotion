@@ -10,10 +10,10 @@ import { useLanguage } from '@/components/providers/language-provider';
 export function PlaceholderSections() {
   const { t } = useLanguage();
 
-  // "products" now resolves to the real pricing section (see <PricingCards />),
-  // so it is no longer a placeholder.
+  // "products" now resolves to the real pricing section (see <PricingCards />)
+  // and "what-you-get" to the package showcase (see <WhatYouGet />), so neither
+  // is a placeholder anymore.
   const sections = [
-    { id: 'use-cases', title: t.nav.useCases },
     { id: 'about', title: t.nav.about },
     { id: 'get-the-guide', title: t.hero.cta },
   ];

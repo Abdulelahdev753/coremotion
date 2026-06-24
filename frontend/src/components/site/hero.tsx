@@ -81,7 +81,7 @@ export function Hero() {
             {t.hero.cta}
           </Link>
           <a
-            href="#use-cases"
+            href="#what-you-get"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-base font-medium text-white/85 transition-colors hover:border-white/30 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
           >
             <PlayCircle aria-hidden className="size-5 rtl:-scale-x-100" />

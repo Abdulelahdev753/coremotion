@@ -499,3 +499,130 @@ html[lang="ar"] .tier-card__price {
     transform: none;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   "What you'll get" — package mockups
+   Six product-card images (basic/pro/elite × men/women), each on a dark glassy
+   tile with a short caption. The grid reads as tier columns × gender rows.
+   Tier accent is set per card via --tier-rgb (matches the pricing tiers).
+   ────────────────────────────────────────────────────────────────────────── */
+.getit-stage {
+  width: 100%;
+  padding: 6rem 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  scroll-margin-top: 5.5rem;
+}
+
+.getit-stage__intro {
+  margin: 0 auto 3rem;
+  max-width: 42rem;
+  text-align: center;
+}
+
+.getit-stage__heading {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+html[lang="ar"] .getit-stage__heading {
+  letter-spacing: normal;
+}
+
+.getit-stage__subheading {
+  margin-top: 0.85rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.getit-grid {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 20px;
+}
+
+@media (max-width: 960px) {
+  .getit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 44rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .getit-grid {
+    grid-template-columns: 1fr;
+    max-width: 26rem;
+  }
+}
+
+.getit-card {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(ellipse at 88% 108%, rgba(var(--tier-rgb), 0.18), transparent 14rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+    rgba(8, 7, 15, 0.96);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.getit-card:hover {
+  border-color: rgba(var(--tier-rgb), 0.4);
+  transform: translateY(-3px);
+}
+
+.getit-card__media {
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: radial-gradient(ellipse at 50% 30%, #15161b, #0b0c0f);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.getit-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.getit-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(16px, 2.4vw, 22px);
+}
+
+.getit-card__title {
+  margin: 0;
+  color: #fff;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.getit-card__text {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .getit-card,
+  .getit-card:hover {
+    transition: none;
+    transform: none;
+  }
+}

@@ -20,7 +20,7 @@ export type Dictionary = {
   brand: string;
   nav: {
     products: string;
-    useCases: string;
+    whatYouGet: string;
     about: string;
     motioncore: string;
   };
@@ -36,6 +36,13 @@ export type Dictionary = {
   };
   sections: {
     comingSoon: string;
+  };
+  /** "What you'll get" — package mockups (one per tier × gender) with captions. */
+  whatYouGet: {
+    heading: string;
+    subheading: string;
+    /** Six captions, ordered men: basic/pro/elite, then women: basic/pro/elite. */
+    items: Array<{ title: string; description: string }>;
   };
   pricing: {
     heading: string;
@@ -226,7 +233,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     brand: 'UltraFit',
     nav: {
       products: 'المنتجات',
-      useCases: 'حالات الاستخدام',
+      whatYouGet: 'ماذا ستحصل عليه',
       about: 'من نحن',
       motioncore: 'MotionCore',
     },
@@ -242,6 +249,36 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     sections: {
       comingSoon: 'قريبًا',
+    },
+    whatYouGet: {
+      heading: 'ماذا ستحصل عليه',
+      subheading: 'محتوى كل باقة بالتفصيل — للرجال والنساء، من الأساسية إلى النخبة.',
+      items: [
+        {
+          title: 'الباقة الأساسية — رجال',
+          description: 'ملف تدريبي كامل + دليل تعليمي مع فيديو لكل تمرين وخطة كارديو للمبتدئين.',
+        },
+        {
+          title: 'باقة برو — رجال',
+          description: 'تحدّي 12 أسبوعًا بجداول تدريب متدرّجة والملف التعليمي الشامل المبني على الأبحاث.',
+        },
+        {
+          title: 'باقة النخبة — رجال',
+          description: 'تدريب + تغذية + تعليم في ثلاثة ملفات متكاملة لتحويل جسمك بالكامل.',
+        },
+        {
+          title: 'الباقة الأساسية — نساء',
+          description: 'جداول تدريب كاملة (3-4-5 أيام) + دليل تعليمي مبسّط مناسب للمبتدئات.',
+        },
+        {
+          title: 'باقة برو — نساء',
+          description: 'تحدّي 12 أسبوعًا لنحت الجسم خطوة بخطوة مع دليل تدريبي وتعليمي متكامل.',
+        },
+        {
+          title: 'باقة النخبة — نساء',
+          description: 'تدريب وتغذية وتعليم متقدّم — النظام المتكامل للوصول إلى هدفك.',
+        },
+      ],
     },
     pricing: {
       heading: 'اختر باقة UltraFit المناسبة لك',
@@ -477,7 +514,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     brand: 'UltraFit',
     nav: {
       products: 'Products',
-      useCases: 'Use Cases',
+      whatYouGet: "What You'll Get",
       about: 'About Us',
       motioncore: 'MotionCore',
     },
@@ -493,6 +530,36 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     sections: {
       comingSoon: 'Coming soon',
+    },
+    whatYouGet: {
+      heading: "What You'll Get",
+      subheading: "Exactly what's inside each plan — for men and women, from Basic to Elite.",
+      items: [
+        {
+          title: 'Basic — Men',
+          description: 'Full training file + educational guide, with a video for every exercise and a beginner cardio plan.',
+        },
+        {
+          title: 'Pro — Men',
+          description: '12-week challenge with progressive training splits and the complete research-based guide.',
+        },
+        {
+          title: 'Elite — Men',
+          description: 'Training + nutrition + education across three complete files to transform your whole body.',
+        },
+        {
+          title: 'Basic — Women',
+          description: 'Complete training schedules (3-4-5 days) + a simplified educational guide for beginners.',
+        },
+        {
+          title: 'Pro — Women',
+          description: '12-week challenge to sculpt your body step by step, with a full training and education guide.',
+        },
+        {
+          title: 'Elite — Women',
+          description: 'Advanced training, nutrition, and education — the complete system to reach your goal.',
+        },
+      ],
     },
     pricing: {
       heading: 'Choose your UltraFit plan',
