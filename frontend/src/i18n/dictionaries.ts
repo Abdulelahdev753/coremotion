@@ -37,6 +37,17 @@ export type Dictionary = {
   sections: {
     comingSoon: string;
   };
+  /** FAQ accordion — replaces the old "Get the guide" placeholder section. */
+  faq: {
+    eyebrow: string;
+    heading: string;
+    subheading: string;
+    /** Each item's `id` doubles as its accordion value; the first is open by default. */
+    items: Array<{ id: string; question: string; answer: string }>;
+    /** Closing line + link that nudges undecided visitors back to the packages. */
+    contactLead: string;
+    contactCta: string;
+  };
   /** Men/Women selector that drives both the pricing and "what you'll get" sections. */
   packages: {
     /** Group label for assistive tech on the audience pill. */
@@ -63,6 +74,16 @@ export type Dictionary = {
       pro: PricingTier;
       elite: PricingTier;
     };
+  };
+  /** Site footer — brand block, nav columns, socials, and legal links. */
+  footer: {
+    tagline: string;
+    /** Column titles + link labels; hrefs/order live in the footer component. */
+    columns: Array<{ title: string; links: string[] }>;
+    legal: string[];
+    /** Accessible labels for the social icons, in the component's icon order. */
+    socials: string[];
+    copyright: string;
   };
   actions: {
     openMenu: string;
@@ -257,6 +278,58 @@ export const dictionaries: Record<Locale, Dictionary> = {
     sections: {
       comingSoon: 'قريبًا',
     },
+    faq: {
+      eyebrow: 'الأسئلة الشائعة',
+      heading: 'أسئلة شائعة عن UltraFit',
+      subheading:
+        'كل ما تحتاج معرفته قبل أن تبدأ رحلتك مع UltraFit. لم تجد إجابتك؟ تصفّح الباقات وابدأ الآن.',
+      items: [
+        {
+          id: 'faq-1',
+          question: 'ما هو UltraFit؟',
+          answer:
+            'UltraFit برنامج تدريبي رقمي على شكل أدلة PDF قابلة للتحميل، تضم خطة تمارين كاملة وتوجيهًا غذائيًا وشرحًا بالفيديو لكل حركة — متوفّر للرجال والنساء ومن الباقة الأساسية إلى النخبة.',
+        },
+        {
+          id: 'faq-2',
+          question: 'كيف أستلم الدليل بعد الشراء؟',
+          answer:
+            'فور إتمام الدفع يصلك رابط تحميل آمن لملف الدليل (PDF) مباشرةً — بدون انتظار وبدون شحن. الرابط صالح لتحميل نسختك خلال مدة محدودة بعد الشراء.',
+        },
+        {
+          id: 'faq-3',
+          question: 'هل الباقات مناسبة للمبتدئين؟',
+          answer:
+            'نعم. الباقة الأساسية مصمّمة للمبتدئين بهيكل بسيط وإرشادات واضحة لأداء كل تمرين، بينما تضيف باقتا برو والنخبة برنامجًا متدرّجًا مدته 12 أسبوعًا كلما تقدّمت في مستواك.',
+        },
+        {
+          id: 'faq-4',
+          question: 'ما الفرق بين الأساسية وبرو والنخبة؟',
+          answer:
+            'الأساسية تمنحك خطة تمارين مخصّصة وإرشادات للأداء؛ وبرو تضيف تحوّلًا كاملًا مدته 12 أسبوعًا مع كارديو متدرّج؛ والنخبة تضيف نظامًا غذائيًا متقدّمًا وتخصيصًا كاملًا حسب هدفك.',
+        },
+        {
+          id: 'faq-5',
+          question: 'هل توجد باقات للرجال والنساء؟',
+          answer:
+            'نعم. كل باقة متوفّرة بنسختين — واحدة للرجال وأخرى للنساء — مع تدريب وتغذية مصمّمَين خصيصًا لكل فئة.',
+        },
+        {
+          id: 'faq-6',
+          question: 'هل البرنامج مبني على أسس علمية؟',
+          answer:
+            'كل خطة مبنية على أبحاث ومراجع موثوقة مثل PubMed وNSCA وElsevier وغيرها، وليست مجرد اجتهادات عشوائية.',
+        },
+        {
+          id: 'faq-7',
+          question: 'ما هو نظام MotionCore؟',
+          answer:
+            'MotionCore هو نظام التحليل المرافق الذي يقيّم حركتك ومستواك ويساعدك على اختيار الباقة الأنسب لك قبل الشراء.',
+        },
+      ],
+      contactLead: 'لم تجد إجابة سؤالك؟',
+      contactCta: 'تصفّح الباقات وابدأ الآن',
+    },
     packages: {
       audienceLabel: 'اختر فئة الباقات',
       men: 'رجال',
@@ -341,6 +414,27 @@ export const dictionaries: Record<Locale, Dictionary> = {
           note: 'الخيار الأفضل لمن يريد خطة تدريب وتغذية متكاملة في مكان واحد.',
         },
       },
+    },
+    footer: {
+      tagline:
+        'نظام تدريبي واضح مع شرح تفصيلي لكل حركة.\nابدأ رحلتك الرياضية بالطريقة الصحيحة.',
+      columns: [
+        {
+          title: 'المنتجات',
+          links: ['الباقات', 'ماذا ستحصل عليه', 'الأسئلة الشائعة'],
+        },
+        {
+          title: 'MotionCore',
+          links: ['نظام التحليل', 'ابدأ التقييم', 'لوحة التحكم'],
+        },
+        {
+          title: 'الشركة',
+          links: ['من نحن', 'الصفحة الرئيسية'],
+        },
+      ],
+      legal: ['سياسة الخصوصية', 'الشروط والأحكام'],
+      socials: ['انستغرام', 'إكس (تويتر)', 'تيك توك', 'واتساب'],
+      copyright: '© 2026 UltraFit. جميع الحقوق محفوظة.',
     },
     actions: {
       openMenu: 'فتح القائمة',
@@ -543,6 +637,58 @@ export const dictionaries: Record<Locale, Dictionary> = {
     sections: {
       comingSoon: 'Coming soon',
     },
+    faq: {
+      eyebrow: 'FAQ',
+      heading: 'Frequently asked questions',
+      subheading:
+        "Everything you need to know before starting your UltraFit journey. Can't find your answer? Browse the packages and get started.",
+      items: [
+        {
+          id: 'faq-1',
+          question: 'What is UltraFit?',
+          answer:
+            'UltraFit is a digital training program delivered as downloadable PDF guides — a complete workout plan, nutrition direction, and a video breakdown of every movement. It comes for both men and women, from Basic to Elite.',
+        },
+        {
+          id: 'faq-2',
+          question: 'How do I receive my guide after purchase?',
+          answer:
+            'The moment checkout completes, you get a secure download link for your PDF guide — instantly, with no waiting and no shipping. The link stays valid so you can download your copy for a limited time after purchase.',
+        },
+        {
+          id: 'faq-3',
+          question: 'Are the plans suitable for beginners?',
+          answer:
+            'Yes. The Basic plan is built beginner-first with a simple structure and clear guidance for every exercise, while Pro and Elite add progressive 12-week programming as you advance.',
+        },
+        {
+          id: 'faq-4',
+          question: "What's the difference between Basic, Pro, and Elite?",
+          answer:
+            'Basic gives you a personalized workout plan and exercise guidance; Pro adds a full 12-week transformation with progressive cardio; Elite layers in an advanced nutrition system and full goal-based customization.',
+        },
+        {
+          id: 'faq-5',
+          question: 'Do you have plans for both men and women?',
+          answer:
+            "Yes. Every tier comes in two versions — one for men and one for women — with training and nutrition tailored to each.",
+        },
+        {
+          id: 'faq-6',
+          question: 'Is the program based on real science?',
+          answer:
+            'Every plan is built on trusted research and references such as PubMed, NSCA, and Elsevier — not guesswork.',
+        },
+        {
+          id: 'faq-7',
+          question: 'What is MotionCore?',
+          answer:
+            'MotionCore is our companion analysis system that assesses your movement and level, helping you match to the right package before you buy.',
+        },
+      ],
+      contactLead: "Can't find your answer?",
+      contactCta: 'Browse the packages and get started',
+    },
     packages: {
       audienceLabel: 'Choose package audience',
       men: 'Men',
@@ -627,6 +773,27 @@ export const dictionaries: Record<Locale, Dictionary> = {
           note: 'Best choice for those wanting a complete training and nutrition plan in one place.',
         },
       },
+    },
+    footer: {
+      tagline:
+        'A clear training system with a detailed breakdown of every movement.\nStart your fitness journey the right way.',
+      columns: [
+        {
+          title: 'Product',
+          links: ['Packages', "What You'll Get", 'FAQ'],
+        },
+        {
+          title: 'MotionCore',
+          links: ['Analysis system', 'Start assessment', 'Dashboard'],
+        },
+        {
+          title: 'Company',
+          links: ['About us', 'Home'],
+        },
+      ],
+      legal: ['Privacy Policy', 'Terms of Service'],
+      socials: ['Instagram', 'X (Twitter)', 'TikTok', 'WhatsApp'],
+      copyright: '© 2026 UltraFit. All rights reserved.',
     },
     actions: {
       openMenu: 'Open menu',

@@ -1,5 +1,6 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
   createContext,
   useCallback,
@@ -105,7 +106,14 @@ export function LanguageProvider({
     [locale, setLocale, toggleLocale],
   );
 
-  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+  // Feed the active reading direction into Base UI so its directional
+  // components (e.g. the FAQ accordion) don't fall back to their `ltr` default
+  // and scramble mixed Arabic/Latin text. Stays in sync with language toggles.
+  return (
+    <LanguageContext.Provider value={value}>
+      <DirectionProvider direction={value.dir}>{children}</DirectionProvider>
+    </LanguageContext.Provider>
+  );
 }
 
 export function useLanguage() {

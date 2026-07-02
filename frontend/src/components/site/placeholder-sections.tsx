@@ -10,13 +10,11 @@ import { useLanguage } from '@/components/providers/language-provider';
 export function PlaceholderSections() {
   const { t } = useLanguage();
 
-  // "products" now resolves to the real pricing section (see <PricingCards />)
-  // and "what-you-get" to the package showcase (see <WhatYouGet />), so neither
-  // is a placeholder anymore.
-  const sections = [
-    { id: 'about', title: t.nav.about },
-    { id: 'get-the-guide', title: t.hero.cta },
-  ];
+  // "products" now resolves to the real pricing section (see <PricingCards />),
+  // "what-you-get" to the package showcase (see <WhatYouGet />), and the old
+  // "get-the-guide" anchor to the FAQ (see <FaqSection />) — so only "about"
+  // remains a placeholder.
+  const sections = [{ id: 'about', title: t.nav.about }];
 
   return (
     <>
