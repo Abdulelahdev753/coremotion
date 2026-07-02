@@ -1,7 +1,7 @@
 'use client';
 
-import { Check } from 'lucide-react';
-import type { CSSProperties, ReactNode } from 'react';
+import { Check, Loader2 } from 'lucide-react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
 
@@ -11,20 +11,21 @@ import { useLanguage } from '@/components/providers/language-provider';
  * only the price, accent color and its rgb triple are fixed here.
  */
 const tierStyles = [
-  { key: 'basic', price: '39', color: '#d6ec1b', rgb: '214, 236, 27' },
-  { key: 'pro', price: '49', color: '#fb923c', rgb: '251, 146, 60' },
-  { key: 'elite', price: '59', color: '#a78bfa', rgb: '167, 139, 250' },
+  { key: 'basic', price: '39.99', color: '#d6ec1b', rgb: '214, 236, 27' },
+  { key: 'pro', price: '49.99', color: '#fb923c', rgb: '251, 146, 60' },
+  { key: 'elite', price: '59.99', color: '#a78bfa', rgb: '167, 139, 250' },
 ] as const;
 
 type PlanId = (typeof tierStyles)[number]['key'];
 
 type PricingCardsProps = {
   /**
-   * Cart hook. Fires with the tier id ('basic' | 'pro' | 'elite') when a card's
-   * "Add to cart" button is pressed. There is no cart flow in the app yet, so
-   * this is the seam to wire one into.
+   * Checkout hook. Fires with the tier id ('basic' | 'pro' | 'elite') when a
+   * card's "Buy now" button is pressed. May be async (it kicks off a backend
+   * call to mint the StreamPay link); the card keeps its spinner until the
+   * promise settles and the browser navigates away.
    */
-  onAddToCart?: (planId: PlanId) => void;
+  onAddToCart?: (planId: PlanId) => void | Promise<void>;
   /**
    * Optional Men/Women selector, rendered centered directly above the cards.
    * The selector owns the audience state and drives the package sections.
@@ -35,6 +36,9 @@ type PricingCardsProps = {
 export function PricingCards({ onAddToCart, selector }: PricingCardsProps) {
   const { t } = useLanguage();
   const p = t.pricing;
+  // Which tier is mid-redirect. The card stays mounted while the browser loads
+  // the StreamPay page, so the spinner shows for the whole hand-off.
+  const [loadingTier, setLoadingTier] = useState<PlanId | null>(null);
 
   return (
     <section id="products" className="pricing-stage scroll-mt-28">
@@ -88,9 +92,27 @@ export function PricingCards({ onAddToCart, selector }: PricingCardsProps) {
                   <button
                     type="button"
                     className="tier-card__cta tier-card__cta--add"
-                    onClick={() => onAddToCart?.(style.key)}
+                    onClick={() => {
+                      if (!onAddToCart || loadingTier) return;
+                      setLoadingTier(style.key);
+                      // On success the browser navigates away (spinner persists);
+                      // on failure, re-enable the button so the buyer can retry.
+                      Promise.resolve(onAddToCart(style.key)).catch((err) => {
+                        console.error('Checkout failed:', err);
+                        setLoadingTier(null);
+                      });
+                    }}
+                    disabled={loadingTier === style.key}
+                    aria-busy={loadingTier === style.key}
                   >
-                    <span className="tier-card__cta-label">{p.addToCart}</span>
+                    {loadingTier === style.key ? (
+                      <span className="tier-card__cta-spinner">
+                        <Loader2 size={18} strokeWidth={3} aria-hidden="true" />
+                        <span className="sr-only">{p.buyNow}</span>
+                      </span>
+                    ) : (
+                      <span className="tier-card__cta-label">{p.buyNow}</span>
+                    )}
                   </button>
                 </div>
               </footer>

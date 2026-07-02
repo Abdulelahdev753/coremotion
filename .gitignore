@@ -23,3 +23,6 @@ yarn-error.log*
 .vscode/
 .idea/
 *.swp
+
+# Local backup snapshots (restore points, not app code)
+.backups/
