@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from 'react';
 
+import TiltedCover from '@/components/animata/image/tilted-cover';
 import { useLanguage } from '@/components/providers/language-provider';
 import type { PackageAudience } from '@/components/site/package-audience-pill';
 
@@ -28,9 +29,19 @@ type WhatYouGetProps = {
   audience?: PackageAudience;
 };
 
+/**
+ * "What You'll Get" — one animata TiltedCover per tier: the package mockup sits
+ * as a cover that slides away on hover to reveal the tier description on an
+ * accent-tinted panel. Tilt follows the on-screen position (left card tilts
+ * left, right card tilts right, center stays flat) and is computed from the
+ * layout direction so Arabic renders identically to English. Touch devices
+ * can't hover, so TiltedCover also toggles the reveal on tap.
+ */
 export function WhatYouGet({ audience = 'men' }: WhatYouGetProps) {
   const { t } = useLanguage();
   const w = t.whatYouGet;
+  // RTL grids flow right→left, so DOM index 0 sits on the visual right.
+  const isRtl = t.dir === 'rtl';
 
   return (
     <section id="what-you-get" className="getit-stage scroll-mt-28">
@@ -45,22 +56,40 @@ export function WhatYouGet({ audience = 'men' }: WhatYouGetProps) {
           // index stays aligned, then keep only the selected audience's three.
           .map((card, i) => ({ card, item: w.items[i] }))
           .filter(({ card }) => card.audience === audience)
-          .map(({ card, item }) => (
-            <figure
-              key={card.src}
-              className="getit-card"
-              style={{ '--tier-rgb': card.rgb } as CSSProperties}
-            >
-              <div className="getit-card__media">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={card.src} alt={item.title} loading="lazy" />
-              </div>
-              <figcaption className="getit-card__body">
-                <h3 className="getit-card__title">{item.title}</h3>
-                <p className="getit-card__text">{item.description}</p>
-              </figcaption>
-            </figure>
-          ))}
+          .map(({ card, item }, index) => {
+            // 0 = visual left, 1 = center, 2 = visual right (single-column
+            // mobile stacks them, where the mix of tilts reads fine).
+            const visual = isRtl ? 2 - index : index;
+            return (
+              <figure
+                key={card.src}
+                className="m-0 flex min-w-0 flex-col items-center"
+                style={{ '--tier-rgb': card.rgb } as CSSProperties}
+              >
+                <TiltedCover
+                  direction={visual === 2 ? 'right' : 'left'}
+                  tiltCover={visual !== 1}
+                  image={{ src: card.src, alt: item.title }}
+                >
+                  <div
+                    className="flex h-full w-full flex-col items-center justify-center p-5 text-center"
+                    style={{
+                      background: `radial-gradient(ellipse at 50% 120%, rgba(var(--tier-rgb), 0.22), transparent 70%), #0b0c0f`,
+                    }}
+                  >
+                    <p className="text-xs leading-relaxed text-white/75 rtl:leading-loose">
+                      {item.description}
+                    </p>
+                  </div>
+                </TiltedCover>
+                <figcaption className="mt-3 text-center">
+                  <h3 className="text-base font-extrabold leading-tight text-white">
+                    {item.title}
+                  </h3>
+                </figcaption>
+              </figure>
+            );
+          })}
       </div>
     </section>
   );

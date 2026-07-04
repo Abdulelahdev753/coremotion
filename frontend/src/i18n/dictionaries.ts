@@ -34,8 +34,18 @@ export type Dictionary = {
     secondaryCta: string;
     trustedBy: string;
   };
-  sections: {
-    comingSoon: string;
+  /** "About us" section — narrative + value tiles + a short stat strip. */
+  about: {
+    eyebrow: string;
+    /** Heading is split so the closing phrase can be accented in brand color. */
+    headingLead: string;
+    headingAccent: string;
+    lead: string;
+    body: string;
+    /** Value tiles beside the narrative. */
+    values: Array<{ title: string; description: string }>;
+    /** Stat strip under the narrative. */
+    stats: Array<{ value: string; label: string }>;
   };
   /** FAQ accordion — replaces the old "Get the guide" placeholder section. */
   faq: {
@@ -77,11 +87,15 @@ export type Dictionary = {
     emailInvalid: string;
     emailContinue: string;
     emailCancel: string;
-    tiers: {
-      basic: PricingTier;
-      pro: PricingTier;
-      elite: PricingTier;
-    };
+    /** Tier copy differs per audience — the Men/Women pill picks the set. */
+    tiers: Record<
+      'men' | 'women',
+      {
+        basic: PricingTier;
+        pro: PricingTier;
+        elite: PricingTier;
+      }
+    >;
   };
   /** Site footer — brand block, nav columns, socials, and legal links. */
   footer: {
@@ -283,8 +297,35 @@ export const dictionaries: Record<Locale, Dictionary> = {
       secondaryCta: 'نظام motioncore التحليلي',
       trustedBy: 'مبني على أبحاث ومراجع موثوقة',
     },
-    sections: {
-      comingSoon: 'قريبًا',
+    about: {
+      eyebrow: 'من نحن',
+      headingLead: 'تدريب مبني على العلم،',
+      headingAccent: 'مصمم لهدفك',
+      lead: 'UltraFit فريق شغوف بالتدريب الصحيح. نحوّل الأبحاث العلمية الموثوقة إلى أدلة تدريب وتغذية عملية وواضحة — بدون تعقيد وبدون اجتهادات عشوائية.',
+      body: 'بدأنا UltraFit لأننا رأينا كثيرين يضيّعون شهورًا بين تمارين خاطئة ومعلومات متضاربة. مهمتنا أن نختصر عليك الطريق: خطط مدروسة خطوة بخطوة، شرح واضح لكل حركة، ونظام MotionCore الذي يساعدك على اختيار ما يناسب جسمك وهدفك.',
+      values: [
+        {
+          title: 'مبني على الأبحاث',
+          description: 'كل خطة مستندة إلى مراجع موثوقة مثل PubMed وNSCA وElsevier — لا اجتهادات عشوائية.',
+        },
+        {
+          title: 'للرجال والنساء',
+          description: 'كل باقة متوفرة بنسختين مصممتين خصيصًا لكل فئة وأهدافها.',
+        },
+        {
+          title: 'تسليم فوري',
+          description: 'ملفات PDF تصلك فور إتمام الدفع — بدون انتظار وبدون شحن.',
+        },
+        {
+          title: 'شرح لكل حركة',
+          description: 'روابط فيديو توضح طريقة أداء التمارين حتى تتدرب بثقة ومن دون أخطاء.',
+        },
+      ],
+      stats: [
+        { value: '12', label: 'أسبوعًا من التدرج المدروس' },
+        { value: '6', label: 'باقات لكل مستوى وهدف' },
+        { value: 'PDF', label: 'تسليم رقمي فوري' },
+      ],
     },
     faq: {
       eyebrow: 'الأسئلة الشائعة',
@@ -336,7 +377,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         },
       ],
       contactLead: 'لم تجد إجابة سؤالك؟',
-      contactCta: 'تصفّح الباقات وابدأ الآن',
+      contactCta: 'راسلنا على واتساب',
     },
     packages: {
       audienceLabel: 'اختر فئة الباقات',
@@ -387,46 +428,92 @@ export const dictionaries: Record<Locale, Dictionary> = {
       emailContinue: 'المتابعة للدفع',
       emailCancel: 'إلغاء',
       tiers: {
-        basic: {
-          badge: 'أساسية',
-          name: 'UltraFit الأساسية',
-          tagline: 'ابدأ رحلتك الرياضية بالطريقة الصحيحة.',
-          features: [
-            'خطة تمارين مخصصة لك',
-            'هدف تنشيف أو تضخيم أو ثبات الوزن',
-            'هيكل مناسب للمبتدئين',
-            'إرشادات أداء التمارين',
-            'متابعة التقدم',
-            'توجيه غذائي مبسّط',
-          ],
-          note: 'مثالية للمبتدئين ولكل من يريد فهم التمارين بشكل صحيح.',
+        men: {
+          basic: {
+            badge: 'أساسية',
+            name: 'Ultra Fit Basic',
+            tagline: 'ابدأ رحلتك الرياضية بالطريقة الصحيحة.',
+            features: [
+              'جداول تدريبية كاملة (3 أيام - 4 أيام - 5 أيام - 6 أيام)',
+              'متوفرة لأهداف: التنشيف، التضخيم، المحافظة على الوزن',
+              'روابط فيديوهات توضح طريقة أداء التمارين',
+              'تمارين الإحماء قبل التمرين',
+              'خطة كارديو حسب هدفك',
+              'كتيب علمي متكامل لفهم بناء العضلات واستهداف العضلات وتحقيق أفضل النتائج',
+            ],
+            note: 'مناسب للمبتدئين وكل شخص يريد فهم التدريب بشكل صحيح.',
+          },
+          pro: {
+            badge: 'برو',
+            name: 'Ultra Fit Pro',
+            tagline: 'تحدي 12 أسبوع لتغيير جسمك خطوة بخطوة.',
+            includes: 'جميع محتويات باقة Basic',
+            features: [
+              'برنامج تدريبي كامل لمدة 12 أسبوع',
+              'تغيير التمارين كل 4 أسابيع',
+              'تطوير تدريجي للأداء والقوة خلال مراحل التحدي',
+              'خطة كارديو متدرجة تناسب كل مرحلة',
+              'تمارين إحماء مخصصة لكل يوم تدريبي',
+              'كتيب علمي متكامل لفهم بناء العضلات واستهداف العضلات وتحقيق أفضل النتائج خلال التحدي',
+            ],
+          },
+          elite: {
+            badge: 'النخبة',
+            name: 'Ultra Fit Elite',
+            tagline: 'النظام المتكامل للوصول لهدفك.',
+            includes: 'جميع محتويات باقة Pro',
+            features: [
+              'جداول غذائية للتنشيف والتضخيم والمحافظة على الوزن',
+              'تحدي 12 أسبوع متكامل يشمل التدريب والتغذية والكارديو',
+              'خطط غذائية محسوبة لمساعدتك على بناء أفضل جسم ممكن حسب هدفك',
+              'كتيب علمي متكامل يشرح بناء العضلات والتغذية واستهداف العضلات وأفضل التمارين لكل عضلة',
+            ],
+            note: 'أفضل خيار لمن يريد خطة تدريب وغذاء متكاملة في مكان واحد.',
+          },
         },
-        pro: {
-          badge: 'برو',
-          name: 'UltraFit برو',
-          tagline: 'تحدٍّ مدته 12 أسبوعًا لتحويل جسمك خطوة بخطوة.',
-          includes: 'كل ما في الباقة الأساسية',
-          features: [
-            'برنامج تحوّل كامل مدته 12 أسبوعًا',
-            'مراحل تدرّج أسبوعية',
-            'خطة كارديو متدرّجة لكل مرحلة',
-            'تحسين تقسيم التمارين',
-            'هيكل غذائي متكامل',
-            'نظام للعادات والالتزام',
-          ],
-        },
-        elite: {
-          badge: 'النخبة',
-          name: 'UltraFit النخبة',
-          tagline: 'النظام المتكامل للوصول إلى هدفك.',
-          includes: 'كل ما في باقة برو',
-          features: [
-            'نظام تدريب وتغذية متقدّم',
-            'تحدّي 12 أسبوعًا كاملًا يشمل التمارين والتغذية والكارديو',
-            'تخصيص حسب هدفك',
-            'هيكل وإرشاد متميّز',
-          ],
-          note: 'الخيار الأفضل لمن يريد خطة تدريب وتغذية متكاملة في مكان واحد.',
+        women: {
+          basic: {
+            badge: 'أساسية',
+            name: 'Ultra Fit Women Basic',
+            tagline: 'ابدئي رحلتك الرياضية بالطريقة الصحيحة.',
+            features: [
+              'جداول تدريبية كاملة (3 أيام - 4 أيام - 5 أيام)',
+              'مصممة لأهداف: نحت الجسم ونزول الوزن، بناء الجزء السفلي والعلوي، المحافظة على الوزن',
+              'روابط فيديوهات توضح طريقة أداء جميع التمارين',
+              'تمارين الإحماء قبل التمرين',
+              'خطة كارديو حسب هدفك',
+              'كتيب علمي متكامل لفهم بناء العضلات واستهداف العضلات وتحقيق أفضل النتائج',
+            ],
+            note: 'مناسبة للمبتدئات وكل من ترغب في فهم التدريب بشكل صحيح.',
+          },
+          pro: {
+            badge: 'برو',
+            name: 'Ultra Fit Women Pro',
+            tagline: 'تحدي 12 أسبوع لنحت الجسم وبناء جسم بشكل متناسق.',
+            includes: 'جميع محتويات باقة Women Basic',
+            features: [
+              'برنامج تدريبي كامل لمدة 12 أسبوع',
+              'تغيير التمارين كل 4 أسابيع',
+              'تطوير تدريجي للأداء والقوة خلال مراحل التحدي',
+              'خطة كارديو متدرجة تناسب كل مرحلة',
+              'تمارين إحماء مخصصة لكل يوم تدريبي',
+              'كتيب علمي متكامل لفهم بناء العضلات واستهداف العضلات وتحقيق أفضل النتائج خلال التحدي',
+            ],
+            note: 'الأكثر طلبًا',
+          },
+          elite: {
+            badge: 'النخبة',
+            name: 'Ultra Fit Women Elite',
+            tagline: 'النظام المتكامل للوصول لهدفك.',
+            includes: 'جميع محتويات باقة Women Pro',
+            features: [
+              'تحدي 12 أسبوع متكامل يشمل التدريب والتغذية والكارديو',
+              'جداول غذائية لنحت الجسم وبناء الجزء السفلي والعلوي والمحافظة على الوزن حسب هدفك',
+              'خطط غذائية محسوبة السعرات والبروتين لمساعدتك على الوصول لأفضل جسم',
+              'كتيب علمي متكامل يشرح بناء العضلات والتغذية واستهداف العضلات وأفضل التمارين لكل عضلة',
+            ],
+            note: 'أفضل خيار لمن تريد خطة تدريب وغذاء متكاملة في مكان واحد.',
+          },
         },
       },
     },
@@ -649,8 +736,35 @@ export const dictionaries: Record<Locale, Dictionary> = {
       secondaryCta: 'MotionCore analysis system',
       trustedBy: 'Built on trusted research & references',
     },
-    sections: {
-      comingSoon: 'Coming soon',
+    about: {
+      eyebrow: 'About us',
+      headingLead: 'Training built on science,',
+      headingAccent: 'designed for your goal',
+      lead: 'UltraFit is a team obsessed with training done right. We turn trusted research into clear, practical training and nutrition guides — no fluff, no guesswork.',
+      body: 'We started UltraFit after watching too many people lose months to wrong exercises and conflicting advice. Our mission is to shortcut that path: structured step-by-step plans, a clear breakdown of every movement, and the MotionCore system to match you with what fits your body and goal.',
+      values: [
+        {
+          title: 'Research-based',
+          description: 'Every plan is grounded in trusted references like PubMed, NSCA, and Elsevier — never guesswork.',
+        },
+        {
+          title: 'For men & women',
+          description: 'Every package comes in two versions, each designed around its audience and goals.',
+        },
+        {
+          title: 'Instant delivery',
+          description: 'Your PDF guides arrive the moment payment completes — no waiting, no shipping.',
+        },
+        {
+          title: 'Every movement explained',
+          description: 'Video links show exactly how to perform each exercise, so you train with confidence.',
+        },
+      ],
+      stats: [
+        { value: '12', label: 'weeks of structured progression' },
+        { value: '6', label: 'packages for every level and goal' },
+        { value: 'PDF', label: 'instant digital delivery' },
+      ],
     },
     faq: {
       eyebrow: 'FAQ',
@@ -702,7 +816,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         },
       ],
       contactLead: "Can't find your answer?",
-      contactCta: 'Browse the packages and get started',
+      contactCta: 'Message us on WhatsApp',
     },
     packages: {
       audienceLabel: 'Choose package audience',
@@ -753,46 +867,92 @@ export const dictionaries: Record<Locale, Dictionary> = {
       emailContinue: 'Continue to payment',
       emailCancel: 'Cancel',
       tiers: {
-        basic: {
-          badge: 'Basic',
-          name: 'Ultra Fit Basic',
-          tagline: 'Start your fitness journey the right way.',
-          features: [
-            'Personalized workout plan',
-            'Cutting, bulking, or weight maintenance goal',
-            'Beginner-friendly structure',
-            'Exercise guidance',
-            'Progress tracking',
-            'Simple nutrition direction',
-          ],
-          note: 'Perfect for beginners and anyone who wants to understand training properly.',
+        men: {
+          basic: {
+            badge: 'Basic',
+            name: 'Ultra Fit Basic',
+            tagline: 'Start your fitness journey the right way.',
+            features: [
+              'Complete training schedules (3, 4, 5, and 6 days)',
+              'Available for cutting, bulking, and weight-maintenance goals',
+              'Video links showing how to perform the exercises',
+              'Pre-workout warm-up routines',
+              'A cardio plan matched to your goal',
+              'A complete science-based handbook on building muscle, targeting muscles, and getting the best results',
+            ],
+            note: 'Perfect for beginners and anyone who wants to understand training properly.',
+          },
+          pro: {
+            badge: 'Pro',
+            name: 'Ultra Fit Pro',
+            tagline: 'A 12-week challenge to change your body step by step.',
+            includes: 'Everything in the Basic package',
+            features: [
+              'A complete 12-week training program',
+              'Exercises rotated every 4 weeks',
+              'Gradual performance and strength progression across the challenge phases',
+              'A progressive cardio plan for each phase',
+              'Warm-up routines tailored to every training day',
+              'A complete science-based handbook on building muscle, targeting muscles, and getting the best results during the challenge',
+            ],
+          },
+          elite: {
+            badge: 'Elite',
+            name: 'Ultra Fit Elite',
+            tagline: 'The complete system to reach your goal.',
+            includes: 'Everything in the Pro package',
+            features: [
+              'Meal plans for cutting, bulking, and weight maintenance',
+              'A complete 12-week challenge covering training, nutrition, and cardio',
+              'Calculated nutrition plans to help you build the best physique for your goal',
+              'A complete science-based handbook covering muscle building, nutrition, muscle targeting, and the best exercises for every muscle',
+            ],
+            note: 'The best choice for anyone who wants training and nutrition in one place.',
+          },
         },
-        pro: {
-          badge: 'Pro',
-          name: 'Ultra Fit Pro',
-          tagline: '12-week challenge to transform your body step by step.',
-          includes: 'Everything in the Basic package',
-          features: [
-            'Full 12-week transformation program',
-            'Weekly progression phases',
-            'Progressive cardio plan for each phase',
-            'Training split optimization',
-            'Nutrition structure',
-            'Habit and accountability system',
-          ],
-        },
-        elite: {
-          badge: 'Elite',
-          name: 'Ultra Fit Elite',
-          tagline: 'The complete system to reach your goal.',
-          includes: 'Everything in the Pro package',
-          features: [
-            'Advanced training and nutrition system',
-            'Complete 12-week challenge including training, nutrition, and cardio',
-            'Goal-based customization',
-            'Premium structure and guidance',
-          ],
-          note: 'Best choice for those wanting a complete training and nutrition plan in one place.',
+        women: {
+          basic: {
+            badge: 'Basic',
+            name: 'Ultra Fit Women Basic',
+            tagline: 'Start your fitness journey the right way.',
+            features: [
+              'Complete training schedules (3, 4, and 5 days)',
+              'Designed for body sculpting & weight loss, lower/upper-body building, and weight maintenance',
+              'Video links showing how to perform every exercise',
+              'Pre-workout warm-up routines',
+              'A cardio plan matched to your goal',
+              'A complete science-based handbook on building muscle, targeting muscles, and getting the best results',
+            ],
+            note: 'Perfect for beginners and anyone who wants to understand training properly.',
+          },
+          pro: {
+            badge: 'Pro',
+            name: 'Ultra Fit Women Pro',
+            tagline: 'A 12-week challenge to sculpt a balanced, toned body.',
+            includes: 'Everything in the Women Basic package',
+            features: [
+              'A complete 12-week training program',
+              'Exercises rotated every 4 weeks',
+              'Gradual performance and strength progression across the challenge phases',
+              'A progressive cardio plan for each phase',
+              'Warm-up routines tailored to every training day',
+              'A complete science-based handbook on building muscle, targeting muscles, and getting the best results during the challenge',
+            ],
+            note: 'Most popular',
+          },
+          elite: {
+            badge: 'Elite',
+            name: 'Ultra Fit Women Elite',
+            tagline: 'The complete system to reach your goal.',
+            includes: 'Everything in the Women Pro package',
+            features: [
+              'A complete 12-week challenge covering training, nutrition, and cardio',
+              'Meal plans for body sculpting, lower/upper-body building, and weight maintenance — matched to your goal',
+              'Calorie- and protein-calculated nutrition plans to help you reach your best physique',
+              'A complete science-based handbook covering muscle building, nutrition, muscle targeting, and the best exercises for every muscle',
+            ],
+            note: 'The best choice for anyone who wants training and nutrition in one place.',
+          },
         },
       },
     },

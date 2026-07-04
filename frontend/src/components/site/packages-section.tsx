@@ -38,6 +38,7 @@ export function PackagesSection() {
     <>
       <PricingCards
         onAddToCart={handleAddToCart}
+        audience={audience}
         selector={
           <PackageAudiencePill
             value={audience}

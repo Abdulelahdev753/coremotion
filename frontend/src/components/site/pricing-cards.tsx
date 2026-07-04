@@ -5,6 +5,7 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
 import { CheckoutEmailDialog } from '@/components/site/checkout-email-dialog';
+import type { PackageAudience } from '@/components/site/package-audience-pill';
 
 /**
  * Visual + non-translatable config per tier. The copy (names, features, button
@@ -33,11 +34,14 @@ type PricingCardsProps = {
    * The selector owns the audience state and drives the package sections.
    */
   selector?: ReactNode;
+  /** Which audience's tier copy to render (the dictionary has one set each). */
+  audience?: PackageAudience;
 };
 
-export function PricingCards({ onAddToCart, selector }: PricingCardsProps) {
+export function PricingCards({ onAddToCart, selector, audience = 'men' }: PricingCardsProps) {
   const { t } = useLanguage();
   const p = t.pricing;
+  const tiers = p.tiers[audience];
   // Which tier is mid-redirect. The card stays mounted while the browser loads
   // the StreamPay page, so the spinner shows for the whole hand-off.
   const [loadingTier, setLoadingTier] = useState<PlanId | null>(null);
@@ -55,7 +59,7 @@ export function PricingCards({ onAddToCart, selector }: PricingCardsProps) {
 
       <div className="tier-cards" aria-label={p.heading}>
         {tierStyles.map((style) => {
-          const tier = p.tiers[style.key];
+          const tier = tiers[style.key];
           return (
             <article
               key={style.key}

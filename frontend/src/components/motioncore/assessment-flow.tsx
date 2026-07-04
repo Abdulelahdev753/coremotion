@@ -51,7 +51,6 @@ type State = {
 
 type Action =
   | { type: 'set'; patch: Partial<Draft> }
-  | { type: 'toggleExclusion'; exclusion: DietExclusion }
   | { type: 'errors'; errors: State['errors'] }
   | { type: 'goTo'; step: number }
   | { type: 'prefill'; draft: Draft };
@@ -66,13 +65,6 @@ function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'set':
       return { ...state, draft: { ...state.draft, ...action.patch }, errors: {} };
-    case 'toggleExclusion': {
-      const has = state.draft.exclusions.includes(action.exclusion);
-      const exclusions = has
-        ? state.draft.exclusions.filter((item) => item !== action.exclusion)
-        : [...state.draft.exclusions, action.exclusion];
-      return { ...state, draft: { ...state.draft, exclusions } };
-    }
     case 'errors':
       return { ...state, errors: action.errors };
     case 'goTo':
@@ -88,7 +80,6 @@ const TRAINING_DAYS: DaysPerWeek[] = [3, 4, 5];
 const GOALS: Goal[] = ['fatLoss', 'muscleGain', 'fitness'];
 const PACES: Pace[] = ['gentle', 'standard', 'aggressive'];
 const EQUIPMENT: Equipment[] = ['none', 'dumbbells', 'gym'];
-const EXCLUSIONS: DietExclusion[] = ['dairy', 'eggs', 'nuts', 'gluten', 'seafood'];
 
 export function AssessmentFlow() {
   const { t, locale } = useLanguage();
@@ -359,18 +350,6 @@ export function AssessmentFlow() {
                     onSelect={() => dispatch({ type: 'set', patch: { equipment } })}
                     label={ta.options.equipment[equipment].label}
                     description={ta.options.equipment[equipment].description}
-                  />
-                ))}
-              </div>
-            </FieldGroup>
-            <FieldGroup label={ta.fields.exclusions} hint={ta.optional}>
-              <div className="flex flex-wrap gap-2.5">
-                {EXCLUSIONS.map((exclusion) => (
-                  <ChipToggle
-                    key={exclusion}
-                    selected={draft.exclusions.includes(exclusion)}
-                    onToggle={() => dispatch({ type: 'toggleExclusion', exclusion })}
-                    label={ta.options.exclusions[exclusion]}
                   />
                 ))}
               </div>

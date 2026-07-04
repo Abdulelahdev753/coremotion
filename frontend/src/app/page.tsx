@@ -1,8 +1,8 @@
+import { AboutSection } from '@/components/site/about-section';
 import { FaqSection } from '@/components/site/faq-section';
 import { Hero } from '@/components/site/hero';
 import { Navbar } from '@/components/site/navbar';
 import { PackagesSection } from '@/components/site/packages-section';
-import { PlaceholderSections } from '@/components/site/placeholder-sections';
 import { SiteFooter } from '@/components/site/site-footer';
 
 export default function Home() {
@@ -13,7 +13,7 @@ export default function Home() {
         <Hero />
         <PackagesSection />
         <FaqSection />
-        <PlaceholderSections />
+        <AboutSection />
       </main>
       <SiteFooter />
     </>

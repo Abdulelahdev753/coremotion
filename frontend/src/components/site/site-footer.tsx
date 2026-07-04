@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { ComponentType, ReactNode } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
+import { INSTAGRAM_URL, TIKTOK_URL, TWITTER_URL, WHATSAPP_URL } from '@/lib/site-links';
 
 // GitHub Pages serves the site from /<repo>; next/image does not apply basePath
 // to unoptimized images (static export), so prefix the logo manually — same as
@@ -25,10 +26,10 @@ const legalHrefs = ['#', '#'] as const;
 type SocialKey = 'instagram' | 'twitter' | 'tiktok' | 'whatsapp';
 
 const socialConfig: Array<{ icon: SocialKey; href: string }> = [
-  { icon: 'instagram', href: '#' },
-  { icon: 'twitter', href: '#' },
-  { icon: 'tiktok', href: '#' },
-  { icon: 'whatsapp', href: '#' },
+  { icon: 'instagram', href: INSTAGRAM_URL },
+  { icon: 'twitter', href: TWITTER_URL },
+  { icon: 'tiktok', href: TIKTOK_URL },
+  { icon: 'whatsapp', href: WHATSAPP_URL },
 ];
 
 // Inline brand marks (Simple Icons paths) — keeps us on lucide-only + avoids
@@ -100,8 +101,15 @@ function FooterLink({
       </Link>
     );
   }
+  const external = href.startsWith('http');
   return (
-    <a href={href} className={className} aria-label={ariaLabel}>
+    <a
+      href={href}
+      className={className}
+      aria-label={ariaLabel}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
+    >
       {children}
     </a>
   );
