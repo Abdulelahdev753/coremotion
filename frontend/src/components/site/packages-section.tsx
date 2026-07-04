@@ -21,13 +21,14 @@ export function PackagesSection() {
   const { t } = useLanguage();
   const [audience, setAudience] = useState<PackageAudience>('men');
 
-  // "Buy now" mints a single-use StreamPay link on the backend for the live
-  // audience (Men/Women) + pressed tier, then redirects the buyer to it in the
-  // same tab. Reads `audience` from render scope so it reflects the live pill.
-  // Errors propagate to PricingCards, which re-enables the button.
+  // "Buy now" collects the buyer's email (for PDF delivery), then mints a
+  // single-use StreamPay link on the backend for the live audience (Men/Women)
+  // + pressed tier and redirects the buyer to it in the same tab. Reads
+  // `audience` from render scope so it reflects the live pill. Errors
+  // propagate to PricingCards, which re-enables the dialog.
   const handleAddToCart = useCallback(
-    async (tier: PricingTierId) => {
-      const url = await startCheckout(audience, tier);
+    async (tier: PricingTierId, email: string) => {
+      const url = await startCheckout(audience, tier, email);
       window.location.href = url;
     },
     [audience],

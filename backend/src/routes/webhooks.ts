@@ -9,6 +9,7 @@
 import { Router, type Request, type Response } from 'express';
 import { verifyWebhookSignature, getInvoice } from '../lib/stream';
 import { getOrderByToken, getOrderByPaymentLinkId, markOrderPaid } from '../lib/supabase';
+import { maybeSendDeliveryEmail } from '../lib/delivery';
 
 export const webhooksRouter = Router();
 
@@ -82,6 +83,11 @@ webhooksRouter.post('/webhooks/streampay', async (req: Request, res: Response) =
       streamPaymentId: data.payment?.id ?? body.entity_id ?? null,
       streamOrgInvoiceNumber: orgInvoiceNumber,
     });
+
+    // Email the PDF (idempotent; no-op if the redirect path already sent it).
+    // Awaited so serverless-style shutdowns can't drop it, but it never throws
+    // — a send failure must not 5xx an already-recorded payment.
+    await maybeSendDeliveryEmail(order.order_token);
 
     return res.status(200).json({ ok: true, matched: true });
   } catch (err) {

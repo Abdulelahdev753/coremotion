@@ -33,6 +33,9 @@ export type OrderRow = {
   status: 'pending' | 'paid';
   customer_name: string | null;
   customer_phone: string | null;
+  customer_email: string | null;
+  delivery_email_sent_at: string | null;
+  resend_email_id: string | null;
   stream_payment_link_id: string | null;
   stream_invoice_id: string | null;
   stream_payment_id: string | null;
@@ -47,6 +50,7 @@ export async function insertPendingOrder(args: {
   orderToken: string;
   pkg: PackageConfig;
   streamPaymentLinkId: string;
+  customerEmail: string | null;
 }): Promise<void> {
   const { error } = await getClient().from('orders').insert({
     order_number: args.orderNumber,
@@ -59,6 +63,7 @@ export async function insertPendingOrder(args: {
     currency: 'SAR',
     status: 'pending',
     stream_payment_link_id: args.streamPaymentLinkId,
+    customer_email: args.customerEmail,
   });
   if (error) throw new Error(`Failed to insert order: ${error.message}`);
 }
@@ -123,6 +128,51 @@ export async function markOrderPaid(
     .eq('order_token', token)
     .is('paid_at', null);
   if (stampError) throw new Error(`Failed to stamp paid_at: ${stampError.message}`);
+}
+
+/**
+ * Atomically claim the right to send this order's delivery email. Stamping
+ * delivery_email_sent_at only where it is still null means the webhook and the
+ * redirect/status paths can all attempt delivery, but exactly one send happens.
+ * Returns true when this caller won the claim.
+ */
+export async function claimDeliveryEmail(token: string): Promise<boolean> {
+  const { data, error } = await getClient()
+    .from('orders')
+    .update({ delivery_email_sent_at: new Date().toISOString() })
+    .eq('order_token', token)
+    .is('delivery_email_sent_at', null)
+    .select('id');
+  if (error) throw new Error(`Failed to claim delivery email: ${error.message}`);
+  return (data?.length ?? 0) > 0;
+}
+
+/** Undo a claim after a failed send so a later payment-confirm path retries. */
+export async function releaseDeliveryEmailClaim(token: string): Promise<void> {
+  const { error } = await getClient()
+    .from('orders')
+    .update({ delivery_email_sent_at: null })
+    .eq('order_token', token)
+    .is('resend_email_id', null);
+  if (error) throw new Error(`Failed to release delivery email claim: ${error.message}`);
+}
+
+/** Record the Resend message id once a delivery email is accepted for sending. */
+export async function recordDeliveryEmailId(token: string, emailId: string): Promise<void> {
+  const { error } = await getClient()
+    .from('orders')
+    .update({ resend_email_id: emailId })
+    .eq('order_token', token);
+  if (error) throw new Error(`Failed to record delivery email id: ${error.message}`);
+}
+
+/** Download a private bucket object into memory (the package PDFs are ~50 KB). */
+export async function downloadObject(bucket: string, object: string): Promise<Buffer> {
+  const { data, error } = await getClient().storage.from(bucket).download(object);
+  if (error || !data) {
+    throw new Error(`Failed to download ${bucket}/${object}: ${error?.message ?? 'no data'}`);
+  }
+  return Buffer.from(await data.arrayBuffer());
 }
 
 /**

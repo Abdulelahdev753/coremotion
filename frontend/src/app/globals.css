@@ -530,6 +530,150 @@ html[lang="ar"] .tier-card__price {
   }
 }
 
+/* ── Pre-checkout email dialog ─────────────────────────────────────────────
+   Captures the buyer's email before the StreamPay redirect; the backend
+   emails the purchased PDF there after payment. Same dark-glass language as
+   the tier cards, minus the tier-colored leaks. */
+.checkout-email__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(2, 2, 6, 0.66);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.checkout-email__panel {
+  width: min(420px, 100%);
+  padding: 28px 26px 24px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background:
+    radial-gradient(ellipse at 92% 0%, rgba(255, 255, 255, 0.1), transparent 12rem),
+    linear-gradient(118deg, #020204 0%, #05040a 52%, rgba(255, 255, 255, 0.04) 100%),
+    rgba(8, 7, 15, 0.97);
+  box-shadow:
+    0 26px 74px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+.checkout-email__title {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.checkout-email__subtitle {
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.checkout-email__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.checkout-email__input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.checkout-email__input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.checkout-email__input:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.34);
+  outline-offset: 2px;
+}
+
+.checkout-email__input[aria-invalid='true'] {
+  border-color: rgba(248, 113, 113, 0.75);
+}
+
+.checkout-email__error {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: #f87171;
+}
+
+.checkout-email__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.checkout-email__btn {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  min-height: 48px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+
+.checkout-email__btn:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.checkout-email__btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.34);
+  outline-offset: 3px;
+}
+
+.checkout-email__btn--ghost {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.checkout-email__btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.checkout-email__btn--primary {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+  color: #0a0b0d;
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.checkout-email__btn--primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkout-email__btn {
+    transition: none;
+  }
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    "What you'll get" — package mockups
    Six product-card images (basic/pro/elite × men/women), each on a dark glassy

@@ -69,6 +69,14 @@ export type Dictionary = {
     currency: string;
     addToCart: string;
     buyNow: string;
+    /** Pre-checkout email dialog — the PDF is emailed here after payment. */
+    emailTitle: string;
+    emailSubtitle: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    emailInvalid: string;
+    emailContinue: string;
+    emailCancel: string;
     tiers: {
       basic: PricingTier;
       pro: PricingTier;
@@ -371,6 +379,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       currency: 'ر.س',
       addToCart: 'أضف إلى السلة',
       buyNow: 'اشترِ الآن',
+      emailTitle: 'أين نرسل برنامجك؟',
+      emailSubtitle: 'سنرسل ملف البرنامج (PDF) إلى بريدك مباشرة بعد إتمام الدفع.',
+      emailLabel: 'البريد الإلكتروني',
+      emailPlaceholder: 'name@example.com',
+      emailInvalid: 'يرجى إدخال بريد إلكتروني صحيح.',
+      emailContinue: 'المتابعة للدفع',
+      emailCancel: 'إلغاء',
       tiers: {
         basic: {
           badge: 'أساسية',
@@ -730,6 +745,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       currency: 'SAR',
       addToCart: 'Add to cart',
       buyNow: 'Buy now',
+      emailTitle: 'Where should we send your program?',
+      emailSubtitle: "We'll email your program PDF right after payment.",
+      emailLabel: 'Email',
+      emailPlaceholder: 'name@example.com',
+      emailInvalid: 'Please enter a valid email address.',
+      emailContinue: 'Continue to payment',
+      emailCancel: 'Cancel',
       tiers: {
         basic: {
           badge: 'Basic',

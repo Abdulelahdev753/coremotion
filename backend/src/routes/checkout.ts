@@ -21,6 +21,7 @@ import {
   createSignedDownloadUrl,
   type OrderRow,
 } from '../lib/supabase';
+import { maybeSendDeliveryEmail, isPlausibleEmail } from '../lib/delivery';
 
 export const checkoutRouter = Router();
 
@@ -50,6 +51,10 @@ async function resolveDownloadUrl(order: OrderRow): Promise<string | null> {
   }
   if (!paid) return null;
 
+  // Fire-and-forget: email the PDF too (no-op if already sent). Never blocks
+  // or fails the redirect — maybeSendDeliveryEmail handles its own errors.
+  void maybeSendDeliveryEmail(order.order_token);
+
   const pkg = PACKAGES[order.package_key as PackageConfig['key']];
   const bucket = pkg?.bucket ?? order.bucket;
   const object = pkg?.object ?? `${order.bucket}.pdf`;
@@ -58,11 +63,18 @@ async function resolveDownloadUrl(order: OrderRow): Promise<string | null> {
 
 checkoutRouter.post('/checkout/start', async (req, res) => {
   try {
-    const { audience, tier } = (req.body ?? {}) as { audience?: unknown; tier?: unknown };
+    const { audience, tier, email } = (req.body ?? {}) as {
+      audience?: unknown;
+      tier?: unknown;
+      email?: unknown;
+    };
     const pkg = resolvePackage(audience, tier);
     if (!pkg) {
       return res.status(400).json({ error: 'Invalid audience or tier.' });
     }
+    // Optional so a stale pre-email frontend can still sell; without it the
+    // buyer simply gets no delivery email (the paid redirect still downloads).
+    const customerEmail = isPlausibleEmail(email) ? email.trim() : null;
 
     const env = getEnv();
     const orderToken = crypto.randomUUID();
@@ -85,6 +97,7 @@ checkoutRouter.post('/checkout/start', async (req, res) => {
       orderToken,
       pkg,
       streamPaymentLinkId: link.id,
+      customerEmail,
     });
 
     return res.json({ url: link.url, orderNumber });

@@ -16,11 +16,13 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 export async function startCheckout(
   audience: PackageAudience,
   tier: PricingTierId,
+  /** Buyer's email — the backend sends the purchased PDF here after payment. */
+  email: string,
 ): Promise<string> {
   const res = await fetch(`${API_BASE}/api/checkout/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ audience, tier }),
+    body: JSON.stringify({ audience, tier, email }),
   });
   if (!res.ok) {
     throw new Error(`Failed to start checkout (${res.status})`);
