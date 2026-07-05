@@ -5,7 +5,8 @@
  * calls `maybeSendDeliveryEmail`; an atomic claim on `delivery_email_sent_at`
  * guarantees the buyer gets exactly one email no matter which path confirms
  * first or how many times StreamPay retries the webhook. The PDF (~50 KB) is
- * attached directly, with a 7-day signed download link as a fallback in the
+ * attached directly, with a 7-day download link (proxied through our own
+ * /api/download endpoint, so it never exposes Supabase) as a fallback in the
  * body. A failed send releases the claim so the next confirmation retries.
  */
 import { getEnv } from './env';
@@ -16,9 +17,13 @@ import {
   releaseDeliveryEmailClaim,
   recordDeliveryEmailId,
   downloadObject,
-  createSignedDownloadUrl,
   type OrderRow,
 } from './supabase';
+
+/** Buyer-facing download URL on our own domain (GET /api/download). */
+export function buildDownloadUrl(orderToken: string): string {
+  return `${getEnv().publicBaseUrl}/api/download?token=${encodeURIComponent(orderToken)}`;
+}
 
 /** Loose-but-safe shape check; the frontend validates properly before checkout. */
 export function isPlausibleEmail(value: unknown): value is string {
@@ -136,10 +141,8 @@ export async function maybeSendDeliveryEmail(orderToken: string): Promise<void> 
     const bucket = pkg?.bucket ?? order.bucket;
     const object = pkg?.object ?? `${order.bucket}.pdf`;
 
-    const [pdf, downloadUrl] = await Promise.all([
-      downloadObject(bucket, object),
-      createSignedDownloadUrl(bucket, object, getEnv().emailLinkTtlSeconds),
-    ]);
+    const pdf = await downloadObject(bucket, object);
+    const downloadUrl = buildDownloadUrl(order.order_token);
 
     const { subject, text, html } = buildEmail(order, pkg ?? fallbackPkg(order), downloadUrl);
     const emailId = await sendViaResend({

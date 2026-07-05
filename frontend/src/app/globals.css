@@ -677,6 +677,170 @@ html[lang="ar"] .tier-card__price {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   Checkout result pages (success / failed)
+   Same dark-glass family as the checkout email dialog: near-black backdrop
+   with a faint brand glow, one centered card, white primary action.
+   ────────────────────────────────────────────────────────────────────────── */
+.checkout-result {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(60% 45% at 50% 0%, rgba(214, 236, 27, 0.09), transparent 70%),
+    #0a0a0a;
+}
+
+.checkout-result__card {
+  width: 100%;
+  max-width: 440px;
+  padding: 36px 28px 28px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 7, 15, 0.97);
+  box-shadow:
+    0 26px 74px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.checkout-result__badge {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+
+.checkout-result__badge--success {
+  background: var(--color-brand, #d6ec1b);
+  color: #0a0b0d;
+  box-shadow: 0 0 44px rgba(214, 236, 27, 0.35);
+}
+
+.checkout-result__badge--failed {
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  color: #f87171;
+}
+
+.checkout-result__title {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.checkout-result__order {
+  margin: 0 0 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.checkout-result__order strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.checkout-result__body {
+  margin: 0 0 22px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.checkout-result__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.checkout-result__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+
+.checkout-result__btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.34);
+  outline-offset: 3px;
+}
+
+.checkout-result__btn--primary {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+  color: #0a0b0d;
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.checkout-result__btn--primary:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+}
+
+.checkout-result__btn--ghost {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.checkout-result__btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.checkout-result__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 22px 0 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(214, 236, 27, 0.28);
+  background: rgba(214, 236, 27, 0.07);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.checkout-result__note svg {
+  flex-shrink: 0;
+  color: var(--color-brand, #d6ec1b);
+}
+
+.checkout-result__hint {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkout-result__btn {
+    transition: none;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    "What you'll get" — package mockups
    Six product-card images (basic/pro/elite × men/women), each on a dark glassy
    tile with a short caption. The grid reads as tier columns × gender rows.

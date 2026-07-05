@@ -28,11 +28,10 @@ export type Env = {
   supabaseUrl: string;
   supabaseServiceKey: string;
   publicBaseUrl: string;
-  signedUrlTtlSeconds: number;
   resendApiKey: string;
   /** RFC 5322 From for delivery emails, e.g. `UltraFit <noreply@ultrafits.com>`. */
   emailFrom: string;
-  /** TTL for the signed download link embedded in the delivery email. */
+  /** How long the /api/download link stays valid after payment. */
   emailLinkTtlSeconds: number;
 };
 
@@ -49,8 +48,7 @@ export function getEnv(): Env {
   // StreamPay uses HTTP Basic: base64("api-key:api-secret") in the x-api-key header.
   const streamApiKeyToken = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
 
-  const ttl = Number.parseInt(optional('SIGNED_URL_TTL_SECONDS', '10800'), 10);
-  // Email links live longer than redirect links: 7 days, so the message stays useful.
+  // Download links stay valid for 7 days after payment, matching the email copy.
   const emailTtl = Number.parseInt(optional('EMAIL_LINK_TTL_SECONDS', '604800'), 10);
 
   cached = {
@@ -60,7 +58,6 @@ export function getEnv(): Env {
     supabaseUrl: required('SUPABASE_URL'),
     supabaseServiceKey: required('SUPABASE_SERVICE_KEY'),
     publicBaseUrl: required('PUBLIC_BASE_URL').replace(/\/$/, ''),
-    signedUrlTtlSeconds: Number.isFinite(ttl) && ttl > 0 ? ttl : 10800,
     resendApiKey: required('RESEND_API_KEY'),
     emailFrom: optional('EMAIL_FROM', 'UltraFit <noreply@ultrafits.com>'),
     emailLinkTtlSeconds: Number.isFinite(emailTtl) && emailTtl > 0 ? emailTtl : 604800,

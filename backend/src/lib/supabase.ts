@@ -174,21 +174,3 @@ export async function downloadObject(bucket: string, object: string): Promise<Bu
   }
   return Buffer.from(await data.arrayBuffer());
 }
-
-/**
- * Create a time-limited signed URL for a private bucket object. Returns an
- * absolute URL the browser can be redirected to. Expiry is in seconds.
- */
-export async function createSignedDownloadUrl(
-  bucket: string,
-  object: string,
-  ttlSeconds: number,
-): Promise<string> {
-  const { data, error } = await getClient()
-    .storage.from(bucket)
-    .createSignedUrl(object, ttlSeconds);
-  if (error || !data?.signedUrl) {
-    throw new Error(`Failed to sign ${bucket}/${object}: ${error?.message ?? 'no url'}`);
-  }
-  return data.signedUrl;
-}

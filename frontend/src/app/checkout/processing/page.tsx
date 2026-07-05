@@ -27,7 +27,7 @@ const COPY = {
 /**
  * Fallback landing for the rare case where the buyer returns from StreamPay
  * before payment is confirmed. Polls /api/checkout/status with the order token
- * and redirects to the signed PDF URL as soon as it's ready.
+ * and hands off to /checkout/success/ as soon as the payment is confirmed.
  */
 export default function CheckoutProcessingPage() {
   const { locale, dir } = useLanguage();
@@ -54,7 +54,7 @@ export default function CheckoutProcessingPage() {
         if (res.ok) {
           const data = (await res.json()) as { status?: string; download_url?: string };
           if (data.status === 'paid' && data.download_url) {
-            window.location.replace(data.download_url);
+            window.location.replace(`/checkout/success/?token=${encodeURIComponent(token)}`);
             return;
           }
         }
