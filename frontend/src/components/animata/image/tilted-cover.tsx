@@ -66,7 +66,7 @@ export default function TiltedCover({
         {/* Background content */}
         <div
           className={cn(
-            "border-box pointer-events-none relative h-full w-full overflow-hidden rounded-xl border border-white/[0.12] bg-[#0b0c0f] transition-all duration-500 ease-slow group-hover/tilt:transform-none!",
+            "border-box pointer-events-none relative h-full w-full overflow-hidden rounded-xl border border-black/10 bg-[#f0f2f2] transition-all duration-500 ease-slow group-hover/tilt:transform-none!",
             pressed && "transform-none!",
           )}
           style={{
@@ -85,7 +85,7 @@ export default function TiltedCover({
         {/* Cover Content */}
         <div
           className={cn(
-            "border-box pointer-events-none absolute inset-0 h-full w-full rounded-xl border-[6px] border-white/10 bg-[#15161b] shadow-[0_18px_50px_rgba(0,0,0,0.42)] transition-all delay-75 duration-500 ease-slow group-hover/tilt:transform-none! group-hover/tilt:opacity-0",
+            "border-box pointer-events-none absolute inset-0 h-full w-full rounded-xl border-[6px] border-black/10 bg-[#f0f2f2] shadow-[0_18px_50px_rgba(0,0,0,0.22)] transition-all delay-75 duration-500 ease-slow group-hover/tilt:transform-none! group-hover/tilt:opacity-0",
             pressed && "transform-none! opacity-0",
             // The cover is over-constrained (inset-0 + fixed width), so the
             // browser honours `left` in LTR but `right` in RTL — animate both
@@ -108,6 +108,8 @@ export default function TiltedCover({
               <img
                 src=""
                 alt=""
+                loading="lazy"
+                decoding="async"
                 {...image}
                 className={cn("h-full w-full rounded-md object-cover", image?.className)}
               />

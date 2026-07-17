@@ -63,7 +63,7 @@ export function Navbar() {
                 priority
                 className="h-8 w-auto transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="text-[1.05rem] font-semibold tracking-tight text-white">
+              <span className="text-[1.05rem] font-semibold tracking-tight text-black">
                 {t.brand}
               </span>
             </Link>
@@ -74,7 +74,7 @@ export function Navbar() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="rounded-full px-3.5 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
+                    className="rounded-full px-3.5 py-2 text-sm font-medium text-black/70 transition-colors hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
                   >
                     {link.label}
                   </Link>
@@ -87,7 +87,7 @@ export function Navbar() {
               <LanguageToggle />
               <Link
                 href="/motioncore"
-                className="hidden items-center rounded-full bg-brand px-4 py-2 text-sm font-semibold text-black shadow-[0_0_24px_-8px_#d6ec1b] transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:inline-flex"
+                className="hidden items-center rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:inline-flex"
               >
                 {t.hero.cta}
               </Link>
@@ -97,7 +97,7 @@ export function Navbar() {
                 aria-expanded={open}
                 aria-controls="mobile-nav"
                 aria-label={open ? t.actions.closeMenu : t.actions.openMenu}
-                className="relative z-30 inline-flex size-9 touch-manipulation select-none items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors [-webkit-tap-highlight-color:transparent] hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70 md:hidden"
+                className="relative z-30 inline-flex size-9 touch-manipulation select-none items-center justify-center rounded-full border border-black/15 bg-black/5 text-black transition-colors [-webkit-tap-highlight-color:transparent] hover:bg-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70 md:hidden"
               >
                 {open ? <X className="size-5" /> : <Menu className="size-5" />}
               </button>
@@ -115,14 +115,14 @@ export function Navbar() {
               : 'pointer-events-none max-h-0 opacity-0',
           )}
         >
-          <div className="relative z-30 rounded-2xl border border-white/10 bg-[#0d0f12]/95 p-2 shadow-2xl backdrop-blur-xl">
+          <div className="relative z-30 rounded-2xl border border-black/10 bg-[#f0f2f2]/95 p-2 shadow-2xl backdrop-blur-xl">
             <ul className="flex flex-col">
               {links.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="block touch-manipulation rounded-xl px-4 py-3 text-base font-medium text-white/80 transition-colors hover:bg-white/5 hover:text-white"
+                    className="block touch-manipulation rounded-xl px-4 py-3 text-base font-medium text-black/80 transition-colors hover:bg-black/5 hover:text-black"
                   >
                     {link.label}
                   </Link>

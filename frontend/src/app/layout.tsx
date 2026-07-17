@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Cairo } from "next/font/google";
+import localFont from "next/font/local";
 
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { defaultLocale, getDirection } from "@/i18n/config";
@@ -7,20 +7,34 @@ import { dictionaries } from "@/i18n/dictionaries";
 
 import "./globals.css";
 
-const geistSans = Geist({
+// Keep fonts inside the app so builds never wait on Google Fonts. The files
+// are variable fonts, so one local asset covers every weight used by the UI.
+// display: "optional" — the browser uses the metric-adjusted fallback if the
+// web font isn't ready within the ~100ms block window and then never swaps, so
+// text can't reflow after first paint. This eliminates the font-swap layout
+// shift (the real cause of the hero CLS), which "swap" could not: the site
+// defaults to Arabic, and no size-adjust fallback perfectly matches Cairo's
+// Arabic glyph advances, so a swap re-wrapped body copy and shoved the page.
+// The fonts are small local woff2, so most visitors still load them in-window.
+const geistSans = localFont({
+  src: "./fonts/geist-latin.woff2",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  display: "optional",
+  weight: "100 900",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "./fonts/geist-mono-latin.woff2",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "optional",
+  weight: "100 900",
 });
 
-const cairo = Cairo({
+const cairo = localFont({
+  src: "./fonts/cairo-arabic.woff2",
   variable: "--font-cairo",
-  subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  display: "optional",
+  weight: "400 800",
 });
 
 // A static export can't read the locale cookie at request time, so metadata and
@@ -47,6 +61,17 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        {/* Locale paint-gate: runs before the body content paints. If the visitor
+            previously chose a non-default language, hide the page until
+            LanguageProvider restores it after hydration, so the default-locale
+            content never paints-then-reflows (the returning-visitor CLS jump).
+            The 1.5s timeout is a failsafe against hydration never completing. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var k='NEXT_LOCALE',d='ar',s=null;try{s=localStorage.getItem(k)}catch(e){}if(!s){var m=document.cookie.match(/(?:^|;\\s*)NEXT_LOCALE=([^;]+)/);s=m?m[1]:null}if(s&&s!==d&&(s==='ar'||s==='en')){var el=document.documentElement;el.setAttribute('data-locale-pending','');setTimeout(function(){el.removeAttribute('data-locale-pending')},1500)}}catch(e){}})();",
+          }}
+        />
         <LanguageProvider initialLocale={locale}>{children}</LanguageProvider>
       </body>
     </html>

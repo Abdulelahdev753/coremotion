@@ -189,13 +189,13 @@ export function AssessmentFlow() {
     <MotionCoreShell className="max-w-2xl">
       {/* Step header + progress */}
       <header>
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-white/40 rtl:tracking-normal">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-black/40 rtl:tracking-normal">
           {fillTemplate(ta.stepOf, {
             current: formatNumber(step + 1, locale),
             total: formatNumber(STEPS.length, locale),
           })}
         </p>
-        <h1 className="mt-2 text-3xl font-extrabold text-white sm:text-4xl">
+        <h1 className="mt-2 text-3xl font-extrabold text-black sm:text-4xl">
           {ta.steps[stepId]}
         </h1>
         <div className="mt-6 flex gap-2" aria-hidden>
@@ -204,7 +204,7 @@ export function AssessmentFlow() {
               key={id}
               className={cn(
                 'h-1.5 flex-1 rounded-full transition-all duration-500',
-                index <= step ? 'bg-brand shadow-[0_0_12px_-2px_#d6ec1b]' : 'bg-white/10',
+                index <= step ? 'bg-brand shadow-[0_0_12px_-2px_#16924e]' : 'bg-black/10',
               )}
             />
           ))}
@@ -332,7 +332,7 @@ export function AssessmentFlow() {
               </FieldGroup>
             ) : null}
             {draft.goal === 'fitness' ? (
-              <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60">
+              <p className="rounded-2xl border border-black/10 bg-black/5 px-4 py-3 text-sm text-black/60">
                 {ta.maintainHint}
               </p>
             ) : null}
@@ -364,7 +364,7 @@ export function AssessmentFlow() {
           type="button"
           onClick={() => dispatch({ type: 'goTo', step: step - 1 })}
           className={cn(
-            'inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-white/75 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70',
+            'inline-flex items-center gap-2 rounded-full border border-black/15 px-5 py-2.5 text-sm font-medium text-black/75 transition-colors hover:border-black/30 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70',
             step === 0 && 'invisible',
           )}
         >
@@ -375,7 +375,7 @@ export function AssessmentFlow() {
           type="button"
           onClick={next}
           disabled={!stepComplete}
-          className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-2.5 text-sm font-semibold text-black shadow-[0_0_24px_-8px_#d6ec1b] transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+          className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-2.5 text-sm font-semibold text-black shadow-[0_0_24px_-8px_#16924e] transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
         >
           {step === STEPS.length - 1 ? ta.finish : ta.next}
           <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />

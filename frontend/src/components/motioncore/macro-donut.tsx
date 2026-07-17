@@ -22,21 +22,21 @@ export function MacroDonut({ targets }: { targets: DailyTargets }) {
       label: td.targets.protein,
       grams: targets.proteinG,
       pct: ((targets.proteinG * 4) / kcalFromMacros) * 100,
-      color: '#d6ec1b',
+      color: '#16924e',
     },
     {
       key: 'carbs',
       label: td.targets.carbs,
       grams: targets.carbsG,
       pct: ((targets.carbsG * 4) / kcalFromMacros) * 100,
-      color: 'rgba(255,255,255,0.65)',
+      color: 'rgba(10,11,13,0.55)',
     },
     {
       key: 'fat',
       label: td.targets.fat,
       grams: targets.fatG,
       pct: ((targets.fatG * 9) / kcalFromMacros) * 100,
-      color: 'rgba(255,255,255,0.28)',
+      color: 'rgba(10,11,13,0.25)',
     },
   ];
 
@@ -45,7 +45,7 @@ export function MacroDonut({ targets }: { targets: DailyTargets }) {
   return (
     <div className="flex items-center gap-6">
       <svg viewBox="0 0 36 36" className="size-36 shrink-0" role="img" aria-label={td.macrosTitle}>
-        <circle cx="18" cy="18" r={R} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="3.8" />
+        <circle cx="18" cy="18" r={R} fill="none" stroke="rgba(0,0,0,0.1)" strokeWidth="3.8" />
         {segments.map((segment) => {
           const offset = cumulative;
           cumulative += segment.pct;
@@ -69,13 +69,13 @@ export function MacroDonut({ targets }: { targets: DailyTargets }) {
           x="18"
           y="17.2"
           textAnchor="middle"
-          className="fill-white font-mono"
+          className="fill-[#0a0b0d] font-mono"
           fontSize="6"
           fontWeight="700"
         >
           {formatNumber(targets.calories, locale)}
         </text>
-        <text x="18" y="23" textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="3">
+        <text x="18" y="23" textAnchor="middle" fill="rgba(10,11,13,0.45)" fontSize="3">
           {t.motioncore.units.kcal}
         </text>
       </svg>
@@ -88,11 +88,11 @@ export function MacroDonut({ targets }: { targets: DailyTargets }) {
               className="size-2.5 shrink-0 rounded-full"
               style={{ backgroundColor: segment.color }}
             />
-            <span className="text-white/70">{segment.label}</span>
-            <span className="ms-auto font-mono text-white">
+            <span className="text-black/70">{segment.label}</span>
+            <span className="ms-auto font-mono text-black">
               {formatNumber(segment.grams, locale)} {t.motioncore.units.g}
             </span>
-            <span className="w-12 text-end font-mono text-xs text-white/40">
+            <span className="w-12 text-end font-mono text-xs text-black/40">
               {formatNumber(segment.pct / 100, locale, {
                 style: 'percent',
                 maximumFractionDigits: 0,

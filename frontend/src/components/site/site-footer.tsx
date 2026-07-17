@@ -132,14 +132,14 @@ export function SiteFooter() {
   const socials = f.socials.map((label, i) => ({ label, ...socialConfig[i] }));
 
   return (
-    <footer className="relative w-full overflow-hidden bg-[#0a0b0d] text-white antialiased">
+    <footer className="relative w-full overflow-hidden bg-[#f0f2f2] text-black antialiased">
       <motion.div
         variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.22 }}
       >
-        <div className="mx-auto max-w-6xl border-t border-white/[0.06] px-6 pt-14 pb-8 sm:px-8">
+        <div className="mx-auto max-w-6xl border-t border-black/[0.08] px-6 pt-14 pb-8 sm:px-8">
           <div className="grid gap-10 lg:grid-cols-[minmax(220px,1fr)_minmax(520px,0.98fr)] lg:gap-x-20">
             {/* Brand */}
             <motion.div variants={riseVariants} className="max-w-lg">
@@ -155,9 +155,9 @@ export function SiteFooter() {
                   height={32}
                   className="h-8 w-auto"
                 />
-                <span className="text-lg font-semibold tracking-tight text-white">{t.brand}</span>
+                <span className="text-lg font-semibold tracking-tight text-black">{t.brand}</span>
               </Link>
-              <p className="mt-4 max-w-md whitespace-pre-line text-pretty text-sm leading-relaxed text-white/55 rtl:leading-loose">
+              <p className="mt-4 max-w-md whitespace-pre-line text-pretty text-sm leading-relaxed text-black/55 rtl:leading-loose">
                 {f.tagline}
               </p>
             </motion.div>
@@ -170,7 +170,7 @@ export function SiteFooter() {
             >
               {columns.map((column) => (
                 <motion.div variants={riseVariants} key={column.title}>
-                  <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/80 rtl:tracking-normal">
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-black/80 rtl:tracking-normal">
                     {column.title}
                   </h3>
                   <motion.ul variants={listVariants} className="mt-4 space-y-2.5">
@@ -178,7 +178,7 @@ export function SiteFooter() {
                       <motion.li variants={linkVariants} key={link.label}>
                         <FooterLink
                           href={link.href}
-                          className="inline-flex rounded text-sm text-white/55 transition-colors duration-200 ease-out hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
+                          className="inline-flex rounded text-sm text-black/55 transition-colors duration-200 ease-out hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
                         >
                           {link.label}
                         </FooterLink>
@@ -193,9 +193,9 @@ export function SiteFooter() {
           {/* Bottom bar */}
           <motion.div
             variants={riseVariants}
-            className="mt-12 flex flex-col gap-4 border-t border-white/[0.06] pt-6 sm:flex-row sm:items-center sm:justify-between"
+            className="mt-12 flex flex-col gap-4 border-t border-black/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"
           >
-            <p className="text-xs text-white/40">{f.copyright}</p>
+            <p className="text-xs text-black/40">{f.copyright}</p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
               <motion.ul
@@ -210,7 +210,7 @@ export function SiteFooter() {
                       <FooterLink
                         href={social.href}
                         ariaLabel={social.label}
-                        className="group flex size-9 items-center justify-center rounded-full text-white/50 transition-colors duration-200 ease-out hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
+                        className="group flex size-9 items-center justify-center rounded-full text-black/50 transition-colors duration-200 ease-out hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
                       >
                         <Icon className="size-[18px] transition-transform duration-200 ease-out group-hover:scale-110" />
                       </FooterLink>
@@ -224,7 +224,7 @@ export function SiteFooter() {
                   <motion.li variants={linkVariants} key={link.label}>
                     <FooterLink
                       href={link.href}
-                      className="inline-flex rounded text-xs text-white/50 transition-colors duration-200 ease-out hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
+                      className="inline-flex rounded text-xs text-black/50 transition-colors duration-200 ease-out hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
                     >
                       {link.label}
                     </FooterLink>

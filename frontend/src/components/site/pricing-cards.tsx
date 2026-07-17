@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Download, Infinity as InfinityIcon, Headset, Loader2, ShieldCheck } from 'lucide-react';
 import { useState, type CSSProperties, type ReactNode } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
@@ -13,12 +13,15 @@ import type { PackageAudience } from '@/components/site/package-audience-pill';
  * only the price, accent color and its rgb triple are fixed here.
  */
 const tierStyles = [
-  { key: 'basic', price: '39.99', color: '#d6ec1b', rgb: '214, 236, 27' },
-  { key: 'pro', price: '49.99', color: '#fb923c', rgb: '251, 146, 60' },
-  { key: 'elite', price: '59.99', color: '#a78bfa', rgb: '167, 139, 250' },
+  { key: 'basic', price: '39', color: '#16924e', rgb: '22, 146, 78' },
+  { key: 'pro', price: '49', color: '#16924e', rgb: '22, 146, 78' },
+  { key: 'elite', price: '59', color: '#16924e', rgb: '22, 146, 78' },
 ] as const;
 
 type PlanId = (typeof tierStyles)[number]['key'];
+
+/** Icons for the trust bar, in the same order as the dictionary's `trust` copy. */
+const trustIcons = [ShieldCheck, Download, InfinityIcon, Headset] as const;
 
 type PricingCardsProps = {
   /**
@@ -57,6 +60,16 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
 
       {selector && <div className="pricing-stage__selector">{selector}</div>}
 
+      <div className="pricing-promo">
+        <p className="pricing-promo__eyebrow">
+          <span className="pricing-promo__dash" aria-hidden="true" />
+          {p.promo[audience].eyebrow}
+          <span className="pricing-promo__dash" aria-hidden="true" />
+        </p>
+        <h3 className="pricing-promo__heading">{p.promo[audience].heading}</h3>
+        <p className="pricing-promo__subheading">{p.promo[audience].subheading}</p>
+      </div>
+
       <div className="tier-cards" aria-label={p.heading}>
         {tierStyles.map((style) => {
           const tier = tiers[style.key];
@@ -71,6 +84,10 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
                 } as CSSProperties
               }
             >
+              <span className={`tier-card__audience tier-card__audience--${audience}`}>
+                {audience === 'men' ? t.packages.men : t.packages.women}
+              </span>
+
               <header className="tier-card__header">
                 <p className="tier-card__badge">{tier.badge}</p>
                 <h3 className="tier-card__name">{tier.name}</h3>
@@ -123,6 +140,23 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
           );
         })}
       </div>
+
+      <ul className="pricing-trust" aria-label={p.heading}>
+        {p.trust.map((item, i) => {
+          const Icon = trustIcons[i] ?? ShieldCheck;
+          return (
+            <li key={item.title} className="pricing-trust__item">
+              <span className="pricing-trust__icon" aria-hidden="true">
+                <Icon size={26} strokeWidth={2} />
+              </span>
+              <div className="pricing-trust__text">
+                <p className="pricing-trust__title">{item.title}</p>
+                <p className="pricing-trust__desc">{item.description}</p>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
 
       <CheckoutEmailDialog
         open={emailTier !== null}

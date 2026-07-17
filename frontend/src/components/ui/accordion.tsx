@@ -41,7 +41,7 @@ const AccordionTrigger = React.forwardRef<
       {children}
       <ChevronDown
         aria-hidden
-        className="size-4 shrink-0 text-white/40 transition-transform duration-200"
+        className="size-4 shrink-0 text-black/40 transition-transform duration-200"
       />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>

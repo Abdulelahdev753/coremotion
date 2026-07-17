@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -79,12 +80,36 @@ export function LanguageProvider({
     });
   }, []);
 
+  // The paint-gate (inline script in the root layout) hides the page for
+  // returning visitors whose saved locale differs from the build-time default,
+  // so it never paints the default locale and then re-flows. We must reveal it
+  // again exactly once — after the restored locale has been applied — otherwise
+  // those visitors would either see the default-locale flash (revealed too
+  // early) or a blank page (never revealed). `revealedRef` guards the first
+  // run of the [locale] effect (still the default locale) from revealing.
+  const revealedRef = useRef(false);
+  const hasMountedRef = useRef(false);
+
+  const reveal = useCallback(() => {
+    if (revealedRef.current) return;
+    revealedRef.current = true;
+    document.documentElement.removeAttribute('data-locale-pending');
+  }, []);
+
   // The static export renders with the default locale, so restore the visitor's
   // saved choice once on the client after hydration.
   useEffect(() => {
     const stored = readStoredLocale();
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe one-time restore
-    if (stored && stored !== locale) setLocaleState(stored);
+    if (stored && stored !== locale) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe one-time restore
+      setLocaleState(stored);
+      // Reveal is deferred to the [locale] effect below, which re-runs once the
+      // switched-locale render has committed — so the restored language paints
+      // first and the gate is lifted without a default-locale flash.
+    } else {
+      // Nothing to restore: reveal immediately (the gate may not even be set).
+      reveal();
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- intentionally run once on mount
 
   // Keep <html lang/dir> in sync with the active locale (initial paint uses the
@@ -93,7 +118,16 @@ export function LanguageProvider({
     const root = document.documentElement;
     root.lang = locale;
     root.dir = getDirection(locale);
-  }, [locale]);
+    // Skip the initial run (still the default locale); reveal only once a
+    // restore has landed us on the final locale. Runtime toggles are no-ops
+    // here because the gate was already lifted on mount.
+    if (revealedRef.current) return;
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    reveal();
+  }, [locale, reveal]);
 
   const value = useMemo<LanguageContextValue>(
     () => ({

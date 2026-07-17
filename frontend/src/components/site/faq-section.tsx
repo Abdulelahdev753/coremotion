@@ -19,16 +19,16 @@ export function FaqSection() {
   const f = t.faq;
 
   return (
-    <section id="faq" className="scroll-mt-28 border-t border-white/[0.06] px-6 py-24">
+    <section id="faq" className="scroll-mt-28 border-t border-black/[0.08] px-6 py-24">
       <div className="mx-auto w-full max-w-3xl">
         {/* Intro */}
         <div className="flex flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-white/60 rtl:tracking-normal">
-            <span className="size-1.5 rounded-full bg-brand shadow-[0_0_10px_#d6ec1b]" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-black/5 px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-black/60 rtl:tracking-normal">
+            <span className="size-1.5 rounded-full bg-brand shadow-[0_0_10px_#16924e]" />
             {f.eyebrow}
           </span>
-          <h2 className="mt-6 text-3xl font-bold text-white sm:text-4xl">{f.heading}</h2>
-          <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-white/60 rtl:leading-loose">
+          <h2 className="mt-6 text-3xl font-bold text-black sm:text-4xl">{f.heading}</h2>
+          <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-black/60 rtl:leading-loose">
             {f.subheading}
           </p>
         </div>
@@ -43,12 +43,12 @@ export function FaqSection() {
             <AccordionItem
               key={item.id}
               value={item.id}
-              className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] px-2 backdrop-blur-sm transition-colors hover:border-white/20 data-[open]:border-brand/30 data-[open]:bg-white/[0.05]"
+              className="overflow-hidden rounded-2xl border border-black/10 bg-black/[0.03] px-2 backdrop-blur-sm transition-colors hover:border-black/20 data-[open]:border-brand/30 data-[open]:bg-black/[0.05]"
             >
-              <AccordionTrigger className="px-4 py-5 text-base text-white/90 hover:text-white hover:no-underline">
+              <AccordionTrigger className="px-4 py-5 text-base text-black/90 hover:text-black hover:no-underline">
                 {item.question}
               </AccordionTrigger>
-              <AccordionContent className="px-4 pb-5 pt-0 text-sm leading-relaxed text-white/60 rtl:leading-loose">
+              <AccordionContent className="px-4 pb-5 pt-0 text-sm leading-relaxed text-black/60 rtl:leading-loose">
                 {item.answer}
               </AccordionContent>
             </AccordionItem>
@@ -56,7 +56,7 @@ export function FaqSection() {
         </Accordion>
 
         {/* Closing nudge → WhatsApp */}
-        <p className="mt-10 text-center text-sm text-white/50">
+        <p className="mt-10 text-center text-sm text-black/50">
           {f.contactLead}{' '}
           <a
             href={WHATSAPP_URL}

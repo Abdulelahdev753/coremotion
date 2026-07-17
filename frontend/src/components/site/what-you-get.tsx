@@ -74,16 +74,16 @@ export function WhatYouGet({ audience = 'men' }: WhatYouGetProps) {
                   <div
                     className="flex h-full w-full flex-col items-center justify-center p-5 text-center"
                     style={{
-                      background: `radial-gradient(ellipse at 50% 120%, rgba(var(--tier-rgb), 0.22), transparent 70%), #0b0c0f`,
+                      background: `radial-gradient(ellipse at 50% 120%, rgba(var(--tier-rgb), 0.22), transparent 70%), #ffffff`,
                     }}
                   >
-                    <p className="text-xs leading-relaxed text-white/75 rtl:leading-loose">
+                    <p className="text-xs leading-relaxed text-black/75 rtl:leading-loose">
                       {item.description}
                     </p>
                   </div>
                 </TiltedCover>
                 <figcaption className="mt-3 text-center">
-                  <h3 className="text-base font-extrabold leading-tight text-white">
+                  <h3 className="text-base font-extrabold leading-tight text-black">
                     {item.title}
                   </h3>
                 </figcaption>

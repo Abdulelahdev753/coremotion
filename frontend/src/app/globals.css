@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-brand: #d6ec1b;
-  --color-brand-foreground: #0a0b0d;
+  --color-brand: #16924e;
+  --color-brand-foreground: #ffffff;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-arabic: var(--font-cairo);
@@ -132,14 +132,24 @@
     scroll-padding-top: 5.5rem;
   }
   body {
-    /* MotionCore is a dark-canvas product surface. */
-    background-color: #0a0b0d;
-    color: #e8e9e4;
+    /* Light product surface. */
+    background-color: #f0f2f2;
+    color: #0a0b0d;
   }
   /* Arabic switches to the Arabic face; Latin letter-spacing is never applied
      to Arabic because it breaks the connected script. */
   html[lang="ar"] body {
     font-family: var(--font-arabic), var(--font-sans), system-ui, sans-serif;
+  }
+  /* Locale paint-gate. The static export is always built in the default locale
+     (Arabic); returning visitors who chose another language have it restored on
+     the client after hydration. The inline script in <body> sets this attribute
+     before first paint when a different locale is stored, so the page stays
+     hidden until LanguageProvider applies that locale — this prevents the
+     default-locale content from painting and then re-flowing (a CLS jump). A
+     1.5s failsafe in the script reveals the page even if hydration never runs. */
+  html[data-locale-pending] body {
+    visibility: hidden;
   }
   ::selection {
     background-color: var(--color-brand);
@@ -165,7 +175,7 @@
 .pricing-stage {
   width: 100%;
   padding: 6rem 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   scroll-margin-top: 5.5rem;
 }
 
@@ -179,14 +189,14 @@
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: #0a0b0d;
 }
 
 .pricing-stage__subheading {
   margin-top: 0.85rem;
   font-size: 1rem;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(10, 11, 13, 0.6);
 }
 
 /* Latin tracking breaks the connected Arabic script. */
@@ -196,9 +206,54 @@ html[lang="ar"] .pricing-stage__heading {
 
 /* Men/Women pill: sits centered between the intro and the cards. */
 .pricing-stage__selector {
-  margin: 0 auto 2.75rem;
+  margin: 0 auto 2rem;
   display: flex;
   justify-content: center;
+}
+
+/* Promo header between the pill and the cards. */
+.pricing-promo {
+  margin: 0 auto 2.5rem;
+  max-width: 44rem;
+  text-align: center;
+}
+
+.pricing-promo__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 0.9rem;
+  color: #16924e;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.pricing-promo__dash {
+  width: 1.6rem;
+  height: 2px;
+  border-radius: 2px;
+  background: #16924e;
+  opacity: 0.7;
+}
+
+.pricing-promo__heading {
+  margin: 0;
+  font-size: clamp(1.6rem, 3.8vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #0a0b0d;
+}
+
+html[lang="ar"] .pricing-promo__heading {
+  letter-spacing: normal;
+}
+
+.pricing-promo__subheading {
+  margin: 0.85rem 0 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(10, 11, 13, 0.55);
 }
 
 .tier-cards {
@@ -209,6 +264,13 @@ html[lang="ar"] .pricing-stage__heading {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
   gap: 20px;
+  /* Always lay the cards out left→right (basic · pro · elite), so Elite sits on
+     the right even in Arabic RTL. Card content keeps its own direction below. */
+  direction: ltr;
+}
+
+html[lang="ar"] .tier-card {
+  direction: rtl;
 }
 
 @media (max-width: 960px) {
@@ -227,7 +289,7 @@ html[lang="ar"] .pricing-stage__heading {
   overflow: hidden;
   isolation: isolate;
   border-radius: 32px;
-  color: #fff;
+  color: #0a0b0d;
 }
 
 /* Keep card content above the decorative tier-glow pseudo-elements. */
@@ -236,21 +298,41 @@ html[lang="ar"] .pricing-stage__heading {
   z-index: 2;
 }
 
+/* Audience badge pinned to the top corner: green for Men, pink for Women.
+   inset-inline-end keeps it in the trailing corner under both LTR and RTL. */
+.tier-card__audience {
+  position: absolute;
+  top: 16px;
+  inset-inline-end: 16px;
+  z-index: 3;
+  padding: 5px 12px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+html[lang="ar"] .tier-card__audience {
+  letter-spacing: normal;
+}
+
+.tier-card__audience--men {
+  background: #16924e;
+  box-shadow: 0 4px 14px rgba(22, 146, 78, 0.45);
+}
+
+.tier-card__audience--women {
+  background: #fc449a;
+  box-shadow: 0 4px 14px rgba(252, 68, 154, 0.45);
+}
+
 .glass-shell {
-  border: 1px solid rgba(255, 255, 255, 0.46);
-  background:
-    radial-gradient(ellipse at 94% 3%, rgba(255, 255, 255, 0.16), transparent 10rem),
-    radial-gradient(ellipse at 88% 108%, rgba(var(--tier-rgb), 0.38), transparent 17rem),
-    linear-gradient(118deg, #020204 0%, #05040a 44%, rgba(var(--tier-rgb), 0.035) 74%, rgba(255, 255, 255, 0.035) 100%),
-    rgba(8, 7, 15, 0.96);
-  box-shadow:
-    0 26px 74px rgba(0, 0, 0, 0.5),
-    0 18px 60px rgba(var(--tier-rgb), 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.64),
-    inset 0 -16px 34px rgba(var(--tier-rgb), 0.36),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(18px) saturate(1.45);
-  -webkit-backdrop-filter: blur(18px) saturate(1.45);
+  border: 1.5px solid #16924e;
+  background: #ffffff;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
 }
 
 /* Tier-colored light leaks: a warped wash at the top-right and a glow strip at
@@ -261,6 +343,7 @@ html[lang="ar"] .pricing-stage__heading {
   position: absolute;
   pointer-events: none;
   z-index: 1;
+  display: none;
 }
 
 .tier-card::before {
@@ -326,7 +409,7 @@ html[lang="ar"] .tier-card__badge {
 
 .tier-card__name {
   margin: 8px 0 0;
-  color: #fff;
+  color: #0a0b0d;
   font-size: clamp(1.2rem, 2.2vw, 1.45rem);
   font-weight: 800;
   line-height: 1.2;
@@ -357,7 +440,7 @@ html[lang="ar"] .tier-card__price {
 
 .tier-card__tagline {
   margin: 8px 0 0;
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(0, 0, 0, 0.55);
   font-size: 0.88rem;
   line-height: 1.5;
 }
@@ -383,12 +466,11 @@ html[lang="ar"] .tier-card__price {
   margin-bottom: 2px;
   padding: 10px 14px;
   border-radius: 8px;
-  background: rgba(var(--tier-rgb), 0.08);
-  color: rgba(255, 255, 255, 0.94);
+  background: rgba(var(--tier-rgb), 0.1);
+  color: #0a0b0d;
   font-size: 0.91rem;
   font-weight: 700;
   line-height: 1.35;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.34);
 }
 
 .tier-card__feature {
@@ -396,11 +478,10 @@ html[lang="ar"] .tier-card__price {
   grid-template-columns: 22px 1fr;
   align-items: start;
   gap: 10px;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.82);
   font-size: 0.92rem;
   font-weight: 500;
   line-height: 1.5;
-  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.42);
 }
 
 .tier-card__check {
@@ -425,10 +506,10 @@ html[lang="ar"] .tier-card__price {
 .tier-card__note {
   margin: 0;
   padding: 10px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.48);
+  background: rgba(0, 0, 0, 0.02);
+  color: rgba(0, 0, 0, 0.5);
   font-size: 0.82rem;
   line-height: 1.45;
 }
@@ -498,27 +579,27 @@ html[lang="ar"] .tier-card__price {
   }
 }
 
-/* Single clean white surface with a transparent border — no layered/rim border. */
+/* Green button with white text. */
 .tier-card__cta--add {
-  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
-  color: #0a0b0d;
+  background: linear-gradient(180deg, #1aa257 0%, #16924e 100%);
+  color: #ffffff;
   border-color: transparent;
   box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    0 8px 18px rgba(22, 146, 78, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .tier-card__cta--add:hover:not(:disabled) {
-  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+  background: linear-gradient(180deg, #1cae5d 0%, #17994f 100%);
+  box-shadow: 0 10px 22px rgba(22, 146, 78, 0.36);
   transform: translateY(-1px);
 }
 
 .tier-card__cta--add:active:not(:disabled) {
-  background: linear-gradient(180deg, #f2f2f3 0%, #ffffff 100%);
+  background: linear-gradient(180deg, #148a49 0%, #16924e 100%);
   box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.2),
-    inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    0 2px 6px rgba(22, 146, 78, 0.3),
+    inset 0 1px 2px rgba(0, 0, 0, 0.12);
   transform: scale(0.995);
 }
 
@@ -529,6 +610,98 @@ html[lang="ar"] .tier-card__price {
 
   .tier-card__cta--add:hover {
     transform: none;
+  }
+}
+
+/* ── Trust / reassurance bar ───────────────────────────────────────────────
+   Four icon + text items shown below the cards, split by thin dividers. */
+.pricing-trust {
+  width: 100%;
+  max-width: 72rem;
+  margin: 28px auto 0;
+  padding: 22px 16px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: 16px;
+  list-style: none;
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.06);
+}
+
+.pricing-trust__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 4px 12px;
+}
+
+/* Divider between items (not before the first). */
+.pricing-trust__item + .pricing-trust__item {
+  border-inline-start: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.pricing-trust__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: #16924e;
+}
+
+.pricing-trust__title {
+  margin: 0;
+  color: #0a0b0d;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.pricing-trust__desc {
+  margin: 4px 0 0;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 760px) {
+  .pricing-trust {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    row-gap: 20px;
+  }
+
+  /* On two columns, only draw a divider between the two items in each row. */
+  .pricing-trust__item + .pricing-trust__item {
+    border-inline-start: none;
+  }
+
+  .pricing-trust__item:nth-child(even) {
+    border-inline-start: 1px solid rgba(0, 0, 0, 0.08);
+  }
+}
+
+@media (max-width: 420px) {
+  .pricing-trust {
+    grid-template-columns: 1fr;
+    row-gap: 0;
+  }
+
+  .pricing-trust__item {
+    justify-content: flex-start;
+  }
+
+  .pricing-trust__item:nth-child(even) {
+    border-inline-start: none;
+  }
+
+  /* Single column: separate stacked items with a horizontal grey divider. */
+  .pricing-trust__item + .pricing-trust__item {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 16px;
+    margin-top: 4px;
   }
 }
 
@@ -553,15 +726,12 @@ html[lang="ar"] .tier-card__price {
   width: min(420px, 100%);
   padding: 28px 26px 24px;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background:
-    radial-gradient(ellipse at 92% 0%, rgba(255, 255, 255, 0.1), transparent 12rem),
-    linear-gradient(118deg, #020204 0%, #05040a 52%, rgba(255, 255, 255, 0.04) 100%),
-    rgba(8, 7, 15, 0.97);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #f0f2f2;
   box-shadow:
-    0 26px 74px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  color: #fff;
+    0 26px 74px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  color: #0a0b0d;
 }
 
 .checkout-email__title {
@@ -573,7 +743,7 @@ html[lang="ar"] .tier-card__price {
 .checkout-email__subtitle {
   margin: 0 0 18px;
   font-size: 0.92rem;
-  color: rgba(255, 255, 255, 0.66);
+  color: rgba(10, 11, 13, 0.66);
 }
 
 .checkout-email__label {
@@ -581,7 +751,7 @@ html[lang="ar"] .tier-card__price {
   margin-bottom: 6px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(10, 11, 13, 0.82);
 }
 
 .checkout-email__input {
@@ -589,15 +759,15 @@ html[lang="ar"] .tier-card__price {
   min-height: 48px;
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: rgba(255, 255, 255, 0.7);
+  color: #0a0b0d;
   font: inherit;
   font-size: 0.95rem;
 }
 
 .checkout-email__input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(10, 11, 13, 0.35);
 }
 
 .checkout-email__input:focus-visible {
@@ -625,6 +795,7 @@ html[lang="ar"] .tier-card__price {
   -webkit-appearance: none;
   appearance: none;
   flex: 1;
+  min-width: 0;
   min-height: 48px;
   padding: 12px 18px;
   border-radius: 12px;
@@ -632,6 +803,7 @@ html[lang="ar"] .tier-card__price {
   font: inherit;
   font-size: 0.92rem;
   font-weight: 800;
+  white-space: nowrap;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -649,25 +821,25 @@ html[lang="ar"] .tier-card__price {
 }
 
 .checkout-email__btn--ghost {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: rgba(10, 11, 13, 0.85);
 }
 
 .checkout-email__btn--ghost:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.09);
 }
 
 .checkout-email__btn--primary {
-  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
-  color: #0a0b0d;
+  background: linear-gradient(180deg, #1aa659 0%, #16924e 100%);
+  color: #ffffff;
   box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    0 8px 18px rgba(22, 146, 78, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .checkout-email__btn--primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  background: linear-gradient(180deg, #1aa659 0%, #158048 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -688,8 +860,8 @@ html[lang="ar"] .tier-card__price {
   justify-content: center;
   padding: 24px;
   background:
-    radial-gradient(60% 45% at 50% 0%, rgba(214, 236, 27, 0.09), transparent 70%),
-    #0a0a0a;
+    radial-gradient(60% 45% at 50% 0%, rgba(22, 146, 78, 0.1), transparent 70%),
+    #f0f2f2;
 }
 
 .checkout-result__card {
@@ -697,12 +869,12 @@ html[lang="ar"] .tier-card__price {
   max-width: 440px;
   padding: 36px 28px 28px;
   border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(8, 7, 15, 0.97);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
   box-shadow:
-    0 26px 74px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  color: #fff;
+    0 26px 74px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: #0a0b0d;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -719,9 +891,9 @@ html[lang="ar"] .tier-card__price {
 }
 
 .checkout-result__badge--success {
-  background: var(--color-brand, #d6ec1b);
-  color: #0a0b0d;
-  box-shadow: 0 0 44px rgba(214, 236, 27, 0.35);
+  background: var(--color-brand, #16924e);
+  color: #ffffff;
+  box-shadow: 0 0 44px rgba(22, 146, 78, 0.35);
 }
 
 .checkout-result__badge--failed {
@@ -740,14 +912,14 @@ html[lang="ar"] .tier-card__price {
   margin: 0 0 14px;
   padding: 4px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.04);
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(10, 11, 13, 0.75);
 }
 
 .checkout-result__order strong {
-  color: #fff;
+  color: #0a0b0d;
   font-weight: 700;
 }
 
@@ -755,7 +927,7 @@ html[lang="ar"] .tier-card__price {
   margin: 0 0 22px;
   font-size: 0.95rem;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.66);
+  color: rgba(10, 11, 13, 0.66);
 }
 
 .checkout-result__actions {
@@ -788,25 +960,25 @@ html[lang="ar"] .tier-card__price {
 }
 
 .checkout-result__btn--primary {
-  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
-  color: #0a0b0d;
+  background: linear-gradient(180deg, #1aa659 0%, #16924e 100%);
+  color: #ffffff;
   box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    0 8px 18px rgba(22, 146, 78, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .checkout-result__btn--primary:hover {
-  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  background: linear-gradient(180deg, #1aa659 0%, #158048 100%);
 }
 
 .checkout-result__btn--ghost {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: rgba(10, 11, 13, 0.85);
 }
 
 .checkout-result__btn--ghost:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.09);
 }
 
 .checkout-result__note {
@@ -816,22 +988,22 @@ html[lang="ar"] .tier-card__price {
   margin: 22px 0 0;
   padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(214, 236, 27, 0.28);
-  background: rgba(214, 236, 27, 0.07);
+  border: 1px solid rgba(22, 146, 78, 0.3);
+  background: rgba(22, 146, 78, 0.08);
   font-size: 0.85rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(10, 11, 13, 0.85);
 }
 
 .checkout-result__note svg {
   flex-shrink: 0;
-  color: var(--color-brand, #d6ec1b);
+  color: var(--color-brand, #16924e);
 }
 
 .checkout-result__hint {
   margin: 10px 0 0;
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(10, 11, 13, 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -849,7 +1021,7 @@ html[lang="ar"] .tier-card__price {
 .getit-stage {
   width: 100%;
   padding: 6rem 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   scroll-margin-top: 5.5rem;
 }
 
@@ -863,7 +1035,7 @@ html[lang="ar"] .tier-card__price {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: #0a0b0d;
 }
 
 html[lang="ar"] .getit-stage__heading {
@@ -874,7 +1046,7 @@ html[lang="ar"] .getit-stage__heading {
   margin-top: 0.85rem;
   font-size: 1rem;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(10, 11, 13, 0.6);
 }
 
 .getit-grid {

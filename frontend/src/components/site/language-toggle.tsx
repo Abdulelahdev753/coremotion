@@ -15,8 +15,8 @@ export function LanguageToggle({ className }: { className?: string }) {
       aria-label={t.actions.switchLanguage}
       title={t.actions.switchLanguage}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5',
-        'text-sm font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white',
+        'inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-black/5 px-3 py-1.5',
+        'text-sm font-medium text-black/85 transition-colors hover:bg-black/10 hover:text-black',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70',
         className,
       )}

@@ -88,8 +88,8 @@ export default function CheckoutProcessingPage() {
         gap: '1rem',
         padding: '2rem',
         textAlign: 'center',
-        background: '#0a0a0a',
-        color: '#fafafa',
+        background: '#f0f2f2',
+        color: '#0a0b0d',
       }}
     >
       {!timedOut && <Loader2 size={40} strokeWidth={2.5} className="animate-spin" aria-hidden />}

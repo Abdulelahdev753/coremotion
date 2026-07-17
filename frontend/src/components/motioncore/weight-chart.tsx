@@ -65,7 +65,7 @@ export function WeightChart({
             x2={W - PAD_X}
             y1={PAD_Y + fraction * (H - PAD_Y * 2)}
             y2={PAD_Y + fraction * (H - PAD_Y * 2)}
-            stroke="rgba(255,255,255,0.06)"
+            stroke="rgba(0,0,0,0.08)"
           />
         ))}
 
@@ -75,24 +75,24 @@ export function WeightChart({
           y1={y(points[0].kg)}
           x2={x(maxTime)}
           y2={y(expectedEndKg)}
-          stroke="rgba(255,255,255,0.35)"
+          stroke="rgba(10,11,13,0.35)"
           strokeWidth="1.5"
           strokeDasharray="5 5"
         />
 
         {/* Actual weigh-ins */}
-        <path d={actualPath} fill="none" stroke="#d6ec1b" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d={actualPath} fill="none" stroke="#16924e" strokeWidth="2.5" strokeLinejoin="round" />
         {points.map((point) => (
-          <circle key={point.time} cx={x(point.time)} cy={y(point.kg)} r="3" fill="#0a0b0d" stroke="#d6ec1b" strokeWidth="2" />
+          <circle key={point.time} cx={x(point.time)} cy={y(point.kg)} r="3" fill="#f0f2f2" stroke="#16924e" strokeWidth="2" />
         ))}
 
         {/* Latest weight callout */}
-        <circle cx={x(last.time)} cy={y(last.kg)} r="5" fill="none" stroke="#d6ec1b" strokeOpacity="0.4" strokeWidth="2" />
+        <circle cx={x(last.time)} cy={y(last.kg)} r="5" fill="none" stroke="#16924e" strokeOpacity="0.4" strokeWidth="2" />
         <text
           x={x(last.time)}
           y={y(last.kg) - 10}
           textAnchor="end"
-          className="fill-white font-mono"
+          className="fill-[#0a0b0d] font-mono"
           fontSize="12"
           fontWeight="600"
         >
@@ -100,21 +100,21 @@ export function WeightChart({
         </text>
 
         {/* Axis date labels */}
-        <text x={PAD_X} y={H - 6} fill="rgba(255,255,255,0.4)" fontSize="11">
+        <text x={PAD_X} y={H - 6} fill="rgba(10,11,13,0.4)" fontSize="11">
           {formatDate(entries[0].date, locale)}
         </text>
-        <text x={W - PAD_X} y={H - 6} textAnchor="end" fill="rgba(255,255,255,0.4)" fontSize="11">
+        <text x={W - PAD_X} y={H - 6} textAnchor="end" fill="rgba(10,11,13,0.4)" fontSize="11">
           {formatDate(entries[entries.length - 1].date, locale)}
         </text>
       </svg>
 
-      <div className="mt-2 flex items-center gap-4 text-xs text-white/45" dir="auto">
+      <div className="mt-2 flex items-center gap-4 text-xs text-black/45" dir="auto">
         <span className="inline-flex items-center gap-1.5">
           <span aria-hidden className="inline-block h-0.5 w-5 rounded bg-brand" />
           {t.motioncore.dashboard.weight.latest}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span aria-hidden className="inline-block h-0 w-5 border-t-2 border-dashed border-white/35" />
+          <span aria-hidden className="inline-block h-0 w-5 border-t-2 border-dashed border-black/35" />
           {t.motioncore.dashboard.weight.expectedTrend}
         </span>
       </div>

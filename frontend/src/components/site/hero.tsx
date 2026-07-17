@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import { useLanguage } from '@/components/providers/language-provider';
 import LogoLoop, { type LogoItem } from '@/components/LogoLoop';
-import Silk from '@/components/Silk';
 
 // On GitHub Pages the site is served from /<repo>, so public assets referenced
 // in plain <img> tags must be prefixed manually (Next only rewrites next/image).
@@ -27,8 +26,19 @@ const sourceLogos: LogoItem[] = [
     title: 'Taylor & Francis',
     href: 'https://taylorandfrancis.com',
   },
-  { src: `${basePath}/logos/sbs.avif`, alt: 'Stronger By Science', title: 'Stronger By Science', href: 'https://www.strongerbyscience.com' },
+  { src: `${basePath}/logos/sbs.svg`, alt: 'Stronger By Science', title: 'Stronger By Science', href: 'https://www.strongerbyscience.com' },
 ];
+
+/**
+ * Per-logo render height (px) in the marquee. Wordmark logos fill their SVG
+ * canvas and read fine at the base 40px; emblem logos bake in whitespace/captions
+ * so their artwork looks tiny at 40px — bump those up so all logos match visually.
+ */
+const logoScale: Record<string, number> = {
+  'elsevier.svg': 62,
+  'nsca.svg': 66,
+  'taylor-and-francis.svg': 56,
+};
 
 export function Hero() {
   const { t } = useLanguage();
@@ -36,39 +46,40 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate flex min-h-[100svh] w-full items-center justify-center overflow-hidden px-6 py-28"
+      className="relative isolate flex min-h-[100svh] w-full flex-col items-center justify-start overflow-hidden px-6 pb-10 pt-28 lg:justify-center lg:px-12 lg:pb-32 lg:pt-36"
     >
-      {/* Animated silk backdrop with a Safari-safe fallback inside Silk. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
-        <Silk
-          className="absolute inset-0"
-          speed={3.5}
-          scale={1.3}
-          color="#1b2e10"
-          noiseIntensity={1}
-          rotation={0}
+      {/* Desktop backdrop: the pre-composed couple + green shape. `cover` fills
+          the whole hero at every window aspect ratio — no letter-box bands or
+          hard seams on the sides. Anchored bottom-right so the athletes stay
+          framed on the right; the left edge it crops sits under the copy and the
+          legibility wash, so nothing important is lost. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0 hidden lg:block">
+        {/* eslint-disable-next-line @next/next/no-img-element -- full-bleed hero art */}
+        <img
+          src={`${basePath}/hero-couple-desktop.webp`}
+          alt=""
+          width={1920}
+          height={1080}
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover object-right-bottom"
         />
-        <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_50%_-10%,rgba(214,236,27,0.16),transparent_55%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0b0d]/30 via-[#0a0b0d]/60 to-[#0a0b0d]" />
+        {/* Left-hand legibility wash so the copy always reads. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#f0f2f2] via-[#f0f2f2]/75 to-transparent" />
+        {/* Bottom fade behind the research marquee. */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#f0f2f2] to-transparent" />
       </div>
 
-      <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center">
-        {/* Eyebrow */}
-        <span className="inline-flex animate-in fade-in slide-in-from-bottom-2 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-white/75 fill-mode-both duration-700">
-          <span className="size-1.5 rounded-full bg-brand shadow-[0_0_10px_#d6ec1b]" />
-          {t.hero.eyebrow}
-        </span>
-
+      <div className="relative z-10 flex w-full max-w-xl flex-col items-center text-center sm:max-w-2xl lg:mx-0 lg:mr-auto lg:max-w-md lg:items-start lg:text-start xl:max-w-lg">
         {/* Headline */}
-        <h1 className="mt-6 text-balance text-4xl font-extrabold leading-[1.2] text-white ltr:tracking-tight sm:text-5xl rtl:leading-[1.4] lg:text-6xl xl:text-[4.25rem]">
+        <h1 className="mt-6 text-balance text-4xl font-extrabold leading-[1.2] text-black ltr:tracking-tight sm:text-5xl rtl:leading-[1.4] lg:text-5xl xl:text-6xl">
           {t.hero.headlineLead}{' '}
-          <span className="bg-gradient-to-br from-brand to-[#a9c20f] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-br from-brand to-[#0f7a3f] bg-clip-text text-transparent">
             {t.hero.headlineAccent}
           </span>
         </h1>
 
         {/* Subheadline */}
-        <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-white/65 sm:text-lg rtl:leading-loose">
+        <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-black/65 sm:text-lg rtl:leading-loose">
           {t.hero.subheadline}
         </p>
 
@@ -76,13 +87,13 @@ export function Hero() {
         <div className="mt-9 flex animate-in fade-in slide-in-from-bottom-3 flex-col items-center gap-3 fill-mode-both delay-300 duration-700 sm:flex-row">
           <a
             href="#products"
-            className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-black shadow-[0_10px_40px_-10px_#d6ec1b] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_50px_-8px_#d6ec1b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0b0d]"
+            className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0f2f2]"
           >
             {t.hero.cta}
           </a>
           <Link
             href="/motioncore"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-base font-medium text-white/85 transition-colors hover:border-white/30 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-black px-6 py-3.5 text-base font-semibold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
           >
             {t.hero.secondaryCta}
             <ChartNoAxesCombined aria-hidden className="size-5 rtl:-scale-x-100" />
@@ -90,9 +101,29 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Source / research marquee pinned to the bottom of the hero. */}
-      <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-4 pb-8">
-        <span className="text-[0.7rem] font-medium uppercase tracking-[0.2em] text-white/40">
+      {/* Mobile / tablet: the pre-composed couple + green shape, in flow so it
+          always sits below the copy (never behind it). The source art has a
+          tall empty band above the heads — we crop it out with a bottom-
+          anchored aspect-ratio window so there's no dead white gap. */}
+      <div
+        aria-hidden
+        className="pointer-events-none relative z-0 mt-3 aspect-[941/1120] w-full max-w-sm overflow-hidden lg:hidden"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- hero art */}
+        <img
+          src={`${basePath}/hero-couple-mobile.webp`}
+          alt=""
+          width={941}
+          height={1672}
+          fetchPriority="high"
+          className="absolute inset-x-0 bottom-0 w-full select-none"
+        />
+      </div>
+
+      {/* Source / research marquee — in flow beneath the couple on mobile,
+          pinned to the bottom of the hero on desktop. Visible at every size. */}
+      <div className="relative z-10 mt-8 flex w-full flex-col items-center gap-4 lg:absolute lg:inset-x-0 lg:bottom-0 lg:mt-0 lg:pb-8">
+        <span className="text-[0.7rem] font-medium uppercase tracking-[0.2em] text-black/40">
           {t.hero.trustedBy}
         </span>
         <div className="relative w-full max-w-4xl">
@@ -100,18 +131,22 @@ export function Hero() {
             logos={sourceLogos}
             speed={50}
             direction="left"
-            logoHeight={26}
-            gap={56}
+            logoHeight={40}
+            gap={72}
             hoverSpeed={0}
             scaleOnHover
-            fadeOut
-            fadeOutColor="#0a0b0d"
             ariaLabel={t.hero.trustedBy}
             // The marquee math (flex + translate3d) assumes LTR. Force LTR so the
             // loop renders identically under the site's RTL (Arabic) direction.
             style={{ direction: 'ltr' }}
             renderItem={(item) => {
               const logo = item as Extract<LogoItem, { src: string }>;
+              // Emblem logos (a mark + caption baked into the SVG) carry a lot of
+              // internal whitespace, so at the shared 40px row height their actual
+              // artwork reads much smaller than the wordmarks. Nudge those up so
+              // every logo lands at roughly the same *visual* size.
+              const height =
+                Object.entries(logoScale).find(([file]) => logo.src.includes(file))?.[1] ?? 40;
               return (
                 <a
                   className="logoloop__link"
@@ -128,7 +163,8 @@ export function Hero() {
                     loading="lazy"
                     decoding="async"
                     draggable={false}
-                    className="w-auto opacity-60 brightness-0 invert transition-opacity duration-300 hover:opacity-100"
+                    style={{ height }}
+                    className="w-auto max-w-[160px] object-contain opacity-60 brightness-0 transition-opacity duration-300 hover:opacity-100"
                   />
                 </a>
               );

@@ -17,9 +17,9 @@ export function FieldGroup({
 }) {
   return (
     <div role="group" aria-label={label}>
-      <p className="text-sm font-semibold text-white/85">
+      <p className="text-sm font-semibold text-black/85">
         {label}
-        {hint ? <span className="ms-2 text-xs font-normal text-white/40">{hint}</span> : null}
+        {hint ? <span className="ms-2 text-xs font-normal text-black/40">{hint}</span> : null}
       </p>
       <div className="mt-3">{children}</div>
     </div>
@@ -50,17 +50,17 @@ export function OptionCard({
         'group relative w-full rounded-2xl border p-4 text-start transition-all duration-200',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70',
         selected
-          ? 'border-brand/60 bg-brand/10 shadow-[0_0_28px_-12px_#d6ec1b]'
-          : 'border-white/10 bg-white/5 hover:border-white/25 hover:bg-white/[0.08]',
+          ? 'border-brand/60 bg-brand/10 shadow-[0_0_28px_-12px_#16924e]'
+          : 'border-black/10 bg-black/5 hover:border-black/25 hover:bg-black/[0.08]',
       )}
     >
       <span className="flex items-start justify-between gap-3">
         <span>
-          <span className={cn('block text-sm font-semibold', selected ? 'text-brand' : 'text-white')}>
+          <span className={cn('block text-sm font-semibold', selected ? 'text-brand' : 'text-black')}>
             {label}
           </span>
           {description ? (
-            <span className="mt-1 block text-xs leading-relaxed text-white/55 rtl:leading-relaxed">
+            <span className="mt-1 block text-xs leading-relaxed text-black/55 rtl:leading-relaxed">
               {description}
             </span>
           ) : null}
@@ -69,7 +69,7 @@ export function OptionCard({
           aria-hidden
           className={cn(
             'mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors',
-            selected ? 'border-brand bg-brand text-black' : 'border-white/25 text-transparent',
+            selected ? 'border-brand bg-brand text-black' : 'border-black/25 text-transparent',
           )}
         >
           <Check className="size-3.5" strokeWidth={3} />
@@ -79,7 +79,7 @@ export function OptionCard({
         <span
           className={cn(
             'mt-3 inline-block rounded-full px-2.5 py-1 font-mono text-xs',
-            selected ? 'bg-brand/20 text-brand' : 'bg-white/10 text-white/60',
+            selected ? 'bg-brand/20 text-brand' : 'bg-black/10 text-black/60',
           )}
         >
           {badge}
@@ -109,7 +109,7 @@ export function ChipToggle({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70',
         selected
           ? 'border-brand/60 bg-brand/15 text-brand'
-          : 'border-white/15 bg-white/5 text-white/70 hover:border-white/30 hover:text-white',
+          : 'border-black/15 bg-black/5 text-black/70 hover:border-black/30 hover:text-black',
       )}
     >
       {label}
@@ -137,13 +137,13 @@ export function NumberField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="text-sm font-semibold text-white/85">
+      <label htmlFor={id} className="text-sm font-semibold text-black/85">
         {label}
       </label>
       <div
         className={cn(
-          'mt-2 flex h-12 items-center overflow-hidden rounded-xl border bg-white/5 transition-colors focus-within:ring-2 focus-within:ring-brand/70',
-          error ? 'border-red-400/60' : 'border-white/10 focus-within:border-brand/50',
+          'mt-2 flex h-12 items-center overflow-hidden rounded-xl border bg-black/5 transition-colors focus-within:ring-2 focus-within:ring-brand/70',
+          error ? 'border-red-400/60' : 'border-black/10 focus-within:border-brand/50',
         )}
       >
         <input
@@ -155,9 +155,9 @@ export function NumberField({
           onChange={(event) => onChange(event.target.value)}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
-          className="h-full w-full bg-transparent px-4 font-mono text-base text-white outline-none placeholder:text-white/30"
+          className="h-full w-full bg-transparent px-4 font-mono text-base text-black outline-none placeholder:text-black/30"
         />
-        <span className="pe-4 text-sm text-white/40">{unit}</span>
+        <span className="pe-4 text-sm text-black/40">{unit}</span>
       </div>
       {error ? (
         <p id={`${id}-error`} className="mt-1.5 text-xs text-red-400">
