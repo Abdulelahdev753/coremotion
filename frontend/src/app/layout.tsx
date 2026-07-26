@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { defaultLocale, getDirection } from "@/i18n/config";
@@ -42,6 +43,8 @@ const cairo = localFont({
 // visitor's saved choice on the client after hydration.
 const t = dictionaries[defaultLocale];
 
+const GA_MEASUREMENT_ID = "G-KGML0KGS03";
+
 export const metadata: Metadata = {
   title: `${t.brand} — ${t.hero.headlineLead} ${t.hero.headlineAccent}`,
   description: t.hero.subheadline,
@@ -73,6 +76,20 @@ export default function RootLayout({
           }}
         />
         <LanguageProvider initialLocale={locale}>{children}</LanguageProvider>
+        {/* Google Analytics (gtag.js). afterInteractive keeps the tag off the
+            critical path so it can't delay hydration or first paint. GA4's
+            enhanced measurement tracks History API changes, so client-side
+            route changes are counted without an extra page_view hook. */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`}
+        </Script>
       </body>
     </html>
   );
