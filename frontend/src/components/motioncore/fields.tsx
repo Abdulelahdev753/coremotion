@@ -125,6 +125,8 @@ export function NumberField({
   value,
   onChange,
   error,
+  hint,
+  help,
   inputMode = 'numeric',
 }: {
   id: string;
@@ -133,12 +135,22 @@ export function NumberField({
   value: string;
   onChange: (value: string) => void;
   error?: string;
+  /** Short qualifier beside the label, e.g. "Optional". */
+  hint?: string;
+  /** Longer helper line under the field, announced with the input. */
+  help?: string;
   inputMode?: 'numeric' | 'decimal';
 }) {
+  // Both the helper line and the error are announced; order follows the DOM.
+  const describedBy = [help ? `${id}-help` : null, error ? `${id}-error` : null]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <div>
       <label htmlFor={id} className="text-sm font-semibold text-black/85">
         {label}
+        {hint ? <span className="ms-2 text-xs font-normal text-black/40">{hint}</span> : null}
       </label>
       <div
         className={cn(
@@ -154,16 +166,49 @@ export function NumberField({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? `${id}-error` : undefined}
+          aria-describedby={describedBy || undefined}
           className="h-full w-full bg-transparent px-4 font-mono text-base text-black outline-none placeholder:text-black/30"
         />
         <span className="pe-4 text-sm text-black/40">{unit}</span>
       </div>
+      {help ? (
+        <p id={`${id}-help`} className="mt-1.5 text-xs leading-relaxed text-black/45">
+          {help}
+        </p>
+      ) : null}
       {error ? (
-        <p id={`${id}-error`} className="mt-1.5 text-xs text-red-400">
+        <p id={`${id}-error`} role="alert" className="mt-1.5 text-xs text-red-400">
           {error}
         </p>
       ) : null}
+    </div>
+  );
+}
+
+/** Native checkbox styled to match the option cards. */
+export function CheckboxField({
+  id,
+  label,
+  checked,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <input
+        id={id}
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        className="size-4 shrink-0 accent-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
+      />
+      <label htmlFor={id} className="text-sm text-black/75">
+        {label}
+      </label>
     </div>
   );
 }

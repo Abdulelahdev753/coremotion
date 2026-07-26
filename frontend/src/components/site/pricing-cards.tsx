@@ -162,24 +162,26 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
         })}
       </ul>
 
-      <CheckoutEmailDialog
-        open={emailTier !== null}
-        busy={loadingTier !== null}
-        onCancel={() => {
-          if (!loadingTier) setEmailTier(null);
-        }}
-        onSubmit={(email) => {
-          if (!onAddToCart || !emailTier || loadingTier) return;
-          const tier = emailTier;
-          setLoadingTier(tier);
-          // On success the browser navigates away (spinner persists);
-          // on failure, re-enable the dialog so the buyer can retry.
-          Promise.resolve(onAddToCart(tier, email)).catch((err) => {
-            console.error('Checkout failed:', err);
-            setLoadingTier(null);
-          });
-        }}
-      />
+      {/* Mounted only while open, so the email field resets on every open. */}
+      {emailTier !== null && (
+        <CheckoutEmailDialog
+          busy={loadingTier !== null}
+          onCancel={() => {
+            if (!loadingTier) setEmailTier(null);
+          }}
+          onSubmit={(email) => {
+            if (!onAddToCart || !emailTier || loadingTier) return;
+            const tier = emailTier;
+            setLoadingTier(tier);
+            // On success the browser navigates away (spinner persists);
+            // on failure, re-enable the dialog so the buyer can retry.
+            Promise.resolve(onAddToCart(tier, email)).catch((err) => {
+              console.error('Checkout failed:', err);
+              setLoadingTier(null);
+            });
+          }}
+        />
+      )}
     </section>
   );
 }

@@ -1,3 +1,5 @@
+import type { BmrFormulaChoice, NutritionResult } from './nutrition';
+
 export type Sex = 'male' | 'female';
 export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'very' | 'athlete';
 export type Goal = 'fatLoss' | 'muscleGain' | 'fitness';
@@ -21,13 +23,24 @@ export type AssessmentInput = {
   equipment: Equipment;
   daysPerWeek: DaysPerWeek;
   exclusions: DietExclusion[];
+  /** Optional — a valid reading (2–70%) unlocks the Katch–McArdle formula. */
+  bodyFatPercent?: number;
+  /** Defaults to `auto`: Katch–McArdle when body fat is known, else Mifflin. */
+  bmrFormula?: BmrFormulaChoice;
+  /** Optional 7-day average, used only for the walking progression. */
+  currentAverageSteps?: number;
 };
 
-/** Hard validation bounds — enforced in the form and re-checked in buildPlan. */
+/**
+ * Hard validation bounds — enforced in the form and re-checked in buildPlan.
+ * Mirrors `NUTRITION_BOUNDS` in ./nutrition, which is the source of truth.
+ */
 export const INPUT_BOUNDS = {
-  age: { min: 14, max: 80 },
-  heightCm: { min: 120, max: 230 },
-  weightKg: { min: 35, max: 250 },
+  age: { min: 18, max: 80 },
+  heightCm: { min: 120, max: 250 },
+  weightKg: { min: 35, max: 300 },
+  bodyFatPercent: { min: 2, max: 70 },
+  currentAverageSteps: { min: 0, max: 100000 },
 } as const;
 
 export type DailyTargets = {
@@ -43,6 +56,8 @@ export type DailyTargets = {
   expectedKgPerWeek: number;
   /** True when the safety floor or deficit cap clamped the calorie target. */
   calorieFloorApplied: boolean;
+  /** Full result from the pure calculator, incl. hydration and walking. */
+  nutrition: NutritionResult;
 };
 
 export type MealSlot = 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'snack2';

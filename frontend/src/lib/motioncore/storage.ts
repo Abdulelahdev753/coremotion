@@ -62,6 +62,12 @@ const PACES = ['gentle', 'standard', 'aggressive'];
 const LEVELS = ['beginner', 'intermediate', 'advanced'];
 const EQUIPMENT = ['none', 'dumbbells', 'gym'];
 const EXCLUSIONS = ['dairy', 'eggs', 'nuts', 'gluten', 'seafood'];
+const BMR_FORMULAS = ['auto', 'mifflin', 'katch'];
+
+/** Optional fields added after v1 shipped — absent is valid, malformed is not. */
+function isOptionalNumber(value: unknown): boolean {
+  return value === undefined || (typeof value === 'number' && Number.isFinite(value));
+}
 
 function isAssessmentInput(value: unknown): value is AssessmentInput {
   if (!isRecord(value)) return false;
@@ -77,7 +83,10 @@ function isAssessmentInput(value: unknown): value is AssessmentInput {
     EQUIPMENT.includes(value.equipment as string) &&
     [3, 4, 5].includes(value.daysPerWeek as number) &&
     Array.isArray(value.exclusions) &&
-    value.exclusions.every((item) => EXCLUSIONS.includes(item as string))
+    value.exclusions.every((item) => EXCLUSIONS.includes(item as string)) &&
+    isOptionalNumber(value.bodyFatPercent) &&
+    isOptionalNumber(value.currentAverageSteps) &&
+    (value.bmrFormula === undefined || BMR_FORMULAS.includes(value.bmrFormula as string))
   );
 }
 

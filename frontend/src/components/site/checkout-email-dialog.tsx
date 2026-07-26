@@ -9,7 +9,6 @@ import { useLanguage } from '@/components/providers/language-provider';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 type CheckoutEmailDialogProps = {
-  open: boolean;
   /** True while the checkout link is being minted; locks the form. */
   busy: boolean;
   onCancel: () => void;
@@ -20,8 +19,11 @@ type CheckoutEmailDialogProps = {
  * Pre-checkout modal that captures the buyer's email so the backend can send
  * the purchased PDF after payment. Deliberately tiny: one field, inline
  * validation, Escape/backdrop to dismiss (disabled while redirecting).
+ *
+ * The parent mounts this only while the dialog is open, so the field and its
+ * validation state start fresh on every open with no reset logic here.
  */
-export function CheckoutEmailDialog({ open, busy, onCancel, onSubmit }: CheckoutEmailDialogProps) {
+export function CheckoutEmailDialog({ busy, onCancel, onSubmit }: CheckoutEmailDialogProps) {
   const { t } = useLanguage();
   const p = t.pricing;
   const [email, setEmail] = useState('');
@@ -29,23 +31,18 @@ export function CheckoutEmailDialog({ open, busy, onCancel, onSubmit }: Checkout
   const inputRef = useRef<HTMLInputElement>(null);
   const titleId = useId();
 
-  // Fresh field + focus each time the dialog opens.
+  // Focus the field once, on open.
   useEffect(() => {
-    if (!open) return;
-    setInvalid(false);
     inputRef.current?.focus();
-  }, [open]);
+  }, []);
 
   useEffect(() => {
-    if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !busy) onCancel();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open, busy, onCancel]);
-
-  if (!open) return null;
+  }, [busy, onCancel]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

@@ -164,10 +164,24 @@ export type Dictionary = {
         pace: string;
         equipment: string;
         exclusions: string;
+        bodyFatPercent: string;
+        bmrFormula: string;
+        currentAverageSteps: string;
       };
       optional: string;
+      /** Short helper lines under the optional inputs. */
+      hints: {
+        bodyFat: string;
+        formula: string;
+        steps: string;
+      };
       options: {
         sex: { male: string; female: string };
+        bmrFormula: {
+          auto: OptionText;
+          mifflin: OptionText;
+          katch: OptionText;
+        };
         activity: {
           sedentary: OptionText;
           light: OptionText;
@@ -205,11 +219,13 @@ export type Dictionary = {
       };
       /** Template: {n} is replaced with the number of training days. */
       daysLabel: string;
-      /** Template: {rate} is replaced with the signed kg-per-week rate. */
+      /** Template: {percent} is the signed % of maintenance calories. */
       paceHint: string;
       maintainHint: string;
       /** Template: {min} and {max} are replaced with the field bounds. */
       rangeError: string;
+      /** Shown when Katch–McArdle is chosen without a usable body-fat reading. */
+      katchNeedsBodyFat: string;
       next: string;
       back: string;
       finish: string;
@@ -230,6 +246,83 @@ export type Dictionary = {
       expectedRate: string;
       floorNotice: string;
       macrosTitle: string;
+      /** How the calorie target was derived, shown as a labelled breakdown. */
+      results: {
+        title: string;
+        formulaLabel: string;
+        formulas: { mifflin: string; katch: string };
+        bmrLabel: string;
+        bmrExplanation: string;
+        tdeeLabel: string;
+        tdeeExplanation: string;
+        goalAdjustmentLabel: string;
+        goalAdjustmentExplanation: string;
+        targetLabel: string;
+        /** Template: {kcal} — calories rebuilt from the rounded macro grams. */
+        macroCaloriesNote: string;
+        warnings: { calorieMinimum: string; proteinCap: string };
+      };
+      hydration: {
+        title: string;
+        /** "Estimated daily hydration reference" — never a prescription. */
+        subtitle: string;
+        totalWaterLabel: string;
+        beverageLabel: string;
+        splitNote: string;
+        doNotAddNote: string;
+        increaseNote: string;
+        safety: string;
+        /** Thirst / urine-colour feedback bullets. */
+        feedback: string[];
+        sweat: {
+          title: string;
+          intro: string;
+          fields: {
+            preExerciseWeightKg: string;
+            postExerciseWeightKg: string;
+            exerciseDurationMinutes: string;
+            fluidConsumedLiters: string;
+            urineProducedLiters: string;
+            hotOrHumid: string;
+          };
+          submit: string;
+          results: {
+            netSweatLoss: string;
+            sweatRate: string;
+            dehydration: string;
+            replacement: string;
+            drinkingRate: string;
+          };
+          replacementNote: string;
+          drinkingRateNote: string;
+          errors: { value: string; duration: string };
+          warnings: {
+            dehydration: string;
+            highSweatRate: string;
+            highDrinkingRate: string;
+            hotConditions: string;
+          };
+        };
+      };
+      walking: {
+        title: string;
+        /** "Recommended daily walking target" — evidence-informed, not exact. */
+        subtitle: string;
+        targetLabel: string;
+        /** Template: {min} and {max} are the target range bounds. */
+        rangeLabel: string;
+        generalReferenceLabel: string;
+        currentLabel: string;
+        nextTargetLabel: string;
+        nextTargetHint: string;
+        alreadyMeets: string;
+        evidenceNote: string;
+        /** Weekly physical-activity guidance bullets. */
+        guidance: string[];
+        intensityNote: string;
+        calorieNote: string;
+        weightLossNote: string;
+      };
       meals: {
         title: string;
         approxNote: string;
@@ -282,6 +375,9 @@ export type Dictionary = {
       years: string;
       liters: string;
       steps: string;
+      percent: string;
+      minutes: string;
+      litersPerHour: string;
     };
   };
 };
@@ -621,10 +717,23 @@ export const dictionaries: Record<Locale, Dictionary> = {
           pace: 'وتيرة التقدم',
           equipment: 'المعدات المتاحة',
           exclusions: 'أطعمة تفضل تجنبها',
+          bodyFatPercent: 'نسبة الدهون',
+          bmrFormula: 'معادلة الأيض الأساسي',
+          currentAverageSteps: 'متوسط خطواتك اليومية',
         },
         optional: 'اختياري',
+        hints: {
+          bodyFat: 'إن عرفتها، ستُستخدم معادلة كاتش-مكاردل الأدق.',
+          formula: 'التلقائي يختار كاتش-مكاردل عند إدخال نسبة دهون صحيحة.',
+          steps: 'أدخل متوسط آخر 7 أيام إن أمكن.',
+        },
         options: {
           sex: { male: 'ذكر', female: 'أنثى' },
+          bmrFormula: {
+            auto: { label: 'تلقائي', description: 'كاتش-مكاردل مع نسبة الدهون، وإلا ميفلين' },
+            mifflin: { label: 'ميفلين-سانت جور', description: 'المعادلة القياسية بالطول والوزن والعمر' },
+            katch: { label: 'كاتش-مكاردل', description: 'تعتمد على الكتلة الخالية من الدهون' },
+          },
           activity: {
             sedentary: { label: 'خامل', description: 'عمل مكتبي وحركة قليلة' },
             light: { label: 'خفيف', description: 'مشي أو حركة خفيفة 1–3 أيام أسبوعيًا' },
@@ -661,9 +770,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
           },
         },
         daysLabel: '{n} أيام',
-        paceHint: '≈ {rate} كجم أسبوعيًا',
+        paceHint: '{percent}% من سعرات الثبات',
         maintainHint: 'الحفاظ على وزنك الحالي',
         rangeError: 'أدخل قيمة بين {min} و{max}',
+        katchNeedsBodyFat: 'معادلة كاتش-مكاردل تتطلب نسبة دهون بين 2% و70%.',
         next: 'التالي',
         back: 'رجوع',
         finish: 'أنشئ خطتي',
@@ -684,6 +794,111 @@ export const dictionaries: Record<Locale, Dictionary> = {
         floorNotice:
           'تم رفع سعراتك إلى الحد الأدنى الآمن، لذا سيكون التقدم أبطأ من الوتيرة المختارة.',
         macrosTitle: 'توزيع المغذيات',
+        results: {
+          title: 'كيف حُسبت سعراتك',
+          formulaLabel: 'المعادلة المستخدمة',
+          formulas: { mifflin: 'ميفلين-سانت جور', katch: 'كاتش-مكاردل' },
+          bmrLabel: 'معدل الأيض الأساسي',
+          bmrExplanation: 'الطاقة التقديرية التي يستهلكها جسمك وهو في راحة تامة.',
+          tdeeLabel: 'سعرات الثبات',
+          tdeeExplanation: 'معدل الأيض الأساسي بعد تعديله حسب مستوى نشاطك.',
+          goalAdjustmentLabel: 'تعديل الهدف',
+          goalAdjustmentExplanation: 'سعرات الثبات بعد تعديلها حسب الهدف الذي اخترته.',
+          targetLabel: 'هدف السعرات الموصى به',
+          macroCaloriesNote:
+            'السعرات المعروضة ({kcal}) محسوبة من جرامات المغذيات بعد التقريب، لتتطابق الأرقام.',
+          warnings: {
+            calorieMinimum:
+              'الهدف المحسوب كان أقل من الحد الأدنى العام للأمان في هذه الحاسبة. هذا الحد ليس نصيحة طبية مخصصة لك.',
+            proteinCap:
+              'تم تحديد البروتين عند 35% من السعرات ليبقى توزيع المغذيات صحيحًا رياضيًا.',
+          },
+        },
+        hydration: {
+          title: 'الماء',
+          subtitle: 'مرجع تقديري لاحتياجك اليومي من السوائل',
+          totalWaterLabel: 'إجمالي الماء يوميًا',
+          beverageLabel: 'من المشروبات يوميًا',
+          splitNote:
+            'حوالي 80% من إجمالي الماء يأتي عادةً من الماء والمشروبات، وحوالي 20% من الطعام.',
+          doNotAddNote:
+            'إجمالي الماء يشمل ما تحصل عليه من الطعام والمشروبات معًا — لا تجمع الرقمين.',
+          increaseNote:
+            'التمرين والطقس الحار والحمى والارتفاع والحمل والرضاعة والتعرق الشديد قد ترفع احتياجك من السوائل. قياس فقد العرق أدق من إضافة نسبة ثابتة حسب النشاط.',
+          safety:
+            'من لديه مرض في الكلى أو قصور في القلب أو مرض في الكبد أو اضطراب في الأملاح أو قيود على السوائل أو يتناول أدوية تؤثر على توازن السوائل، فليتبع إرشادات طبيبه.',
+          feedback: [
+            'الإحساس بالعطش ولون البول مؤشران يوميان مفيدان.',
+            'البول أصفر فاتح يشير عادةً إلى ترطيب كافٍ.',
+            'البول عديم اللون باستمرار قد يعني شربًا زائدًا لا حاجة له.',
+            'الإفراط في شرب الماء قد يكون خطيرًا.',
+            'التمرين الطويل والتعرق الغزير قد يتطلبان تعويض الأملاح وليس الماء وحده.',
+          ],
+          sweat: {
+            title: 'احسب فقد العرق أثناء التمرين',
+            intro: 'زِن نفسك قبل التمرين وبعده مباشرةً بنفس الملابس تقريبًا.',
+            fields: {
+              preExerciseWeightKg: 'الوزن قبل التمرين',
+              postExerciseWeightKg: 'الوزن بعد التمرين',
+              exerciseDurationMinutes: 'مدة التمرين',
+              fluidConsumedLiters: 'السوائل التي شربتها أثناء التمرين',
+              urineProducedLiters: 'البول أثناء التمرين',
+              hotOrHumid: 'كان الجو حارًا أو رطبًا',
+            },
+            submit: 'احسب',
+            results: {
+              netSweatLoss: 'صافي فقد العرق',
+              sweatRate: 'معدل التعرق',
+              dehydration: 'نسبة الجفاف',
+              replacement: 'التعويض بعد التمرين',
+              drinkingRate: 'أقصى معدل شرب أثناء التمرين',
+            },
+            replacementNote:
+              'اشرب هذا المدى تدريجيًا خلال ساعات التعافي — وليس دفعة واحدة.',
+            drinkingRateNote:
+              'لا تشرب أثناء التمرين أسرع من معدل تعرقك المقاس.',
+            errors: {
+              value: 'أدخل قيمة رقمية صحيحة.',
+              duration: 'أدخل مدة تمرين أكبر من صفر.',
+            },
+            warnings: {
+              dehydration:
+                'فقدت 2% أو أكثر من وزن جسمك — هذا مستوى جفاف يستحق الانتباه.',
+              highSweatRate:
+                'معدل تعرقك يتجاوز 1.5 لتر/ساعة؛ غالبًا ستحتاج إلى تعويض الأملاح أيضًا.',
+              highDrinkingRate:
+                'المعدل المطلوب يتجاوز حوالي 1 لتر/ساعة، وهو أكثر مما تستوعبه المعدة عادةً.',
+              hotConditions:
+                'الجو الحار أو الرطب يرفع فقد العرق؛ أعد القياس في الظروف المعتادة أيضًا.',
+            },
+          },
+        },
+        walking: {
+          title: 'المشي',
+          subtitle: 'هدف المشي اليومي الموصى به',
+          targetLabel: 'هدفك اليومي',
+          rangeLabel: 'المدى الموصى به {min}–{max}',
+          generalReferenceLabel: 'المرجع الصحي العام',
+          currentLabel: 'متوسطك الحالي',
+          nextTargetLabel: 'هدفك التالي',
+          nextTargetHint: 'زيادة تدريجية من متوسطك الحالي نحو هدفك.',
+          alreadyMeets:
+            'أنت تحقق هدف الخطوات اليومي العام بالفعل. لا حاجة لزيادته باستمرار.',
+          evidenceNote:
+            'هذه أهداف صحية مبنية على الأدلة، وليست وصفة طبية دقيقة ولا كمية مضمونة لخسارة الوزن.',
+          guidance: [
+            '150–300 دقيقة من النشاط الهوائي المعتدل أسبوعيًا.',
+            'أو ما يعادلها من النشاط الشديد.',
+            'تمارين تقوية العضلات في يومين على الأقل أسبوعيًا.',
+            'المشي السريع يمكن أن يحتسب ضمن النشاط المعتدل.',
+          ],
+          intensityNote:
+            'عدد الخطوات وحده لا يعني بالضرورة نشاطًا بشدة معتدلة.',
+          calorieNote:
+            'لا تُضاف سعرات المشي إلى سعراتك اليومية: مستوى النشاط الذي اخترته يقدّر حركتك اليومية أصلًا، وإضافتها مجددًا تحتسب النشاط مرتين.',
+          weightLossNote:
+            'المشي يدعم صحتك وصرف الطاقة، لكن خسارة الوزن تعتمد أساسًا على توازن السعرات المستمر. هذه الحاسبة لا تعد بمقدار محدد من خسارة الوزن مقابل هدف الخطوات.',
+        },
         meals: {
           title: 'وجبات اليوم',
           approxNote: 'الكميات تقريبية لتطابق أهدافك اليومية',
@@ -734,6 +949,9 @@ export const dictionaries: Record<Locale, Dictionary> = {
         years: 'سنة',
         liters: 'لتر',
         steps: 'خطوة',
+        percent: '%',
+        minutes: 'دقيقة',
+        litersPerHour: 'لتر/ساعة',
       },
     },
   },
@@ -1071,10 +1289,23 @@ export const dictionaries: Record<Locale, Dictionary> = {
           pace: 'Pace',
           equipment: 'Available equipment',
           exclusions: 'Foods to avoid',
+          bodyFatPercent: 'Body fat',
+          bmrFormula: 'BMR formula',
+          currentAverageSteps: 'Current average daily steps',
         },
         optional: 'Optional',
+        hints: {
+          bodyFat: 'If you know it, the more precise Katch–McArdle formula is used.',
+          formula: 'Automatic picks Katch–McArdle when a valid body fat is entered.',
+          steps: 'Enter a 7-day average when possible.',
+        },
         options: {
           sex: { male: 'Male', female: 'Female' },
+          bmrFormula: {
+            auto: { label: 'Automatic', description: 'Katch–McArdle with body fat, otherwise Mifflin' },
+            mifflin: { label: 'Mifflin–St Jeor', description: 'The standard height, weight and age equation' },
+            katch: { label: 'Katch–McArdle', description: 'Based on your lean body mass' },
+          },
           activity: {
             sedentary: { label: 'Sedentary', description: 'Desk job, little movement' },
             light: { label: 'Light', description: 'Light activity 1–3 days a week' },
@@ -1111,9 +1342,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
           },
         },
         daysLabel: '{n} days',
-        paceHint: '≈ {rate} kg per week',
+        paceHint: '{percent}% of maintenance calories',
         maintainHint: 'Hold your current weight',
         rangeError: 'Enter a value between {min} and {max}',
+        katchNeedsBodyFat: 'Katch–McArdle needs a body fat between 2% and 70%.',
         next: 'Next',
         back: 'Back',
         finish: 'Build my plan',
@@ -1134,6 +1366,111 @@ export const dictionaries: Record<Locale, Dictionary> = {
         floorNotice:
           'Your calories were raised to a safe minimum, so progress will be slower than the selected pace.',
         macrosTitle: 'Macro split',
+        results: {
+          title: 'How your calories were calculated',
+          formulaLabel: 'Formula used',
+          formulas: { mifflin: 'Mifflin–St Jeor', katch: 'Katch–McArdle' },
+          bmrLabel: 'BMR',
+          bmrExplanation: 'The energy your body is estimated to use at complete rest.',
+          tdeeLabel: 'Maintenance calories (TDEE)',
+          tdeeExplanation: 'Your BMR adjusted for your activity level.',
+          goalAdjustmentLabel: 'Goal adjustment',
+          goalAdjustmentExplanation: 'Your maintenance calories adjusted for the goal you chose.',
+          targetLabel: 'Recommended calorie target',
+          macroCaloriesNote:
+            'The calories shown ({kcal}) are rebuilt from the rounded macro grams, so the numbers agree.',
+          warnings: {
+            calorieMinimum:
+              "The calculated target was below the calculator's general safety minimum. This minimum is not individualized medical advice.",
+            proteinCap:
+              'Protein was limited to 35% of calories so the macro plan stays mathematically valid.',
+          },
+        },
+        hydration: {
+          title: 'Hydration',
+          subtitle: 'Estimated daily hydration reference',
+          totalWaterLabel: 'Total water per day',
+          beverageLabel: 'From beverages per day',
+          splitNote:
+            'About 80% of total water commonly comes from water and beverages, and about 20% from food.',
+          doNotAddNote:
+            'Total water already includes what you get from food and all beverages — do not add the two figures together.',
+          increaseNote:
+            'Exercise, hot weather, fever, altitude, pregnancy, breastfeeding and heavy sweating can increase fluid needs. Sweat loss is more accurate than applying a fixed activity adjustment.',
+          safety:
+            "People with kidney disease, heart failure, liver disease, electrolyte disorders, fluid restrictions, or medicines affecting fluid balance should follow their clinician's advice.",
+          feedback: [
+            'Thirst and urine color provide useful daily feedback.',
+            'Pale-yellow urine generally suggests adequate hydration.',
+            'Consistently colorless urine can indicate unnecessary overconsumption.',
+            'Excessive water intake can be dangerous.',
+            'Prolonged exercise and heavy sweating may require electrolyte replacement, not only water.',
+          ],
+          sweat: {
+            title: 'Calculate exercise sweat loss',
+            intro: 'Weigh yourself right before and right after exercise, in similar clothing.',
+            fields: {
+              preExerciseWeightKg: 'Weight before exercise',
+              postExerciseWeightKg: 'Weight after exercise',
+              exerciseDurationMinutes: 'Exercise duration',
+              fluidConsumedLiters: 'Fluid consumed during exercise',
+              urineProducedLiters: 'Urine produced during exercise',
+              hotOrHumid: 'Conditions were hot or humid',
+            },
+            submit: 'Calculate',
+            results: {
+              netSweatLoss: 'Net sweat loss',
+              sweatRate: 'Sweat rate',
+              dehydration: 'Body mass lost',
+              replacement: 'Post-exercise replacement',
+              drinkingRate: 'Max drinking rate during exercise',
+            },
+            replacementNote:
+              'Drink this range gradually across your recovery hours — not all at once.',
+            drinkingRateNote:
+              'Do not drink during exercise faster than your measured sweat rate.',
+            errors: {
+              value: 'Enter a valid number.',
+              duration: 'Enter an exercise duration greater than zero.',
+            },
+            warnings: {
+              dehydration:
+                'You lost 2% or more of your body mass — a level of dehydration worth acting on.',
+              highSweatRate:
+                'Your sweat rate is above 1.5 L/hour; you likely need electrolytes as well as water.',
+              highDrinkingRate:
+                'The rate needed is above roughly 1 L/hour, which is more than the stomach usually absorbs.',
+              hotConditions:
+                'Hot or humid conditions raise sweat loss; re-measure in typical conditions too.',
+            },
+          },
+        },
+        walking: {
+          title: 'Walking',
+          subtitle: 'Recommended daily walking target',
+          targetLabel: 'Your daily target',
+          rangeLabel: 'Recommended range {min}–{max}',
+          generalReferenceLabel: 'General health reference',
+          currentLabel: 'Your current average',
+          nextTargetLabel: 'Your next target',
+          nextTargetHint: 'A gradual step up from your current average toward your target.',
+          alreadyMeets:
+            'You already meet the general daily step target. You do not need to continually increase it.',
+          evidenceNote:
+            'These are evidence-informed health targets, not exact medical prescriptions or guaranteed weight-loss amounts.',
+          guidance: [
+            '150–300 minutes of moderate aerobic activity per week.',
+            'Or an equivalent amount of vigorous activity.',
+            'Muscle-strengthening exercise on at least 2 days per week.',
+            'Brisk walking can contribute to the moderate-activity target.',
+          ],
+          intensityNote:
+            'Total steps do not always represent moderate-intensity activity.',
+          calorieNote:
+            'Walking calories are not added to your daily target: the activity level you selected already estimates your normal daily movement, and adding them again would double-count it.',
+          weightLossNote:
+            'Walking supports health and energy expenditure, but weight loss depends primarily on sustained calorie balance. This calculator does not promise a specific amount of weight loss from a step target.',
+        },
         meals: {
           title: "Today's meals",
           approxNote: 'Portions are approximate, tuned to your daily targets',
@@ -1184,6 +1521,9 @@ export const dictionaries: Record<Locale, Dictionary> = {
         years: 'years',
         liters: 'L',
         steps: 'steps',
+        percent: '%',
+        minutes: 'min',
+        litersPerHour: 'L/h',
       },
     },
   },

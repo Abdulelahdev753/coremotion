@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Download, Loader2, Mail } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
@@ -154,9 +155,10 @@ export default function CheckoutSuccessPage() {
               <Download size={18} strokeWidth={2.5} aria-hidden />
               {t.download(fileKind)}
             </a>
-            <a className="checkout-result__btn checkout-result__btn--ghost" href="/">
+            {/* Link (not <a>) so the basePath of the Pages build is applied. */}
+            <Link className="checkout-result__btn checkout-result__btn--ghost" href="/">
               {t.home}
-            </a>
+            </Link>
           </div>
           <p className="checkout-result__note">
             <Mail size={16} strokeWidth={2.5} aria-hidden />
@@ -171,9 +173,9 @@ export default function CheckoutSuccessPage() {
           <h1 className="checkout-result__title">{t.notFoundTitle}</h1>
           <p className="checkout-result__body">{t.notFoundBody}</p>
           <div className="checkout-result__actions">
-            <a className="checkout-result__btn checkout-result__btn--ghost" href="/">
+            <Link className="checkout-result__btn checkout-result__btn--ghost" href="/">
               {t.home}
-            </a>
+            </Link>
           </div>
         </div>
       )}

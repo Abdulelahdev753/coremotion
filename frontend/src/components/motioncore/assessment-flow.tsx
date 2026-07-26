@@ -7,8 +7,9 @@ import { useEffect, useReducer } from 'react';
 import { ChipToggle, FieldGroup, NumberField, OptionCard } from '@/components/motioncore/fields';
 import { MotionCoreShell } from '@/components/motioncore/motioncore-shell';
 import { useLanguage } from '@/components/providers/language-provider';
-import { paceRateKgPerWeek, validateAssessment } from '@/lib/motioncore/engine';
+import { paceAdjustmentPercent, validateAssessment } from '@/lib/motioncore/engine';
 import { fillTemplate, formatNumber } from '@/lib/motioncore/format';
+import { isValidBodyFatPercent, type BmrFormulaChoice } from '@/lib/motioncore/nutrition';
 import { loadProfile, saveProfile } from '@/lib/motioncore/storage';
 import {
   INPUT_BOUNDS,
@@ -32,6 +33,10 @@ type Draft = {
   age: string;
   heightCm: string;
   weightKg: string;
+  /** Optional inputs stay as strings so an empty field means "not supplied". */
+  bodyFatPercent: string;
+  bmrFormula: BmrFormulaChoice;
+  currentAverageSteps: string;
   activity?: ActivityLevel;
   trainingLevel?: TrainingLevel;
   daysPerWeek?: DaysPerWeek;
@@ -41,7 +46,12 @@ type Draft = {
   exclusions: DietExclusion[];
 };
 
-type NumericField = 'age' | 'heightCm' | 'weightKg';
+type NumericField =
+  | 'age'
+  | 'heightCm'
+  | 'weightKg'
+  | 'bodyFatPercent'
+  | 'currentAverageSteps';
 
 type State = {
   step: number;
@@ -57,7 +67,16 @@ type Action =
 
 const initialState: State = {
   step: 0,
-  draft: { age: '', heightCm: '', weightKg: '', pace: 'standard', exclusions: [] },
+  draft: {
+    age: '',
+    heightCm: '',
+    weightKg: '',
+    bodyFatPercent: '',
+    bmrFormula: 'auto',
+    currentAverageSteps: '',
+    pace: 'standard',
+    exclusions: [],
+  },
   errors: {},
 };
 
@@ -80,6 +99,7 @@ const TRAINING_DAYS: DaysPerWeek[] = [3, 4, 5];
 const GOALS: Goal[] = ['fatLoss', 'muscleGain', 'fitness'];
 const PACES: Pace[] = ['gentle', 'standard', 'aggressive'];
 const EQUIPMENT: Equipment[] = ['none', 'dumbbells', 'gym'];
+const BMR_FORMULAS: BmrFormulaChoice[] = ['auto', 'mifflin', 'katch'];
 
 export function AssessmentFlow() {
   const { t, locale } = useLanguage();
@@ -102,6 +122,13 @@ export function AssessmentFlow() {
         age: String(assessment.age),
         heightCm: String(assessment.heightCm),
         weightKg: String(assessment.weightKg),
+        bodyFatPercent:
+          assessment.bodyFatPercent === undefined ? '' : String(assessment.bodyFatPercent),
+        bmrFormula: assessment.bmrFormula ?? 'auto',
+        currentAverageSteps:
+          assessment.currentAverageSteps === undefined
+            ? ''
+            : String(assessment.currentAverageSteps),
         activity: assessment.activity,
         trainingLevel: assessment.trainingLevel,
         daysPerWeek: assessment.daysPerWeek,
@@ -113,13 +140,52 @@ export function AssessmentFlow() {
     });
   }, []);
 
+  const rangeError = (field: NumericField): string =>
+    fillTemplate(ta.rangeError, {
+      min: INPUT_BOUNDS[field].min,
+      max: INPUT_BOUNDS[field].max,
+    });
+
   const numericBoundsError = (field: NumericField): string | undefined => {
     const bounds = INPUT_BOUNDS[field];
     const value = Number(draft[field]);
     if (!Number.isFinite(value) || value < bounds.min || value > bounds.max) {
-      return fillTemplate(ta.rangeError, { min: bounds.min, max: bounds.max });
+      return rangeError(field);
     }
     return undefined;
+  };
+
+  /** Optional numeric field: blank is valid, anything present must be in range. */
+  const optionalBoundsError = (field: 'currentAverageSteps'): string | undefined => {
+    if (draft[field].trim() === '') return undefined;
+    return numericBoundsError(field);
+  };
+
+  const bodyFatError = (): string | undefined => {
+    const raw = draft.bodyFatPercent.trim();
+    const supplied = raw !== '';
+    if (supplied && !isValidBodyFatPercent(Number(raw))) return rangeError('bodyFatPercent');
+    // Katch–McArdle is never swapped for Mifflin behind the user's back.
+    if (draft.bmrFormula === 'katch' && !supplied) return ta.katchNeedsBodyFat;
+    return undefined;
+  };
+
+  /** Inline validation for the current step; empty means the step can advance. */
+  const validateStep = (): State['errors'] => {
+    const stepErrors: State['errors'] = {};
+    if (stepId === 'basics') {
+      for (const field of ['age', 'heightCm', 'weightKg'] as const) {
+        const error = numericBoundsError(field);
+        if (error) stepErrors[field] = error;
+      }
+      const bodyFat = bodyFatError();
+      if (bodyFat) stepErrors.bodyFatPercent = bodyFat;
+    }
+    if (stepId === 'activity') {
+      const steps = optionalBoundsError('currentAverageSteps');
+      if (steps) stepErrors.currentAverageSteps = steps;
+    }
+    return stepErrors;
   };
 
   const stepComplete: boolean = (() => {
@@ -136,16 +202,10 @@ export function AssessmentFlow() {
   })();
 
   const next = () => {
-    if (stepId === 'basics') {
-      const stepErrors: State['errors'] = {};
-      for (const field of ['age', 'heightCm', 'weightKg'] as const) {
-        const error = numericBoundsError(field);
-        if (error) stepErrors[field] = error;
-      }
-      if (Object.keys(stepErrors).length > 0) {
-        dispatch({ type: 'errors', errors: stepErrors });
-        return;
-      }
+    const stepErrors = validateStep();
+    if (Object.keys(stepErrors).length > 0) {
+      dispatch({ type: 'errors', errors: stepErrors });
+      return;
     }
     if (step < STEPS.length - 1) {
       dispatch({ type: 'goTo', step: step + 1 });
@@ -155,11 +215,16 @@ export function AssessmentFlow() {
   };
 
   const finish = () => {
+    const bodyFat = draft.bodyFatPercent.trim();
+    const steps = draft.currentAverageSteps.trim();
     const assessment: AssessmentInput = {
       sex: draft.sex!,
       age: Number(draft.age),
       heightCm: Number(draft.heightCm),
       weightKg: Number(draft.weightKg),
+      bodyFatPercent: bodyFat === '' ? undefined : Number(bodyFat),
+      bmrFormula: draft.bmrFormula,
+      currentAverageSteps: steps === '' ? undefined : Math.round(Number(steps)),
       activity: draft.activity!,
       trainingLevel: draft.trainingLevel!,
       goal: draft.goal!,
@@ -177,11 +242,15 @@ export function AssessmentFlow() {
     router.push('/motioncore/dashboard');
   };
 
+  // The badge states the calorie adjustment the pace applies, not a promised
+  // rate of weight change.
   const paceBadge = (pace: Pace): string => {
     if (!draft.goal || draft.goal === 'fitness') return '';
-    const rate = paceRateKgPerWeek(draft.goal, pace);
     return fillTemplate(ta.paceHint, {
-      rate: formatNumber(rate, locale, { signDisplay: 'always', maximumFractionDigits: 3 }),
+      percent: formatNumber(paceAdjustmentPercent(draft.goal, pace), locale, {
+        signDisplay: 'always',
+        maximumFractionDigits: 0,
+      }),
     });
   };
 
@@ -254,6 +323,39 @@ export function AssessmentFlow() {
                 inputMode="decimal"
               />
             </div>
+            {/* Optional: a known body-fat reading unlocks Katch–McArdle. */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              <NumberField
+                id="mc-bodyfat"
+                label={ta.fields.bodyFatPercent}
+                hint={ta.optional}
+                help={ta.hints.bodyFat}
+                unit={t.motioncore.units.percent}
+                value={draft.bodyFatPercent}
+                onChange={(bodyFatPercent) =>
+                  dispatch({ type: 'set', patch: { bodyFatPercent } })
+                }
+                error={errors.bodyFatPercent}
+                inputMode="decimal"
+              />
+            </div>
+            <FieldGroup label={ta.fields.bmrFormula} hint={ta.hints.formula}>
+              <div
+                role="radiogroup"
+                aria-label={ta.fields.bmrFormula}
+                className="grid grid-cols-1 gap-3 sm:grid-cols-3"
+              >
+                {BMR_FORMULAS.map((formula) => (
+                  <OptionCard
+                    key={formula}
+                    selected={draft.bmrFormula === formula}
+                    onSelect={() => dispatch({ type: 'set', patch: { bmrFormula: formula } })}
+                    label={ta.options.bmrFormula[formula].label}
+                    description={ta.options.bmrFormula[formula].description}
+                  />
+                ))}
+              </div>
+            </FieldGroup>
           </>
         )}
 
@@ -297,6 +399,21 @@ export function AssessmentFlow() {
                 ))}
               </div>
             </FieldGroup>
+            {/* Optional: drives the walking progression only — never calories. */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              <NumberField
+                id="mc-steps"
+                label={ta.fields.currentAverageSteps}
+                hint={ta.optional}
+                help={ta.hints.steps}
+                unit={t.motioncore.units.steps}
+                value={draft.currentAverageSteps}
+                onChange={(currentAverageSteps) =>
+                  dispatch({ type: 'set', patch: { currentAverageSteps } })
+                }
+                error={errors.currentAverageSteps}
+              />
+            </div>
           </>
         )}
 

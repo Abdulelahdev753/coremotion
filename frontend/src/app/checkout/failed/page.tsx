@@ -1,6 +1,7 @@
 'use client';
 
 import { MessageCircle, RotateCcw, X } from 'lucide-react';
+import Link from 'next/link';
 
 import { useLanguage } from '@/components/providers/language-provider';
 import { WHATSAPP_URL } from '@/lib/site-links';
@@ -34,10 +35,11 @@ export default function CheckoutFailedPage() {
         <h1 className="checkout-result__title">{t.title}</h1>
         <p className="checkout-result__body">{t.body}</p>
         <div className="checkout-result__actions">
-          <a className="checkout-result__btn checkout-result__btn--primary" href="/#products">
+          {/* Link (not <a>) so the basePath of the Pages build is applied. */}
+          <Link className="checkout-result__btn checkout-result__btn--primary" href="/#products">
             <RotateCcw size={18} strokeWidth={2.5} aria-hidden />
             {t.retry}
-          </a>
+          </Link>
           <a
             className="checkout-result__btn checkout-result__btn--ghost"
             href={WHATSAPP_URL}

@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
+import { HydrationPanel } from '@/components/motioncore/hydration-panel';
 import { MacroDonut } from '@/components/motioncore/macro-donut';
 import { MotionCoreShell } from '@/components/motioncore/motioncore-shell';
 import { useMotionCoreStore } from '@/components/motioncore/use-motioncore-store';
+import { WalkingPanel } from '@/components/motioncore/walking-panel';
 import { useLanguage } from '@/components/providers/language-provider';
 import { buildPlan } from '@/lib/motioncore/engine';
 import { fillTemplate, formatNumber } from '@/lib/motioncore/format';
@@ -74,6 +76,63 @@ export function Dashboard() {
   }
 
   const { targets } = plan;
+  const { nutrition } = targets;
+  const tr = td.results;
+
+  // The derivation chain, in the order it is calculated.
+  const breakdown = [
+    {
+      key: 'formula',
+      label: tr.formulaLabel,
+      value: tr.formulas[nutrition.formulaUsed],
+      explanation: undefined as string | undefined,
+    },
+    {
+      key: 'bmr',
+      label: tr.bmrLabel,
+      value: `${formatNumber(Math.round(nutrition.bmr), locale)} ${units.kcal}`,
+      explanation: tr.bmrExplanation,
+    },
+    {
+      key: 'tdee',
+      label: tr.tdeeLabel,
+      value: `${formatNumber(Math.round(nutrition.tdee), locale)} ${units.kcal}`,
+      explanation: tr.tdeeExplanation,
+    },
+    {
+      key: 'goal',
+      label: tr.goalAdjustmentLabel,
+      value: `${formatNumber(nutrition.goalAdjustmentPercent, locale, {
+        signDisplay: 'exceptZero',
+        maximumFractionDigits: 0,
+      })}${units.percent}`,
+      explanation: tr.goalAdjustmentExplanation,
+    },
+    {
+      key: 'target',
+      label: tr.targetLabel,
+      value: `${formatNumber(Math.round(nutrition.recommendedTargetCalories), locale)} ${units.kcal}`,
+      explanation: undefined,
+    },
+    {
+      key: 'protein',
+      label: td.targets.protein,
+      value: `${formatNumber(nutrition.proteinGrams, locale)} ${units.g}`,
+      explanation: undefined,
+    },
+    {
+      key: 'carbs',
+      label: td.targets.carbs,
+      value: `${formatNumber(nutrition.carbGrams, locale)} ${units.g}`,
+      explanation: undefined,
+    },
+    {
+      key: 'fat',
+      label: td.targets.fat,
+      value: `${formatNumber(nutrition.fatGrams, locale)} ${units.g}`,
+      explanation: undefined,
+    },
+  ];
 
   const statCards = [
     {
@@ -133,11 +192,22 @@ export function Dashboard() {
         </Link>
       </header>
 
-      {targets.calorieFloorApplied ? (
-        <p className="mt-6 flex items-start gap-3 rounded-2xl border border-brand/30 bg-brand/10 px-4 py-3 text-sm leading-relaxed text-black/80">
-          <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0 text-brand" />
-          {td.floorNotice}
-        </p>
+      {nutrition.warnings.length > 0 ? (
+        <ul className="mt-6 space-y-3">
+          {nutrition.warnings.map((warning) => (
+            <li
+              key={warning}
+              className="flex items-start gap-3 rounded-2xl border border-brand/30 bg-brand/10 px-4 py-3 text-sm leading-relaxed text-black/80"
+            >
+              <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0 text-brand" />
+              <span>
+                {warning === 'calorieMinimumApplied'
+                  ? `${tr.warnings.calorieMinimum} ${td.floorNotice}`
+                  : tr.warnings.proteinCap}
+              </span>
+            </li>
+          ))}
+        </ul>
       ) : null}
 
       {/* Daily targets */}
@@ -183,6 +253,39 @@ export function Dashboard() {
           <MacroDonut targets={targets} />
         </div>
       </section>
+
+      {/* How the target was derived */}
+      <section className={cn(CARD, 'mt-4 p-6')} aria-labelledby="mc-results-title">
+        <h2 id="mc-results-title" className="text-lg font-bold text-black">
+          {tr.title}
+        </h2>
+        <dl className="mt-5 divide-y divide-black/10">
+          {breakdown.map((row) => (
+            <div
+              key={row.key}
+              className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3"
+            >
+              <dt className="text-sm text-black/60">
+                {row.label}
+                {row.explanation ? (
+                  <span className="mt-0.5 block text-xs leading-relaxed text-black/40">
+                    {row.explanation}
+                  </span>
+                ) : null}
+              </dt>
+              <dd className="font-mono text-sm font-semibold text-black">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-4 text-xs leading-relaxed text-black/45">
+          {fillTemplate(tr.macroCaloriesNote, {
+            kcal: `${formatNumber(nutrition.macroCalories, locale)} ${units.kcal}`,
+          })}
+        </p>
+      </section>
+
+      <HydrationPanel hydration={nutrition.hydration} />
+      <WalkingPanel walking={nutrition.walking} isWeightLoss={nutrition.goalMultiplier < 1} />
     </MotionCoreShell>
   );
 }
