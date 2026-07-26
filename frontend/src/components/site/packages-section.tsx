@@ -9,6 +9,7 @@ import {
 } from '@/components/site/package-audience-pill';
 import { PricingCards } from '@/components/site/pricing-cards';
 import { WhatYouGet } from '@/components/site/what-you-get';
+import { trackBeginCheckout } from '@/lib/analytics';
 import { startCheckout } from '@/lib/checkout';
 import { type PricingTierId } from '@/lib/payment-links';
 
@@ -28,7 +29,12 @@ export function PackagesSection() {
   // propagate to PricingCards, which re-enables the dialog.
   const handleAddToCart = useCallback(
     async (tier: PricingTierId, email: string) => {
-      const url = await startCheckout(audience, tier, email);
+      const { url, packageKey, priceSar } = await startCheckout(audience, tier, email);
+      // Report the funnel step before handing off. trackBeginCheckout never
+      // throws, so a blocked tag can't stop the redirect to StreamPay.
+      if (packageKey && typeof priceSar === 'number') {
+        trackBeginCheckout(packageKey, priceSar);
+      }
       window.location.href = url;
     },
     [audience],

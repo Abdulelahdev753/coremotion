@@ -4,6 +4,7 @@ import { Check, Download, Loader2, Mail } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
+import { trackPurchase } from '@/lib/analytics';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
@@ -39,6 +40,8 @@ type PaidStatus = {
   download_url: string;
   order_number?: string;
   file_name?: string;
+  package_key?: string;
+  price_sar?: number | null;
 };
 
 /**
@@ -73,10 +76,19 @@ export default function CheckoutSuccessPage() {
             download_url?: string;
             order_number?: string;
             file_name?: string;
+            package_key?: string;
+            price_sar?: number | null;
           };
           if (data.status === 'paid' && data.download_url) {
             setOrder(data as PaidStatus);
             setState('ready');
+            // Report the sale. Values come from the backend (order row +
+            // catalogue), never the URL, and trackPurchase de-duplicates per
+            // order so a refresh or a revisit from the emailed link can't
+            // double-count revenue.
+            if (data.order_number && data.package_key && typeof data.price_sar === 'number') {
+              trackPurchase(data.order_number, data.package_key, data.price_sar);
+            }
             return;
           }
           if (data.status === 'pending') {

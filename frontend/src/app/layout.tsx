@@ -45,6 +45,19 @@ const t = dictionaries[defaultLocale];
 
 const GA_MEASUREMENT_ID = "G-KGML0KGS03";
 
+// Consent Mode v2 is scoped to the regions that actually require prior consent
+// (EEA + UK). A blanket `denied` default would also gag the site's primary
+// audience in Saudi Arabia, where no such requirement applies — visitors there
+// would silently stop being measured. Region-scoped defaults keep SA fully
+// measured while EEA/UK visitors get cookieless pings until consent is granted.
+// If a consent banner is ever added, it should call
+// gtag('consent', 'update', {...}) once the visitor chooses.
+const EEA_UK_REGIONS = [
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR",
+  "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK",
+  "SI", "ES", "SE", "IS", "LI", "NO", "GB",
+];
+
 export const metadata: Metadata = {
   title: `${t.brand} — ${t.hero.headlineLead} ${t.hero.headlineAccent}`,
   description: t.hero.subheadline,
@@ -87,6 +100,19 @@ export default function RootLayout({
         <Script id="google-analytics" strategy="afterInteractive">
           {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: 'denied',
+  region: [${EEA_UK_REGIONS.map((r) => `'${r}'`).join(',')}]
+});
+gtag('consent', 'default', {
+  ad_storage: 'granted',
+  ad_user_data: 'granted',
+  ad_personalization: 'granted',
+  analytics_storage: 'granted'
+});
 gtag('js', new Date());
 gtag('config', '${GA_MEASUREMENT_ID}');`}
         </Script>

@@ -101,7 +101,14 @@ checkoutRouter.post('/checkout/start', async (req, res) => {
       customerEmail,
     });
 
-    return res.json({ url: link.url, orderNumber });
+    // packageKey/priceSar let the frontend report begin_checkout to GA4 with
+    // the price actually charged rather than the rounded figure on the card.
+    return res.json({
+      url: link.url,
+      orderNumber,
+      packageKey: pkg.key,
+      priceSar: pkg.priceSar,
+    });
   } catch (err) {
     console.error('checkout/start failed:', err);
     return res.status(500).json({ error: 'Could not start checkout. Please try again.' });
@@ -184,11 +191,17 @@ checkoutRouter.get('/checkout/status', async (req, res) => {
     if (await confirmPaid(order)) {
       // Fire-and-forget email, same as the return redirect (no-op if sent).
       void maybeSendDeliveryEmail(order.order_token);
+      // package_key/price_sar feed the GA4 purchase event on the success page.
+      // Read from the order row + catalogue (never the client) so reported
+      // revenue can't be tampered with via the URL.
+      const paidPkg = PACKAGES[order.package_key as PackageConfig['key']];
       return res.json({
         status: 'paid',
         download_url: buildDownloadUrl(order.order_token),
         order_number: order.order_number,
         file_name: resolvePackageFile(order).object,
+        package_key: order.package_key,
+        price_sar: paidPkg?.priceSar ?? null,
       });
     }
     return res.json({ status: 'pending' });

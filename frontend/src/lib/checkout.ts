@@ -8,6 +8,15 @@ import type { PricingTierId } from '@/lib/payment-links';
  */
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
+export type StartedCheckout = {
+  /** StreamPay hosted-checkout URL to redirect the buyer to. */
+  url: string;
+  /** Catalogue key (`men-elite`), used for GA4 ecommerce reporting. */
+  packageKey?: string;
+  /** Price actually charged, in SAR. */
+  priceSar?: number;
+};
+
 /**
  * Ask the backend to mint a single-use StreamPay checkout link for the chosen
  * package and return its hosted-checkout URL. The caller redirects the buyer to
@@ -18,7 +27,7 @@ export async function startCheckout(
   tier: PricingTierId,
   /** Buyer's email — the backend sends the purchased PDF here after payment. */
   email: string,
-): Promise<string> {
+): Promise<StartedCheckout> {
   const res = await fetch(`${API_BASE}/api/checkout/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -27,9 +36,13 @@ export async function startCheckout(
   if (!res.ok) {
     throw new Error(`Failed to start checkout (${res.status})`);
   }
-  const data = (await res.json()) as { url?: string };
+  const data = (await res.json()) as {
+    url?: string;
+    packageKey?: string;
+    priceSar?: number;
+  };
   if (!data.url) {
     throw new Error('Checkout did not return a URL');
   }
-  return data.url;
+  return { url: data.url, packageKey: data.packageKey, priceSar: data.priceSar };
 }
