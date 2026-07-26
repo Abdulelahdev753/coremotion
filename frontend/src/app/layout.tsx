@@ -114,6 +114,22 @@ gtag('consent', 'default', {
   analytics_storage: 'granted'
 });
 gtag('js', new Date());
+// Resolve the visitor's saved language the same way the paint-gate above does,
+// and attach it before config so it rides along with the very first page_view.
+// The provider also calls setSiteLanguage on locale changes, but its mount
+// effect runs before this afterInteractive script defines gtag — so without
+// this, every visitor who never toggles the language would go unlabelled.
+var __siteLang = '${defaultLocale}';
+try {
+  var __s = null;
+  try { __s = localStorage.getItem('NEXT_LOCALE'); } catch (e) {}
+  if (!__s) {
+    var __m = document.cookie.match(/(?:^|;\\s*)NEXT_LOCALE=([^;]+)/);
+    __s = __m ? __m[1] : null;
+  }
+  if (__s === 'ar' || __s === 'en') __siteLang = __s;
+} catch (e) {}
+gtag('set', 'user_properties', { site_language: __siteLang });
 gtag('config', '${GA_MEASUREMENT_ID}');`}
         </Script>
       </body>

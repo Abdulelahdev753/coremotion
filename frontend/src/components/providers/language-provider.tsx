@@ -20,6 +20,7 @@ import {
   type Direction,
   type Locale,
 } from '@/i18n/config';
+import { setSiteLanguage } from '@/lib/analytics';
 import { dictionaries, type Dictionary } from '@/i18n/dictionaries';
 
 type LanguageContextValue = {
@@ -118,6 +119,9 @@ export function LanguageProvider({
     const root = document.documentElement;
     root.lang = locale;
     root.dir = getDirection(locale);
+    // Report the language actually being read (covers the restore above and
+    // runtime toggles), so Arabic vs English can be compared in GA4.
+    setSiteLanguage(locale);
     // Skip the initial run (still the default locale); reveal only once a
     // restore has landed us on the final locale. Runtime toggles are no-ops
     // here because the gate was already lifted on mount.

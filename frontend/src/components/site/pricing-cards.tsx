@@ -6,6 +6,7 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 import { useLanguage } from '@/components/providers/language-provider';
 import { CheckoutEmailDialog } from '@/components/site/checkout-email-dialog';
 import type { PackageAudience } from '@/components/site/package-audience-pill';
+import { trackAddToCart } from '@/lib/analytics';
 
 /**
  * Visual + non-translatable config per tier. The copy (names, features, button
@@ -119,6 +120,9 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
                     className="tier-card__cta tier-card__cta--add"
                     onClick={() => {
                       if (!onAddToCart || loadingTier) return;
+                      // Record the intent before the dialog opens, so shoppers
+                      // who abandon at the email ask are still counted.
+                      trackAddToCart(audience, style.key);
                       // Ask for the buyer's email first; checkout starts on submit.
                       setEmailTier(style.key);
                     }}
