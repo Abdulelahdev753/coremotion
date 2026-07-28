@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 
 import { LanguageProvider } from "@/components/providers/language-provider";
+import { WhatsappFab } from "@/components/site/whatsapp-fab";
 import { defaultLocale, getDirection } from "@/i18n/config";
 import { dictionaries } from "@/i18n/dictionaries";
 
@@ -88,7 +89,13 @@ export default function RootLayout({
               "(function(){try{var k='NEXT_LOCALE',d='ar',s=null;try{s=localStorage.getItem(k)}catch(e){}if(!s){var m=document.cookie.match(/(?:^|;\\s*)NEXT_LOCALE=([^;]+)/);s=m?m[1]:null}if(s&&s!==d&&(s==='ar'||s==='en')){var el=document.documentElement;el.setAttribute('data-locale-pending','');setTimeout(function(){el.removeAttribute('data-locale-pending')},1500)}}catch(e){}})();",
           }}
         />
-        <LanguageProvider initialLocale={locale}>{children}</LanguageProvider>
+        {/* The support button lives inside the provider (it reads the locale for
+            its label and prefilled message) and after {children} so it comes
+            last in reading order rather than ahead of the page content. */}
+        <LanguageProvider initialLocale={locale}>
+          {children}
+          <WhatsappFab />
+        </LanguageProvider>
         {/* Google Analytics (gtag.js). afterInteractive keeps the tag off the
             critical path so it can't delay hydration or first paint. GA4's
             enhanced measurement tracks History API changes, so client-side

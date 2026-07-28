@@ -58,6 +58,23 @@ export type Dictionary = {
     contactLead: string;
     contactCta: string;
   };
+  /**
+   * Customer support over WhatsApp — the floating button plus the opening
+   * messages we prefill for the buyer at each entry point, so support receives
+   * the context instead of an empty "hi".
+   */
+  support: {
+    /** Accessible name and hover label on the floating WhatsApp button. */
+    whatsappLabel: string;
+    /** Generic button label wherever support is offered as an action. */
+    cta: string;
+    /** Prefilled opener for a pre-sales question. */
+    generalMessage: string;
+    /** Prefilled opener when a payment was cancelled or declined. */
+    paymentIssueMessage: string;
+    /** Prefilled opener when an order is missing or the download never arrived. */
+    orderIssueMessage: string;
+  };
   /** Men/Women selector that drives both the pricing and "what you'll get" sections. */
   packages: {
     /** Group label for assistive tech on the audience pill. */
@@ -483,6 +500,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
       ],
       contactLead: 'لم تجد إجابة سؤالك؟',
       contactCta: 'راسلنا على واتساب',
+    },
+    support: {
+      whatsappLabel: 'تواصل معنا على واتساب',
+      cta: 'تواصل مع الدعم',
+      generalMessage: 'السلام عليكم، لدي استفسار عن باقات UltraFit.',
+      paymentIssueMessage:
+        'السلام عليكم، واجهت مشكلة أثناء إتمام الدفع في UltraFit وأحتاج المساعدة.',
+      orderIssueMessage:
+        'السلام عليكم، أتممت الدفع في UltraFit ولم يصلني البرنامج. هل يمكنكم المساعدة؟',
     },
     packages: {
       audienceLabel: 'اختر فئة الباقات',
@@ -1055,6 +1081,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
       ],
       contactLead: "Can't find your answer?",
       contactCta: 'Message us on WhatsApp',
+    },
+    support: {
+      whatsappLabel: 'Chat with us on WhatsApp',
+      cta: 'Contact support',
+      generalMessage: "Hi, I have a question about UltraFit's packages.",
+      paymentIssueMessage:
+        'Hi, I ran into a problem completing my payment on UltraFit and need some help.',
+      orderIssueMessage:
+        "Hi, I completed my UltraFit payment but haven't received my program. Can you help?",
     },
     packages: {
       audienceLabel: 'Choose package audience',

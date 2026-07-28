@@ -1,11 +1,12 @@
 'use client';
 
-import { Check, Download, Loader2, Mail } from 'lucide-react';
+import { Check, Download, Loader2, Mail, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
-import { trackPurchase } from '@/lib/analytics';
+import { trackContactSupport, trackPurchase } from '@/lib/analytics';
+import { whatsappUrl } from '@/lib/site-links';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
@@ -51,7 +52,7 @@ type PaidStatus = {
  * Pending orders are handed to /checkout/processing/ which polls until ready.
  */
 export default function CheckoutSuccessPage() {
-  const { locale, dir } = useLanguage();
+  const { locale, dir, t: dict } = useLanguage();
   const t = COPY[locale];
   const [state, setState] = useState<'loading' | 'ready' | 'notfound'>('loading');
   const [order, setOrder] = useState<PaidStatus | null>(null);
@@ -173,6 +174,19 @@ export default function CheckoutSuccessPage() {
           <h1 className="checkout-result__title">{t.notFoundTitle}</h1>
           <p className="checkout-result__body">{t.notFoundBody}</p>
           <div className="checkout-result__actions">
+            {/* This state is reached by someone who believes they have paid, so
+                the copy's "contact support" has to be an actual way out. */}
+            <a
+              className="checkout-result__btn checkout-result__btn--primary"
+              href={whatsappUrl(dict.support.orderIssueMessage)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackContactSupport('checkout_order_not_found')}
+            >
+              <MessageCircle size={18} strokeWidth={2.5} aria-hidden />
+              {dict.support.cta}
+            </a>
+            {/* Link (not <a>) so the basePath of the Pages build is applied. */}
             <Link className="checkout-result__btn checkout-result__btn--ghost" href="/">
               {t.home}
             </Link>

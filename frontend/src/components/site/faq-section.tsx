@@ -7,7 +7,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { WHATSAPP_URL } from '@/lib/site-links';
+import { trackContactSupport } from '@/lib/analytics';
+import { whatsappUrl } from '@/lib/site-links';
 
 /**
  * FAQ accordion answering the UltraFit offer. Replaces the old "Get the guide"
@@ -59,9 +60,10 @@ export function FaqSection() {
         <p className="mt-10 text-center text-sm text-black/50">
           {f.contactLead}{' '}
           <a
-            href={WHATSAPP_URL}
+            href={whatsappUrl(t.support.generalMessage)}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackContactSupport('faq')}
             className="font-medium text-brand underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
           >
             {f.contactCta}

@@ -24,8 +24,53 @@ import {
   type OrderRow,
 } from '../lib/supabase';
 import { maybeSendDeliveryEmail, isPlausibleEmail, buildDownloadUrl } from '../lib/delivery';
+import { whatsappUrl, WHATSAPP_DISPLAY_NUMBER } from '../config/support';
 
 export const checkoutRouter = Router();
+
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
+  );
+
+/**
+ * Buyer-facing "your link expired" page.
+ *
+ * Served as HTML rather than the plain string it used to be so that "contact
+ * support" is a tappable WhatsApp link: this is reached from a download link in
+ * an email, usually on a phone, where a plain-text phone number is a dead end.
+ * Bilingual because the request carries no reliable locale signal. The order
+ * number is prefilled into the chat so support can find the purchase straight
+ * away.
+ */
+function expiredDownloadPage(orderNumber: string | null): string {
+  const ref = orderNumber ? escapeHtml(orderNumber) : '';
+  const chat = whatsappUrl(
+    orderNumber
+      ? `السلام عليكم، رابط تحميل طلبي في UltraFit انتهت صلاحيته. رقم الطلب: ${orderNumber}`
+      : 'السلام عليكم، رابط تحميل طلبي في UltraFit انتهت صلاحيته.',
+  );
+  return `<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>انتهت صلاحية الرابط — UltraFit</title>
+<style>
+body{margin:0;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:2rem;text-align:center;background:#f0f2f2;color:#0a0b0d;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+p{margin:0;max-width:30rem;line-height:1.7;opacity:.8}
+.ref{font-weight:700;opacity:1}
+a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 22px;border-radius:12px;background:#16924e;color:#fff;font-weight:800;text-decoration:none}
+</style></head><body>
+<h1 style="margin:0;font-size:1.5rem">انتهت صلاحية رابط التحميل</h1>
+<p>راسلنا على واتساب وسنعيد إرسال برنامجك.</p>
+<!-- Every Latin/numeric run carries its own dir="ltr": inside this RTL
+     document the bidi algorithm otherwise flips trailing punctuation to the
+     wrong end and reorders the phone number's digit groups. -->
+<p dir="ltr">Your download link has expired — message us on WhatsApp and we'll resend your program.</p>
+${ref ? `<p class="ref">رقم الطلب / Order: <span dir="ltr">${ref}</span></p>` : ''}
+<a href="${chat}">تواصل مع الدعم · Contact support</a>
+<p dir="ltr" style="font-size:.85rem">${WHATSAPP_DISPLAY_NUMBER}</p>
+</body></html>`;
+}
 
 /** Human-friendly, collision-resistant order number, e.g. `UF-260629-K7Q4M`. */
 function generateOrderNumber(): string {
@@ -163,7 +208,8 @@ checkoutRouter.get('/download', async (req, res) => {
     if (Date.now() - paidAtMs > getEnv().emailLinkTtlSeconds * 1000) {
       return res
         .status(410)
-        .send('This download link has expired. Please contact support with your order number.');
+        .type('html')
+        .send(expiredDownloadPage(order.order_number ?? null));
     }
 
     const { bucket, object } = resolvePackageFile(order);

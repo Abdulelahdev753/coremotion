@@ -63,6 +63,16 @@ export function setSiteLanguage(locale: string): void {
   }
 }
 
+/**
+ * Visitor opened a WhatsApp support chat. `source` names the entry point
+ * ('floating_button', 'faq', 'checkout_failed', …) so the reports can tell an
+ * idle pre-sales question apart from someone stuck mid-checkout — the second
+ * is a conversion blocker, the first is not.
+ */
+export function trackContactSupport(source: string): void {
+  track('contact_support', { method: 'whatsapp', source });
+}
+
 /** One catalogue line item in the shape GA4 ecommerce reports expect. */
 function toItem(packageKey: string, priceSar: number): GtagParams {
   // package_key is `<audience>-<tier>`, e.g. "men-elite".

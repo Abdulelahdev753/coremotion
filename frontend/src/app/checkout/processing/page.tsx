@@ -1,9 +1,11 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
+import { Loader2, MessageCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
+import { trackContactSupport } from '@/lib/analytics';
+import { whatsappUrl } from '@/lib/site-links';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 const POLL_INTERVAL_MS = 2000;
@@ -30,7 +32,7 @@ const COPY = {
  * and hands off to /checkout/success/ as soon as the payment is confirmed.
  */
 export default function CheckoutProcessingPage() {
-  const { locale, dir } = useLanguage();
+  const { locale, dir, t: dict } = useLanguage();
   const t = COPY[locale];
   const [timedOut, setTimedOut] = useState(false);
 
@@ -99,6 +101,22 @@ export default function CheckoutProcessingPage() {
       <p style={{ maxWidth: '28rem', opacity: 0.8, lineHeight: 1.6, margin: 0 }}>
         {timedOut ? t.timeout : t.body}
       </p>
+      {/* Only once polling has given up: until then the download is still
+          expected to arrive on its own and support has nothing to fix. The
+          button classes are global (globals.css), so they work outside the
+          .checkout-result wrapper the other result pages use. */}
+      {timedOut && (
+        <a
+          className="checkout-result__btn checkout-result__btn--primary"
+          href={whatsappUrl(dict.support.orderIssueMessage)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackContactSupport('checkout_processing_timeout')}
+        >
+          <MessageCircle size={18} strokeWidth={2.5} aria-hidden />
+          {dict.support.cta}
+        </a>
+      )}
     </main>
   );
 }

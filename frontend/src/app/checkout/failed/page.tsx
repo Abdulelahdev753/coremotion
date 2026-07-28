@@ -4,7 +4,8 @@ import { MessageCircle, RotateCcw, X } from 'lucide-react';
 import Link from 'next/link';
 
 import { useLanguage } from '@/components/providers/language-provider';
-import { WHATSAPP_URL } from '@/lib/site-links';
+import { trackContactSupport } from '@/lib/analytics';
+import { whatsappUrl } from '@/lib/site-links';
 
 const COPY = {
   ar: {
@@ -23,7 +24,7 @@ const COPY = {
 
 /** Landing for StreamPay's failure redirect — reassure and route back to buy. */
 export default function CheckoutFailedPage() {
-  const { locale, dir } = useLanguage();
+  const { locale, dir, t: dict } = useLanguage();
   const t = COPY[locale];
 
   return (
@@ -42,9 +43,10 @@ export default function CheckoutFailedPage() {
           </Link>
           <a
             className="checkout-result__btn checkout-result__btn--ghost"
-            href={WHATSAPP_URL}
+            href={whatsappUrl(dict.support.paymentIssueMessage)}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
+            onClick={() => trackContactSupport('checkout_failed')}
           >
             <MessageCircle size={18} strokeWidth={2.5} aria-hidden />
             {t.support}
