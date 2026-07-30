@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Download, Loader2, Mail, MessageCircle } from 'lucide-react';
+import { Check, Clock, Download, Loader2, Mail, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
@@ -22,6 +22,9 @@ const COPY = {
     home: 'العودة للرئيسية',
     notFoundTitle: 'لم نعثر على الطلب',
     notFoundBody: 'تحقق من الرابط، أو تواصل مع الدعم إذا كنت متأكدًا من إتمام الدفع.',
+    expiredTitle: 'انتهت صلاحية رابط التحميل',
+    expiredBody:
+      'برنامجك مرفق في رسالة البريد التي أرسلناها لك. راسلنا على واتساب وسنعيد إرسال البرنامج.',
   },
   en: {
     loading: 'Confirming your payment…',
@@ -34,6 +37,9 @@ const COPY = {
     home: 'Back to home',
     notFoundTitle: 'Order not found',
     notFoundBody: "Check the link, or contact support if you're sure the payment went through.",
+    expiredTitle: 'Your download link has expired',
+    expiredBody:
+      "Your program is attached to the email we sent you. Message us on WhatsApp and we'll resend it.",
   },
 } as const;
 
@@ -50,12 +56,18 @@ type PaidStatus = {
  * Post-payment landing: confirms the order, auto-starts the file download, and
  * leaves the buyer a manual download button plus the email-delivery reminder.
  * Pending orders are handed to /checkout/processing/ which polls until ready.
+ *
+ * Reached both straight from the payment redirect and from a revisit hours
+ * later, so it also renders the `expired` status the backend returns once the
+ * download window has closed — otherwise a stale bookmark would show a download
+ * button that 410s on click.
  */
 export default function CheckoutSuccessPage() {
   const { locale, dir, t: dict } = useLanguage();
   const t = COPY[locale];
-  const [state, setState] = useState<'loading' | 'ready' | 'notfound'>('loading');
+  const [state, setState] = useState<'loading' | 'ready' | 'expired' | 'notfound'>('loading');
   const [order, setOrder] = useState<PaidStatus | null>(null);
+  const [expiredRef, setExpiredRef] = useState<string | null>(null);
   const autoStarted = useRef(false);
 
   useEffect(() => {
@@ -95,6 +107,13 @@ export default function CheckoutSuccessPage() {
           }
           if (data.status === 'pending') {
             window.location.replace(`/checkout/processing/?token=${encodeURIComponent(token)}`);
+            return;
+          }
+          if (data.status === 'expired') {
+            // No trackPurchase here: the sale was already reported when this
+            // order was first confirmed, and this is only a late revisit.
+            setExpiredRef(data.order_number ?? null);
+            setState('expired');
             return;
           }
         }
@@ -166,6 +185,37 @@ export default function CheckoutSuccessPage() {
             {t.emailNote}
           </p>
           <p className="checkout-result__hint">{t.manual}</p>
+        </div>
+      )}
+
+      {state === 'expired' && (
+        <div className="checkout-result__card">
+          <span className="checkout-result__badge checkout-result__badge--expired" aria-hidden>
+            <Clock size={32} strokeWidth={2.5} />
+          </span>
+          <h1 className="checkout-result__title">{t.expiredTitle}</h1>
+          {expiredRef && (
+            <p className="checkout-result__order" dir="ltr">
+              {t.order}: <strong>{expiredRef}</strong>
+            </p>
+          )}
+          <p className="checkout-result__body">{t.expiredBody}</p>
+          <div className="checkout-result__actions">
+            <a
+              className="checkout-result__btn checkout-result__btn--primary"
+              href={whatsappUrl(dict.support.orderIssueMessage)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackContactSupport('checkout_link_expired')}
+            >
+              <MessageCircle size={18} strokeWidth={2.5} aria-hidden />
+              {dict.support.cta}
+            </a>
+            {/* Link (not <a>) so the basePath of the Pages build is applied. */}
+            <Link className="checkout-result__btn checkout-result__btn--ghost" href="/">
+              {t.home}
+            </Link>
+          </div>
         </div>
       )}
 

@@ -10,6 +10,11 @@
  * single-use link's collected amount), so it never leaks to non-payers and never
  * depends on the webhook having arrived yet. The PDF is proxied through this
  * server (never a Supabase signed URL) so buyers only ever see our own domain.
+ *
+ * Access also expires. Every route that can hand a buyer their file — the
+ * emailed link, the post-payment redirect and the status poll the success page
+ * reads — checks the same download window (lib/link-window) against `paid_at`,
+ * so a replayed URL cannot outlive it on one path while dying on another.
  */
 import crypto from 'crypto';
 import { Router } from 'express';
@@ -24,9 +29,14 @@ import {
   type OrderRow,
 } from '../lib/supabase';
 import { maybeSendDeliveryEmail, isPlausibleEmail, buildDownloadUrl } from '../lib/delivery';
+import { isWithinDownloadWindow } from '../lib/link-window';
 import { whatsappUrl, WHATSAPP_DISPLAY_NUMBER } from '../config/support';
 
 export const checkoutRouter = Router();
+
+/** Is this paid order still inside its download window? */
+const isLive = (order: OrderRow) =>
+  isWithinDownloadWindow(order.paid_at, getEnv().downloadLinkTtlSeconds);
 
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (c) =>
@@ -170,6 +180,16 @@ checkoutRouter.get('/checkout/return', async (req, res) => {
     }
 
     if (await confirmPaid(order)) {
+      // A real buyer reaches this redirect seconds after paying, so an expired
+      // window here means the URL is being replayed long afterwards. Answer it
+      // the same way the emailed link does rather than bouncing to a success
+      // page whose download is already dead.
+      if (!isLive(order)) {
+        return res
+          .status(410)
+          .type('html')
+          .send(expiredDownloadPage(order.order_number ?? null));
+      }
       // Fire-and-forget: email the PDF too (no-op if already sent). Never
       // blocks the redirect — maybeSendDeliveryEmail handles its own errors.
       void maybeSendDeliveryEmail(order.order_token);
@@ -193,8 +213,9 @@ checkoutRouter.get('/checkout/return', async (req, res) => {
 /**
  * Buyer-facing download. Streams the PDF through our server so the URL never
  * exposes Supabase (project ref, bucket names, signed-URL tokens). The order
- * token is single-purchase and unguessable (UUID); the link stays valid for
- * `emailLinkTtlSeconds` after payment to match the email's "7 days" promise.
+ * token is single-purchase and unguessable (UUID); the link stays live only for
+ * `downloadLinkTtlSeconds` after payment, which is also the window the delivery
+ * email states.
  */
 checkoutRouter.get('/download', async (req, res) => {
   try {
@@ -204,8 +225,7 @@ checkoutRouter.get('/download', async (req, res) => {
       return res.status(404).send('Download not found.');
     }
 
-    const paidAtMs = order.paid_at ? Date.parse(order.paid_at) : Date.now();
-    if (Date.now() - paidAtMs > getEnv().emailLinkTtlSeconds * 1000) {
+    if (!isLive(order)) {
       return res
         .status(410)
         .type('html')
@@ -229,12 +249,25 @@ checkoutRouter.get('/download', async (req, res) => {
 });
 
 checkoutRouter.get('/checkout/status', async (req, res) => {
+  // This answer is time-sensitive — the same token returns `paid` before the
+  // download window closes and `expired` after — so it must never be served
+  // from a cache. Without this, Express's ETag alone leaves the freshness
+  // heuristic to the browser, which could keep showing a download button whose
+  // link has already died.
+  res.setHeader('Cache-Control', 'no-store');
   try {
     const token = typeof req.query.token === 'string' ? req.query.token : '';
     const order = token ? await getOrderByToken(token) : null;
     if (!order) return res.status(404).json({ status: 'unknown' });
 
     if (await confirmPaid(order)) {
+      // Past the window there is no link left to hand out, so the success page
+      // is told to show its expired state instead of a button that 410s. No
+      // delivery email either: its copy promises a live link, and sending one
+      // with a dead link would be worse than the WhatsApp route out.
+      if (!isLive(order)) {
+        return res.json({ status: 'expired', order_number: order.order_number });
+      }
       // Fire-and-forget email, same as the return redirect (no-op if sent).
       void maybeSendDeliveryEmail(order.order_token);
       // package_key/price_sar feed the GA4 purchase event on the success page.

@@ -15,5 +15,8 @@
     "declaration": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  // Tests are run by `node --test` (type stripping, not tsc) and import with
+  // explicit .ts extensions, so they are type-checked by tsconfig.test.json
+  // instead of being compiled into dist/.
+  "exclude": ["node_modules", "dist", "src/**/*.test.mts"]
 }

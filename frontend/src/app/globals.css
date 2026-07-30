@@ -902,6 +902,14 @@ html[lang="ar"] .tier-card__price {
   color: #f87171;
 }
 
+/* An expired download window is not a failed payment — amber, not red, so the
+   buyer isn't told their purchase went wrong when only the link timed out. */
+.checkout-result__badge--expired {
+  background: rgba(217, 119, 6, 0.12);
+  border: 1px solid rgba(217, 119, 6, 0.4);
+  color: #b45309;
+}
+
 .checkout-result__title {
   margin: 0 0 8px;
   font-size: 1.35rem;

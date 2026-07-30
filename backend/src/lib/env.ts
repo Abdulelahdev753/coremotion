@@ -4,6 +4,7 @@
  * exactly once so the rest of the app never touches `process.env` directly and
  * a missing var fails fast at boot rather than mid-checkout.
  */
+import { DEFAULT_DOWNLOAD_LINK_TTL_SECONDS } from './link-window';
 
 function required(name: string): string {
   const value = process.env[name];
@@ -31,8 +32,12 @@ export type Env = {
   resendApiKey: string;
   /** RFC 5322 From for delivery emails, e.g. `UltraFit <noreply@ultrafits.com>`. */
   emailFrom: string;
-  /** How long the /api/download link stays valid after payment. */
-  emailLinkTtlSeconds: number;
+  /**
+   * How long the download link stays valid after payment. Enforced by
+   * /api/download, /api/checkout/return and /api/checkout/status, and worded
+   * into the delivery email — see lib/link-window.
+   */
+  downloadLinkTtlSeconds: number;
 };
 
 /**
@@ -48,8 +53,24 @@ export function getEnv(): Env {
   // StreamPay uses HTTP Basic: base64("api-key:api-secret") in the x-api-key header.
   const streamApiKeyToken = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
 
-  // Download links stay valid for 7 days after payment, matching the email copy.
-  const emailTtl = Number.parseInt(optional('EMAIL_LINK_TTL_SECONDS', '604800'), 10);
+  // Download links stay valid for 2 hours after payment; the email copy is
+  // generated from this same number (lib/link-window) so the two can't drift.
+  //
+  // Read under a new name: deployed environments still carry the old
+  // EMAIL_LINK_TTL_SECONDS=604800 from when the window was 7 days, and silently
+  // honouring it would keep links alive for a week after this change ships.
+  if (process.env.EMAIL_LINK_TTL_SECONDS) {
+    console.warn(
+      'EMAIL_LINK_TTL_SECONDS is no longer read (renamed to DOWNLOAD_LINK_TTL_SECONDS) — ' +
+        'delete it from the environment to avoid confusion.',
+    );
+  }
+  const ttl = Number.parseInt(
+    optional('DOWNLOAD_LINK_TTL_SECONDS', String(DEFAULT_DOWNLOAD_LINK_TTL_SECONDS)),
+    10,
+  );
+  const downloadLinkTtlSeconds =
+    Number.isFinite(ttl) && ttl > 0 ? ttl : DEFAULT_DOWNLOAD_LINK_TTL_SECONDS;
 
   cached = {
     streamApiBase: optional('STREAM_API_BASE', 'https://stream-app-service.streampay.sa'),
@@ -60,7 +81,10 @@ export function getEnv(): Env {
     publicBaseUrl: required('PUBLIC_BASE_URL').replace(/\/$/, ''),
     resendApiKey: required('RESEND_API_KEY'),
     emailFrom: optional('EMAIL_FROM', 'UltraFit <noreply@ultrafits.com>'),
-    emailLinkTtlSeconds: Number.isFinite(emailTtl) && emailTtl > 0 ? emailTtl : 604800,
+    downloadLinkTtlSeconds,
   };
+  // Logged once (getEnv caches) so the window in force is verifiable from the
+  // deployment logs rather than inferred from which env vars happen to be set.
+  console.log(`Download link window: ${downloadLinkTtlSeconds}s`);
   return cached;
 }

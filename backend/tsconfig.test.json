@@ -1,0 +1,15 @@
+{
+  // Type-checks the `node --test` suites, which the build config excludes.
+  // They are ESM (.mts) and import source files by their real .ts path because
+  // Node's type stripping does not remap extensions the way a bundler would.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    // Explicit because TS 6 does not auto-include @types for this program, and
+    // without it every `node:` builtin import in the suites fails to resolve.
+    "types": ["node"]
+  },
+  "include": ["src/**/*.test.mts"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -5,11 +5,14 @@
  * calls `maybeSendDeliveryEmail`; an atomic claim on `delivery_email_sent_at`
  * guarantees the buyer gets exactly one email no matter which path confirms
  * first or how many times StreamPay retries the webhook. The PDF (~50 KB) is
- * attached directly, with a 7-day download link (proxied through our own
- * /api/download endpoint, so it never exposes Supabase) as a fallback in the
- * body. A failed send releases the claim so the next confirmation retries.
+ * attached directly — that attachment is the buyer's permanent copy — with a
+ * short-lived download link (proxied through our own /api/download endpoint, so
+ * it never exposes Supabase) as a fallback in the body. The link's stated
+ * validity is generated from the TTL the endpoints enforce, never written by
+ * hand. A failed send releases the claim so the next confirmation retries.
  */
 import { getEnv } from './env';
+import { formatDuration } from './link-window';
 import { PACKAGES, type PackageConfig } from '../config/packages';
 import {
   getOrderByToken,
@@ -42,19 +45,34 @@ function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
-/** Bilingual (AR-first) order-delivery email. Kept inline: one message, no templates. */
-function buildEmail(order: OrderRow, pkg: PackageConfig, downloadUrl: string) {
+/**
+ * Bilingual (AR-first) order-delivery email. Kept inline: one message, no
+ * templates.
+ *
+ * Takes `ttlSeconds` rather than reading the env itself so the wording of the
+ * link's validity can be asserted in a unit test — this copy is a promise to a
+ * paying customer, and it has to be provable that it states the window the
+ * endpoints actually enforce.
+ */
+export function buildEmail(
+  order: OrderRow,
+  pkg: PackageConfig,
+  downloadUrl: string,
+  ttlSeconds: number,
+) {
   const subject = `برنامجك جاهز — Your UltraFit program (${order.order_number})`;
   const greetName = order.customer_name ? ` ${order.customer_name}` : '';
+  // e.g. "ساعتين" / "2 hours" — the same TTL the download endpoints enforce.
+  const window = formatDuration(ttlSeconds);
 
   const text = [
     `شكراً لشرائك${greetName}!`,
-    `برنامج ${pkg.label} جاهز — ستجده مرفقاً بهذه الرسالة (PDF).`,
-    `رابط تحميل إضافي (صالح لمدة 7 أيام): ${downloadUrl}`,
+    `برنامج ${pkg.label} جاهز — ستجده مرفقاً بهذه الرسالة (PDF). احتفظ بالمرفق فهو نسختك الدائمة.`,
+    `رابط تحميل إضافي (صالح لمدة ${window.ar} فقط): ${downloadUrl}`,
     ``,
     `Thank you for your purchase${greetName}!`,
-    `Your ${pkg.label} program is attached to this email as a PDF.`,
-    `Backup download link (valid for 7 days): ${downloadUrl}`,
+    `Your ${pkg.label} program is attached to this email as a PDF — keep the attachment, it's your permanent copy.`,
+    `Backup download link (valid for ${window.en} only): ${downloadUrl}`,
     ``,
     `Order ${order.order_number} — UltraFit (ultrafits.com)`,
   ].join('\n');
@@ -65,15 +83,15 @@ function buildEmail(order: OrderRow, pkg: PackageConfig, downloadUrl: string) {
     <p style="color:#666;margin:0 0 24px">Order ${escapeHtml(order.order_number)}</p>
     <div dir="rtl" style="text-align:right;margin-bottom:24px">
       <p>شكراً لشرائك${escapeHtml(greetName)}!</p>
-      <p>برنامج <strong>${escapeHtml(pkg.label)}</strong> جاهز — ستجده مرفقاً بهذه الرسالة (PDF).</p>
-      <p>يمكنك أيضاً تحميله من الرابط التالي (صالح لمدة 7 أيام):</p>
+      <p>برنامج <strong>${escapeHtml(pkg.label)}</strong> جاهز — ستجده مرفقاً بهذه الرسالة (PDF). احتفظ بالمرفق فهو نسختك الدائمة.</p>
+      <p>يمكنك أيضاً تحميله من الرابط التالي (صالح لمدة <strong>${escapeHtml(window.ar)}</strong> فقط):</p>
     </div>
     <p style="text-align:center;margin:0 0 24px">
       <a href="${downloadUrl}" style="display:inline-block;background:#d6ec1b;color:#111;font-weight:700;padding:12px 28px;border-radius:999px;text-decoration:none">تحميل البرنامج — Download PDF</a>
     </p>
     <div style="margin-bottom:24px">
       <p>Thank you for your purchase${escapeHtml(greetName)}!</p>
-      <p>Your <strong>${escapeHtml(pkg.label)}</strong> program is attached to this email as a PDF. You can also use the button above (link valid for 7 days).</p>
+      <p>Your <strong>${escapeHtml(pkg.label)}</strong> program is attached to this email as a PDF — keep the attachment, it's your permanent copy. You can also use the button above (link valid for ${escapeHtml(window.en)} only).</p>
     </div>
     <p style="color:#999;font-size:12px">UltraFit — ultrafits.com</p>
   </div>`;
@@ -144,7 +162,12 @@ export async function maybeSendDeliveryEmail(orderToken: string): Promise<void> 
     const pdf = await downloadObject(bucket, object);
     const downloadUrl = buildDownloadUrl(order.order_token);
 
-    const { subject, text, html } = buildEmail(order, pkg ?? fallbackPkg(order), downloadUrl);
+    const { subject, text, html } = buildEmail(
+      order,
+      pkg ?? fallbackPkg(order),
+      downloadUrl,
+      getEnv().downloadLinkTtlSeconds,
+    );
     const emailId = await sendViaResend({
       to: order.customer_email!.trim(),
       subject,
