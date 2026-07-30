@@ -43,39 +43,63 @@ const escapeHtml = (value: string) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
   );
 
+/** Copy per reason a download can't be served. `chat` prefills the WhatsApp message. */
+const DOWNLOAD_ISSUE_COPY = {
+  expired: {
+    title: 'انتهت صلاحية رابط التحميل',
+    ar: 'راسلنا على واتساب وسنعيد إرسال برنامجك.',
+    en: "Your download link has expired — message us on WhatsApp and we'll resend your program.",
+    chat: 'السلام عليكم، رابط تحميل طلبي في UltraFit انتهت صلاحيته.',
+  },
+  notFound: {
+    title: 'لم نتمكّن من العثور على رابط التحميل',
+    // Leads with the likeliest cause: mail clients wrap and truncate long URLs,
+    // so a buyer here usually has a valid purchase and a broken link.
+    ar: 'قد يكون الرابط غير مكتمل. انسخ الرابط كاملاً من رسالة البريد، أو راسلنا على واتساب وسنعيد إرسال برنامجك.',
+    en: "We couldn't find this download link — it may be incomplete. Copy the whole link from your email, or message us on WhatsApp and we'll resend your program.",
+    chat: 'السلام عليكم، رابط تحميل برنامجي في UltraFit لا يعمل.',
+  },
+} as const;
+
 /**
- * Buyer-facing "your link expired" page.
+ * Buyer-facing page for a download we can't serve.
  *
  * Served as HTML rather than the plain string it used to be so that "contact
  * support" is a tappable WhatsApp link: this is reached from a download link in
  * an email, usually on a phone, where a plain-text phone number is a dead end.
  * Bilingual because the request carries no reliable locale signal. The order
- * number is prefilled into the chat so support can find the purchase straight
- * away.
+ * number, when we have one, is prefilled into the chat so support can find the
+ * purchase straight away.
+ *
+ * `notFound` covers both an unknown token and an unpaid order, and says the same
+ * thing for each: distinguishing them would confirm to a stranger whether a
+ * given token belongs to a real order.
  */
-function expiredDownloadPage(orderNumber: string | null): string {
+function downloadIssuePage(
+  variant: keyof typeof DOWNLOAD_ISSUE_COPY,
+  orderNumber: string | null,
+): string {
+  const copy = DOWNLOAD_ISSUE_COPY[variant];
   const ref = orderNumber ? escapeHtml(orderNumber) : '';
   const chat = whatsappUrl(
-    orderNumber
-      ? `السلام عليكم، رابط تحميل طلبي في UltraFit انتهت صلاحيته. رقم الطلب: ${orderNumber}`
-      : 'السلام عليكم، رابط تحميل طلبي في UltraFit انتهت صلاحيته.',
+    orderNumber ? `${copy.chat} رقم الطلب: ${orderNumber}` : copy.chat,
   );
   return `<!doctype html>
 <html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>انتهت صلاحية الرابط — UltraFit</title>
+<title>${copy.title} — UltraFit</title>
 <style>
 body{margin:0;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:2rem;text-align:center;background:#f0f2f2;color:#0a0b0d;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 p{margin:0;max-width:30rem;line-height:1.7;opacity:.8}
 .ref{font-weight:700;opacity:1}
 a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 22px;border-radius:12px;background:#16924e;color:#fff;font-weight:800;text-decoration:none}
 </style></head><body>
-<h1 style="margin:0;font-size:1.5rem">انتهت صلاحية رابط التحميل</h1>
-<p>راسلنا على واتساب وسنعيد إرسال برنامجك.</p>
+<h1 style="margin:0;font-size:1.5rem">${copy.title}</h1>
+<p>${copy.ar}</p>
 <!-- Every Latin/numeric run carries its own dir="ltr": inside this RTL
      document the bidi algorithm otherwise flips trailing punctuation to the
      wrong end and reorders the phone number's digit groups. -->
-<p dir="ltr">Your download link has expired — message us on WhatsApp and we'll resend your program.</p>
+<p dir="ltr">${copy.en}</p>
 ${ref ? `<p class="ref">رقم الطلب / Order: <span dir="ltr">${ref}</span></p>` : ''}
 <a href="${chat}">تواصل مع الدعم · Contact support</a>
 <p dir="ltr" style="font-size:.85rem">${WHATSAPP_DISPLAY_NUMBER}</p>
@@ -188,7 +212,7 @@ checkoutRouter.get('/checkout/return', async (req, res) => {
         return res
           .status(410)
           .type('html')
-          .send(expiredDownloadPage(order.order_number ?? null));
+          .send(downloadIssuePage('expired', order.order_number ?? null));
       }
       // Fire-and-forget: email the PDF too (no-op if already sent). Never
       // blocks the redirect — maybeSendDeliveryEmail handles its own errors.
@@ -222,14 +246,22 @@ checkoutRouter.get('/download', async (req, res) => {
     const token = typeof req.query.token === 'string' ? req.query.token : '';
     const order = token ? await getOrderByToken(token) : null;
     if (!order || !(await confirmPaid(order))) {
-      return res.status(404).send('Download not found.');
+      // Mail clients wrap and truncate long URLs, so a truncated token lands
+      // here holding a real purchase. Give it the same route to support the
+      // expired page has rather than a plain-text dead end.
+      //
+      // Deliberately no order number, even for the unpaid-order case where one
+      // exists: printing it would make this response differ from the unknown-
+      // token one and confirm that a guessed token names a real order. The case
+      // this page is really for — a truncated link — has no order to name anyway.
+      return res.status(404).type('html').send(downloadIssuePage('notFound', null));
     }
 
     if (!isLive(order)) {
       return res
         .status(410)
         .type('html')
-        .send(expiredDownloadPage(order.order_number ?? null));
+        .send(downloadIssuePage('expired', order.order_number ?? null));
     }
 
     const { bucket, object } = resolvePackageFile(order);
