@@ -1,6 +1,6 @@
 'use client';
 
-import { Check } from 'lucide-react';
+import { Check, ChevronDown, Settings2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -22,6 +22,63 @@ export function FieldGroup({
         {hint ? <span className="ms-2 text-xs font-normal text-black/40">{hint}</span> : null}
       </p>
       <div className="mt-3">{children}</div>
+    </div>
+  );
+}
+
+/**
+ * Collapsible panel that tucks away advanced controls. Controlled by the
+ * caller so a validation error can force the panel back open.
+ */
+export function Disclosure({
+  id,
+  label,
+  summary,
+  open,
+  onToggle,
+  children,
+}: {
+  id: string;
+  label: string;
+  /** Current value, shown on the closed row so the setting stays legible. */
+  summary?: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl border border-black/10 bg-black/[0.03]">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-controls={`${id}-panel`}
+        className={cn(
+          'flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-start transition-colors',
+          'hover:bg-black/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70',
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <Settings2 aria-hidden className="size-4 shrink-0 text-black/45" />
+          <span className="text-sm font-semibold text-black/85">{label}</span>
+        </span>
+        <span className="flex min-w-0 items-center gap-2">
+          {summary && !open ? (
+            <span className="truncate text-xs text-black/45">{summary}</span>
+          ) : null}
+          <ChevronDown
+            aria-hidden
+            className={cn(
+              'size-4 shrink-0 text-black/45 transition-transform duration-200',
+              open && 'rotate-180',
+            )}
+          />
+        </span>
+      </button>
+      {/* Kept mounted but `hidden`, so aria-controls always resolves. */}
+      <div id={`${id}-panel`} hidden={!open} className="border-t border-black/10 p-4">
+        {children}
+      </div>
     </div>
   );
 }

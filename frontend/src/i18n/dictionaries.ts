@@ -186,6 +186,8 @@ export type Dictionary = {
         currentAverageSteps: string;
       };
       optional: string;
+      /** Label on the collapsed panel holding the advanced controls. */
+      advanced: string;
       /** Short helper lines under the optional inputs. */
       hints: {
         bodyFat: string;
@@ -493,9 +495,9 @@ export const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           id: 'faq-7',
-          question: 'ما هو نظام MotionCore؟',
+          question: 'هل توجد متابعة مع مدرب شخصي؟',
           answer:
-            'MotionCore هو نظام التحليل المرافق الذي يقيّم حركتك ومستواك ويساعدك على اختيار الباقة الأنسب لك قبل الشراء.',
+            'لا، جميع الباقات لا تشمل مدربًا شخصيًا أو متابعة فردية. ما تحصل عليه هو برنامج كامل وجاهز تطبّقه بنفسك: جداول التمارين، وفيديو شرح لكل تمرين، وجدول الكارديو، والكتيب الكامل. وفريق الدعم متاح على واتساب لمساعدتك في أمور الطلب والملفات فقط.',
         },
       ],
       contactLead: 'لم تجد إجابة سؤالك؟',
@@ -584,6 +586,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             tagline: 'الدفع لمرة واحدة',
             features: [
               'جدول تمارين متكامل (PDF)',
+              'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول كارديو',
               'كتيب كامل عن بناء العضلات',
@@ -597,6 +600,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             features: [
               'جدول تمارين لمدة 12 أسبوع',
               'تغيير التمارين كل 4 أسابيع',
+              'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول كارديو',
               'كتيب كامل عن بناء العضلات',
@@ -610,6 +614,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             features: [
               'تحدي تمارين لمدة 12 أسبوع',
               'تغيير التمارين كل 4 أسابيع',
+              'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول غذائي متكامل يساعدك على تحقيق هدفك (تنشيف، بناء عضلات أو المحافظة على الوزن)',
               'جدول كارديو',
@@ -624,6 +629,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             tagline: 'الدفع لمرة واحدة',
             features: [
               'جدول تمارين متكامل (PDF)',
+              'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول كارديو',
               'كتيب كامل عن بناء العضلات',
@@ -637,6 +643,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             features: [
               'جدول تمارين لمدة 12 أسبوع',
               'تغيير التمارين كل 4 أسابيع',
+              'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول كارديو',
               'كتيب كامل عن بناء العضلات',
@@ -650,6 +657,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             features: [
               'تحدي تمارين لمدة 12 أسبوع',
               'تغيير التمارين كل 4 أسابيع',
+              'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول غذائي متكامل يساعدك على تحقيق هدفك (تنشيف، بناء عضلات أو المحافظة على الوزن)',
               'جدول كارديو',
@@ -748,6 +756,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
           currentAverageSteps: 'متوسط خطواتك اليومية',
         },
         optional: 'اختياري',
+        advanced: 'إعدادات متقدمة',
         hints: {
           bodyFat: 'إن عرفتها، ستُستخدم معادلة كاتش-مكاردل الأدق.',
           formula: 'التلقائي يختار كاتش-مكاردل عند إدخال نسبة دهون صحيحة.',
@@ -1074,9 +1083,9 @@ export const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           id: 'faq-7',
-          question: 'What is MotionCore?',
+          question: 'Do you offer a personal coach or trainer?',
           answer:
-            'MotionCore is our companion analysis system that assesses your movement and level, helping you match to the right package before you buy.',
+            'No — none of the plans include a personal trainer or one-on-one coaching. What you get is a complete, self-guided program: your workout schedules, a video explanation for every exercise, the cardio plan, and the full handbook. Our support team on WhatsApp is there for order and file questions only.',
         },
       ],
       contactLead: "Can't find your answer?",
@@ -1165,6 +1174,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             tagline: 'One-time payment',
             features: [
               'Complete workout plan (PDF)',
+              'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Cardio plan',
               'Complete muscle-building handbook',
@@ -1178,6 +1188,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             features: [
               '12-week workout plan',
               'Exercises rotated every 4 weeks',
+              'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Cardio plan',
               'Complete muscle-building handbook',
@@ -1191,6 +1202,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             features: [
               '12-week workout challenge',
               'Exercises rotated every 4 weeks',
+              'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Complete meal plan to help you reach your goal (cutting, muscle building, or weight maintenance)',
               'Cardio plan',
@@ -1205,6 +1217,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             tagline: 'One-time payment',
             features: [
               'Complete workout plan (PDF)',
+              'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Cardio plan',
               'Complete muscle-building handbook',
@@ -1218,6 +1231,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             features: [
               '12-week workout plan',
               'Exercises rotated every 4 weeks',
+              'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Cardio plan',
               'Complete muscle-building handbook',
@@ -1231,6 +1245,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             features: [
               '12-week workout challenge',
               'Exercises rotated every 4 weeks',
+              'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Complete meal plan to help you reach your goal (cutting, muscle building, or weight maintenance)',
               'Cardio plan',
@@ -1329,6 +1344,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
           currentAverageSteps: 'Current average daily steps',
         },
         optional: 'Optional',
+        advanced: 'Advanced settings',
         hints: {
           bodyFat: 'If you know it, the more precise Katch–McArdle formula is used.',
           formula: 'Automatic picks Katch–McArdle when a valid body fat is entered.',

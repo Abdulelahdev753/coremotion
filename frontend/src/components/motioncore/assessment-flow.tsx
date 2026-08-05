@@ -4,7 +4,13 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useReducer } from 'react';
 
-import { ChipToggle, FieldGroup, NumberField, OptionCard } from '@/components/motioncore/fields';
+import {
+  ChipToggle,
+  Disclosure,
+  FieldGroup,
+  NumberField,
+  OptionCard,
+} from '@/components/motioncore/fields';
 import { MotionCoreShell } from '@/components/motioncore/motioncore-shell';
 import { useLanguage } from '@/components/providers/language-provider';
 import { paceAdjustmentPercent, validateAssessment } from '@/lib/motioncore/engine';
@@ -57,16 +63,20 @@ type State = {
   step: number;
   draft: Draft;
   errors: Partial<Record<NumericField, string>>;
+  /** The BMR formula sits behind a disclosure: most people never change it. */
+  advancedOpen: boolean;
 };
 
 type Action =
   | { type: 'set'; patch: Partial<Draft> }
   | { type: 'errors'; errors: State['errors'] }
   | { type: 'goTo'; step: number }
-  | { type: 'prefill'; draft: Draft };
+  | { type: 'prefill'; draft: Draft }
+  | { type: 'advanced'; open: boolean };
 
 const initialState: State = {
   step: 0,
+  advancedOpen: false,
   draft: {
     age: '',
     heightCm: '',
@@ -89,7 +99,10 @@ function reducer(state: State, action: Action): State {
     case 'goTo':
       return { ...state, step: action.step, errors: {} };
     case 'prefill':
-      return { ...state, draft: action.draft };
+      // A saved non-default formula is surfaced rather than buried.
+      return { ...state, draft: action.draft, advancedOpen: action.draft.bmrFormula !== 'auto' };
+    case 'advanced':
+      return { ...state, advancedOpen: action.open };
   }
 }
 
@@ -105,7 +118,7 @@ export function AssessmentFlow() {
   const { t, locale } = useLanguage();
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { step, draft, errors } = state;
+  const { step, draft, errors, advancedOpen } = state;
 
   const ta = t.motioncore.assessment;
   const stepId: StepId = STEPS[step];
@@ -205,6 +218,11 @@ export function AssessmentFlow() {
     const stepErrors = validateStep();
     if (Object.keys(stepErrors).length > 0) {
       dispatch({ type: 'errors', errors: stepErrors });
+      // Katch–McArdle without a body fat is fixable from either control, so
+      // reveal the formula picker instead of only flagging the number field.
+      if (draft.bmrFormula === 'katch' && draft.bodyFatPercent.trim() === '') {
+        dispatch({ type: 'advanced', open: true });
+      }
       return;
     }
     if (step < STEPS.length - 1) {
@@ -339,23 +357,31 @@ export function AssessmentFlow() {
                 inputMode="decimal"
               />
             </div>
-            <FieldGroup label={ta.fields.bmrFormula} hint={ta.hints.formula}>
-              <div
-                role="radiogroup"
-                aria-label={ta.fields.bmrFormula}
-                className="grid grid-cols-1 gap-3 sm:grid-cols-3"
-              >
-                {BMR_FORMULAS.map((formula) => (
-                  <OptionCard
-                    key={formula}
-                    selected={draft.bmrFormula === formula}
-                    onSelect={() => dispatch({ type: 'set', patch: { bmrFormula: formula } })}
-                    label={ta.options.bmrFormula[formula].label}
-                    description={ta.options.bmrFormula[formula].description}
-                  />
-                ))}
-              </div>
-            </FieldGroup>
+            <Disclosure
+              id="mc-advanced"
+              label={ta.advanced}
+              summary={ta.options.bmrFormula[draft.bmrFormula].label}
+              open={advancedOpen}
+              onToggle={() => dispatch({ type: 'advanced', open: !advancedOpen })}
+            >
+              <FieldGroup label={ta.fields.bmrFormula} hint={ta.hints.formula}>
+                <div
+                  role="radiogroup"
+                  aria-label={ta.fields.bmrFormula}
+                  className="grid grid-cols-1 gap-3 sm:grid-cols-3"
+                >
+                  {BMR_FORMULAS.map((formula) => (
+                    <OptionCard
+                      key={formula}
+                      selected={draft.bmrFormula === formula}
+                      onSelect={() => dispatch({ type: 'set', patch: { bmrFormula: formula } })}
+                      label={ta.options.bmrFormula[formula].label}
+                      description={ta.options.bmrFormula[formula].description}
+                    />
+                  ))}
+                </div>
+              </FieldGroup>
+            </Disclosure>
           </>
         )}
 
