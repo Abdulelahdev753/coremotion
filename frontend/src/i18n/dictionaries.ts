@@ -499,6 +499,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
           answer:
             'لا، جميع الباقات لا تشمل مدربًا شخصيًا أو متابعة فردية. ما تحصل عليه هو برنامج كامل وجاهز تطبّقه بنفسك: جداول التمارين، وفيديو شرح لكل تمرين، وجدول الكارديو، والكتيب الكامل. وفريق الدعم متاح على واتساب لمساعدتك في أمور الطلب والملفات فقط.',
         },
+        {
+          id: 'faq-8',
+          question: 'هل هناك اشتراك شهري؟ وهل يمكنني استرجاع المبلغ؟',
+          answer:
+            'لا يوجد اشتراك شهري، والدفع مرة واحدة فقط. في حال لم يعجبك البرنامج، يمكنك تقديم طلب استرداد خلال يومين من تاريخ استلامه، ويُعاد إليك كامل المبلغ خلال 7 إلى 14 يوم عمل.',
+        },
       ],
       contactLead: 'لم تجد إجابة سؤالك؟',
       contactCta: 'راسلنا على واتساب',
@@ -782,8 +788,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
             advanced: { label: 'متقدم', description: 'أكثر من ثلاث سنوات من التمرين الجاد' },
           },
           goal: {
-            fatLoss: { label: 'خسارة دهون', description: 'عجز سعرات مدروس مع حماية العضلات' },
-            muscleGain: { label: 'بناء عضل', description: 'فائض بسيط لنمو عضلي نظيف' },
+            fatLoss: { label: 'تنشيف', description: 'عجز سعرات مدروس مع حماية العضلات' },
+            muscleGain: { label: 'بناء عضل', description: 'زيادة بسيطة في السعرات لبناء عضل بدون دهون' },
             fitness: { label: 'لياقة عامة', description: 'قوة وصحة أفضل عند وزن ثابت' },
           },
           pace: {
@@ -1087,6 +1093,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
           answer:
             'No — none of the plans include a personal trainer or one-on-one coaching. What you get is a complete, self-guided program: your workout schedules, a video explanation for every exercise, the cardio plan, and the full handbook. Our support team on WhatsApp is there for order and file questions only.',
         },
+        {
+          id: 'faq-8',
+          question: 'Is there a monthly subscription? Can I get a refund?',
+          answer:
+            'There is no monthly subscription — you pay once. If the program is not for you, you can request a refund within two days of receiving it, and the full amount is returned to you within 7 to 14 business days.',
+        },
       ],
       contactLead: "Can't find your answer?",
       contactCta: 'Message us on WhatsApp',
@@ -1370,7 +1382,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
             advanced: { label: 'Advanced', description: '3+ years of serious training' },
           },
           goal: {
-            fatLoss: { label: 'Fat loss', description: 'A careful deficit that protects muscle' },
+            fatLoss: { label: 'Cutting', description: 'A careful deficit that protects muscle' },
             muscleGain: { label: 'Muscle gain', description: 'A small surplus for lean growth' },
             fitness: { label: 'Overall fitness', description: 'Stronger and healthier at a stable weight' },
           },
