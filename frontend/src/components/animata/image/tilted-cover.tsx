@@ -28,7 +28,7 @@ interface TiltedCoverProps extends React.HTMLAttributes<HTMLDivElement> {
   image?: React.ComponentPropsWithoutRef<"img">;
 }
 
-// Sized landscape (4:3-ish) for the UltraFit package mockups, with the site's
+// Sized landscape (5:4) for the UltraFit package mockups, with the site's
 // dark glass surfaces instead of the registry's white/light defaults.
 export default function TiltedCover({
   children,

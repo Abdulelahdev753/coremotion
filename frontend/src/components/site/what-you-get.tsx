@@ -11,17 +11,26 @@ import type { PackageAudience } from '@/components/site/package-audience-pill';
 // same way the hero source marquee does.
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
-// Package mockup + tier accent per card. The captions (title/description) come
-// from the i18n dictionary in this exact order: men basic/pro/elite, then
-// women basic/pro/elite — so the grid reads as tier columns × gender rows.
+// The mockups are colour-coded by audience rather than by tier — the men's
+// artwork is green, the women's magenta — so the hover panel takes its tint
+// from the audience too. Green matches the pricing cards' single tier colour;
+// magenta is sampled from the women's mockups.
+const accent = {
+  men: '22, 146, 78',
+  women: '220, 3, 94',
+} as const;
+
+// Package mockup per card. The captions (title/description) come from the i18n
+// dictionary in this exact order: men basic/pro/elite, then women
+// basic/pro/elite — so the grid reads as tier columns × gender rows.
 // `audience` lets the Men/Women pill show only the matching three cards.
 const cards = [
-  { src: `${basePath}/packages/men-basic.webp`, rgb: '214, 236, 27', audience: 'men' },
-  { src: `${basePath}/packages/men-pro.webp`, rgb: '251, 146, 60', audience: 'men' },
-  { src: `${basePath}/packages/men-elite.webp`, rgb: '167, 139, 250', audience: 'men' },
-  { src: `${basePath}/packages/women-basic.webp`, rgb: '214, 236, 27', audience: 'women' },
-  { src: `${basePath}/packages/women-pro.webp`, rgb: '251, 146, 60', audience: 'women' },
-  { src: `${basePath}/packages/women-elite.webp`, rgb: '167, 139, 250', audience: 'women' },
+  { src: `${basePath}/packages/men-basic.webp`, audience: 'men' },
+  { src: `${basePath}/packages/men-pro.webp`, audience: 'men' },
+  { src: `${basePath}/packages/men-elite.webp`, audience: 'men' },
+  { src: `${basePath}/packages/women-basic.webp`, audience: 'women' },
+  { src: `${basePath}/packages/women-pro.webp`, audience: 'women' },
+  { src: `${basePath}/packages/women-elite.webp`, audience: 'women' },
 ] as const;
 
 type WhatYouGetProps = {
@@ -64,7 +73,7 @@ export function WhatYouGet({ audience = 'men' }: WhatYouGetProps) {
               <figure
                 key={card.src}
                 className="m-0 flex min-w-0 flex-col items-center"
-                style={{ '--tier-rgb': card.rgb } as CSSProperties}
+                style={{ '--tier-rgb': accent[card.audience] } as CSSProperties}
               >
                 <TiltedCover
                   direction={visual === 2 ? 'right' : 'left'}
