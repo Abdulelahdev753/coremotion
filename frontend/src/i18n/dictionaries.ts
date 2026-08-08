@@ -53,7 +53,18 @@ export type Dictionary = {
     heading: string;
     subheading: string;
     /** Each item's `id` doubles as its accordion value; the first is open by default. */
-    items: Array<{ id: string; question: string; answer: string }>;
+    items: Array<{
+      id: string;
+      question: string;
+      answer: string;
+      /**
+       * Trailing part of the answer rendered in red — used for the refund
+       * window and timing, which buyers must not miss.
+       */
+      answerAlert?: string;
+      /** Renders the whole answer bold. Reserved for the refund policy. */
+      emphasis?: boolean;
+    }>;
     /** Closing line + link that nudges undecided visitors back to the packages. */
     contactLead: string;
     contactCta: string;
@@ -107,6 +118,15 @@ export type Dictionary = {
     /** Trust/reassurance bar shown below the cards. Icons live in the component,
         in this same order (shield, download, infinity, headset). */
     trust: Array<{ title: string; description: string }>;
+    /** Charity note under the trust bar: the Ehsan platform logo plus a line
+        about donating a share of every purchase. Split around `platform` so the
+        platform name renders bold inside the sentence. */
+    charity: {
+      logoAlt: string;
+      before: string;
+      platform: string;
+      after: string;
+    };
     /** Promo header between the Men/Women pill and the cards. Audience-aware so
         the wording (and Arabic gendered endings) suit men vs women. */
     promo: Record<
@@ -502,8 +522,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
         {
           id: 'faq-8',
           question: 'هل هناك اشتراك شهري؟ وهل يمكنني استرجاع المبلغ؟',
-          answer:
-            'لا يوجد اشتراك شهري، والدفع مرة واحدة فقط. في حال لم يعجبك البرنامج، يمكنك تقديم طلب استرداد خلال يومين من تاريخ استلامه، ويُعاد إليك كامل المبلغ خلال 7 إلى 14 يوم عمل.',
+          answer: 'لا يوجد اشتراك شهري، والدفع مرة واحدة فقط.',
+          answerAlert:
+            'في حال لم يعجبك البرنامج، يمكنك تقديم طلب استرداد خلال يومين من تاريخ و وقت استلام المنتج، تستغرق عملية إسترداد المبلغ 5 ايام الى 14 يوم عمل بناء على عملية المعالجة من قبل بوابة الدفع. في حال لم يسترد المبلغ بعد هذه الفترة، الرجاء التواصل مع الترافيت.',
+          emphasis: true,
         },
       ],
       contactLead: 'لم تجد إجابة سؤالك؟',
@@ -572,6 +594,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
         { title: 'وصول مدى الحياة', description: 'يمكنك الوصول لملفاتك في أي وقت' },
         { title: 'دعم سريع', description: 'نحن هنا لمساعدتك في أي وقت' },
       ],
+      charity: {
+        logoAlt: 'منصة إحسان',
+        before: 'نتبرّع بجزء من قيمة مشترياتكم صدقةً لوجه الله عبر منصة ',
+        platform: 'إحسان',
+        after: '، وسنوافيكم شهريًا عبر حساباتنا في وسائل التواصل بتفاصيل تبرعاتنا الخيرية.',
+      },
       promo: {
         men: {
           eyebrow: 'اختر الباقة المناسبة لك',
@@ -1096,8 +1124,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
         {
           id: 'faq-8',
           question: 'Is there a monthly subscription? Can I get a refund?',
-          answer:
-            'There is no monthly subscription — you pay once. If the program is not for you, you can request a refund within two days of receiving it, and the full amount is returned to you within 7 to 14 business days.',
+          answer: 'There is no monthly subscription — you pay once.',
+          answerAlert:
+            'If the program is not for you, you can request a refund within two days of the date and time you received the product. Refunds take 5 to 14 business days to process, depending on the payment gateway. If you have not received the amount after that period, please contact UltraFit.',
+          emphasis: true,
         },
       ],
       contactLead: "Can't find your answer?",
@@ -1166,6 +1196,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
         { title: 'Lifetime access', description: 'Access your files any time you need' },
         { title: 'Fast support', description: "We're here to help you anytime" },
       ],
+      charity: {
+        logoAlt: 'Ehsan platform',
+        before: 'We donate a share of every purchase as charity, for the sake of Allah, through the ',
+        platform: 'Ehsan',
+        after: ' platform — and each month we post the details of our donations on our social accounts.',
+      },
       promo: {
         men: {
           eyebrow: 'Choose the plan that fits you',

@@ -705,6 +705,49 @@ html[lang="ar"] .tier-card__price {
   }
 }
 
+/* ── Charity note (Ehsan) ──────────────────────────────────────────────────
+   Sits under the trust bar: the Ehsan platform logo above a centered line
+   about donating a share of every purchase. */
+.pricing-charity {
+  width: 100%;
+  max-width: 46rem;
+  margin: 22px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.pricing-charity__logo {
+  width: auto;
+  height: 96px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.pricing-charity__text {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.pricing-charity__text strong {
+  color: #0a0b0d;
+  font-weight: 800;
+}
+
+@media (max-width: 420px) {
+  .pricing-charity__logo {
+    height: 78px;
+  }
+
+  .pricing-charity__text {
+    font-size: 0.84rem;
+  }
+}
+
 /* ── Pre-checkout email dialog ─────────────────────────────────────────────
    Captures the buyer's email before the StreamPay redirect; the backend
    emails the purchased PDF there after payment. Same dark-glass language as

@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Download, Infinity as InfinityIcon, Headset, Loader2, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
 import { useState, type CSSProperties, type ReactNode } from 'react';
 
 import { useLanguage } from '@/components/providers/language-provider';
@@ -23,6 +24,10 @@ type PlanId = (typeof tierStyles)[number]['key'];
 
 /** Icons for the trust bar, in the same order as the dictionary's `trust` copy. */
 const trustIcons = [ShieldCheck, Download, InfinityIcon, Headset] as const;
+
+// GitHub Pages serves the site from /<repo>; next/image does not apply basePath
+// to unoptimized images, so plain <img> sources are prefixed by hand.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 type PricingCardsProps = {
   /**
@@ -161,6 +166,22 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
           );
         })}
       </ul>
+
+      {/* Charity note: Ehsan platform logo plus the donation pledge. */}
+      <div className="pricing-charity">
+        <Image
+          className="pricing-charity__logo"
+          src={`${basePath}/logos/ehsan.svg`}
+          alt={p.charity.logoAlt}
+          width={500}
+          height={581}
+        />
+        <p className="pricing-charity__text">
+          {p.charity.before}
+          <strong>{p.charity.platform}</strong>
+          {p.charity.after}
+        </p>
+      </div>
 
       {/* Mounted only while open, so the email field resets on every open. */}
       {emailTier !== null && (

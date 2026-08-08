@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/accordion';
 import { trackContactSupport } from '@/lib/analytics';
 import { whatsappUrl } from '@/lib/site-links';
+import { cn } from '@/lib/utils';
 
 /**
  * FAQ accordion answering the UltraFit offer. Replaces the old "Get the guide"
@@ -49,8 +50,16 @@ export function FaqSection() {
               <AccordionTrigger className="px-4 py-5 text-base text-black/90 hover:text-black hover:no-underline">
                 {item.question}
               </AccordionTrigger>
-              <AccordionContent className="px-4 pb-5 pt-0 text-sm leading-relaxed text-black/60 rtl:leading-loose">
+              <AccordionContent
+                className={cn(
+                  'px-4 pb-5 pt-0 text-sm leading-relaxed rtl:leading-loose',
+                  item.emphasis ? 'font-bold text-black/80' : 'text-black/60',
+                )}
+              >
                 {item.answer}
+                {item.answerAlert ? (
+                  <> <span className="text-red-600">{item.answerAlert}</span></>
+                ) : null}
               </AccordionContent>
             </AccordionItem>
           ))}
