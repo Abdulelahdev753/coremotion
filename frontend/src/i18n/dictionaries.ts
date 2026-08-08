@@ -152,6 +152,16 @@ export type Dictionary = {
     /** Accessible labels for the social icons, in the component's icon order. */
     socials: string[];
     copyright: string;
+    /**
+     * Ministry of Commerce registration badge. `number` is deliberately not
+     * localized — the CR is the same digits in both languages.
+     */
+    commercialRegistration: {
+      label: string;
+      number: string;
+      /** Alt text for the Ministry of Commerce emblem. */
+      authority: string;
+    };
   };
   actions: {
     openMenu: string;
@@ -721,6 +731,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
       legal: ['سياسة الخصوصية', 'الشروط والأحكام'],
       socials: ['انستغرام', 'إكس (تويتر)', 'تيك توك', 'واتساب'],
       copyright: '© 2026 UltraFit. جميع الحقوق محفوظة.',
+      commercialRegistration: {
+        label: 'رقم ترخيص السجل التجاري',
+        number: '7053618372',
+        authority: 'وزارة التجارة',
+      },
     },
     actions: {
       openMenu: 'فتح القائمة',
@@ -1323,6 +1338,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
       legal: ['Privacy Policy', 'Terms of Service'],
       socials: ['Instagram', 'X (Twitter)', 'TikTok', 'WhatsApp'],
       copyright: '© 2026 UltraFit. All rights reserved.',
+      commercialRegistration: {
+        label: 'Commercial Registration No.',
+        number: '7053618372',
+        authority: 'Ministry of Commerce',
+      },
     },
     actions: {
       openMenu: 'Open menu',

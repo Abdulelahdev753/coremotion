@@ -127,6 +127,7 @@ export function SiteFooter() {
   }));
   const legal = f.legal.map((label, i) => ({ label, href: legalHrefs[i] ?? '#' }));
   const socials = f.socials.map((label, i) => ({ label, ...socialConfig[i] }));
+  const cr = f.commercialRegistration;
 
   return (
     <footer className="relative w-full overflow-hidden bg-[#f0f2f2] text-black antialiased">
@@ -187,10 +188,33 @@ export function SiteFooter() {
             </motion.nav>
           </div>
 
+          {/* Ministry of Commerce registration. The emblem is a knockout mark —
+              the shield is filled and the palm/swords are cut out — so it needs
+              a dark plate behind it to read on this light footer. */}
+          <motion.div variants={riseVariants} className="mt-10 flex items-center gap-3">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#0a0b0d]">
+              <Image
+                src={`${basePath}/logos/moc-logo.svg`}
+                alt={cr.authority}
+                width={28}
+                height={28}
+                className="size-7"
+              />
+            </span>
+            <span className="text-xs leading-snug text-black/45 rtl:leading-relaxed">
+              {cr.label}
+              <br />
+              {/* Force LTR so the digits never reorder inside the RTL footer. */}
+              <bdi dir="ltr" className="font-semibold tabular-nums text-black/70">
+                {cr.number}
+              </bdi>
+            </span>
+          </motion.div>
+
           {/* Bottom bar */}
           <motion.div
             variants={riseVariants}
-            className="mt-12 flex flex-col gap-4 border-t border-black/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"
+            className="mt-10 flex flex-col gap-4 border-t border-black/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"
           >
             <p className="text-xs text-black/40">{f.copyright}</p>
 
