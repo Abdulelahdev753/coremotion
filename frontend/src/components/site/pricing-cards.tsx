@@ -12,12 +12,13 @@ import { trackAddToCart } from '@/lib/analytics';
 /**
  * Visual + non-translatable config per tier. The copy (names, features, button
  * labels) lives in the i18n dictionary so the cards render in Arabic and English;
- * only the price, accent color and its rgb triple are fixed here.
+ * only the prices, accent color and its rgb triple are fixed here. `wasPrice` is
+ * the pre-discount price shown struck through next to the live one.
  */
 const tierStyles = [
-  { key: 'basic', price: '39', color: '#16924e', rgb: '22, 146, 78' },
-  { key: 'pro', price: '49', color: '#16924e', rgb: '22, 146, 78' },
-  { key: 'elite', price: '59', color: '#16924e', rgb: '22, 146, 78' },
+  { key: 'basic', price: '39', wasPrice: '59', color: '#16924e', rgb: '22, 146, 78' },
+  { key: 'pro', price: '49', wasPrice: '69', color: '#16924e', rgb: '22, 146, 78' },
+  { key: 'elite', price: '59', wasPrice: '79', color: '#16924e', rgb: '22, 146, 78' },
 ] as const;
 
 type PlanId = (typeof tierStyles)[number]['key'];
@@ -97,9 +98,19 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
               <header className="tier-card__header">
                 <p className="tier-card__badge">{tier.badge}</p>
                 <h3 className="tier-card__name">{tier.name}</h3>
-                <p className="tier-card__price">
-                  {style.price} <span>{p.currency}</span>
-                </p>
+                <div className="tier-card__pricing">
+                  <p className="tier-card__price">
+                    {style.price} <span>{p.currency}</span>
+                  </p>
+                  <p className="tier-card__was">
+                    {/* Strike only the number so the currency stays legible. */}
+                    <span className="tier-card__was-price">
+                      <s>{style.wasPrice}</s>
+                      <span>{p.currency}</span>
+                    </span>
+                    <span className="tier-card__was-note">{p.discountNote}</span>
+                  </p>
+                </div>
                 <p className="tier-card__tagline">{tier.tagline}</p>
               </header>
 

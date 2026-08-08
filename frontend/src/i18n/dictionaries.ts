@@ -105,6 +105,8 @@ export type Dictionary = {
     subheading: string;
     /** Currency label shown after each price. */
     currency: string;
+    /** Caption under the struck-through pre-discount price. */
+    discountNote: string;
     addToCart: string;
     buyNow: string;
     /** Pre-checkout email dialog — the PDF is emailed here after payment. */
@@ -589,6 +591,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       heading: 'اختر باقة UltraFit المناسبة لك',
       subheading: 'ثلاث باقات مبنية حول هدفك — ابدأ ببساطة أو انطلق بالكامل.',
       currency: 'ر.س',
+      discountNote: 'خصم لفترة محدودة',
       addToCart: 'أضف إلى السلة',
       buyNow: 'اشترِ الآن',
       emailTitle: 'أين نرسل برنامجك؟',
@@ -1196,6 +1199,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       heading: 'Choose your UltraFit plan',
       subheading: 'Three plans built around your goal — start simple or go all in.',
       currency: 'SAR',
+      discountNote: 'Limited-time discount',
       addToCart: 'Add to cart',
       buyNow: 'Buy now',
       emailTitle: 'Where should we send your program?',
