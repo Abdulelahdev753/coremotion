@@ -844,9 +844,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
             advanced: { label: 'متقدم', description: 'أكثر من ثلاث سنوات من التمرين الجاد' },
           },
           goal: {
-            fatLoss: { label: 'تنشيف', description: 'عجز سعرات مدروس مع حماية العضلات' },
-            muscleGain: { label: 'بناء عضل', description: 'زيادة بسيطة في السعرات لبناء عضل بدون دهون' },
-            fitness: { label: 'لياقة عامة', description: 'قوة وصحة أفضل عند وزن ثابت' },
+            fatLoss: { label: 'التنشيف', description: 'خسارة الدهون مع الحفاظ على العضلات' },
+            muscleGain: { label: 'التضخيم', description: 'زيادة الكتلة العضلية وبناء حجم أكبر' },
+            fitness: {
+              label: 'المحافظة وبناء العضلات',
+              description:
+                'بناء عضل وتحسين شكل الجسم مع عجز بسيط بالسعرات لتقليل الدهون تدريجيًا',
+            },
           },
           pace: {
             gentle: { label: 'هادئة', description: 'أبطأ وأسهل التزامًا' },
@@ -1456,9 +1460,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
             advanced: { label: 'Advanced', description: '3+ years of serious training' },
           },
           goal: {
-            fatLoss: { label: 'Cutting', description: 'A careful deficit that protects muscle' },
-            muscleGain: { label: 'Muscle gain', description: 'A small surplus for lean growth' },
-            fitness: { label: 'Overall fitness', description: 'Stronger and healthier at a stable weight' },
+            fatLoss: { label: 'Cutting', description: 'Lose fat while holding on to your muscle' },
+            muscleGain: { label: 'Bulking', description: 'Add muscle mass and build more size' },
+            fitness: {
+              label: 'Maintain and build muscle',
+              description:
+                'Build muscle and improve your shape with a slight calorie deficit that trims fat gradually',
+            },
           },
           pace: {
             gentle: { label: 'Gentle', description: 'Slower, easiest to sustain' },
