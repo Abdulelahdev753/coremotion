@@ -86,7 +86,7 @@ export function Navbar() {
             <div className="flex items-center justify-end gap-2">
               <LanguageToggle />
               <Link
-                href="/motioncore"
+                href="/#products"
                 className="hidden items-center rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:inline-flex"
               >
                 {t.hero.cta}
@@ -130,7 +130,7 @@ export function Navbar() {
               ))}
               <li className="p-2">
                 <Link
-                  href="/motioncore"
+                  href="/#products"
                   onClick={() => setOpen(false)}
                   className="block touch-manipulation rounded-xl bg-brand px-4 py-3 text-center text-base font-semibold text-black"
                 >

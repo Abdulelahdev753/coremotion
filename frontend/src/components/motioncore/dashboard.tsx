@@ -183,13 +183,22 @@ export function Dashboard() {
           <h1 className="text-3xl font-extrabold text-black sm:text-4xl">{td.title}</h1>
           <p className="mt-2 text-sm text-black/55">{td.subtitle}</p>
         </div>
-        <Link
-          href="/motioncore/assessment"
-          className="inline-flex items-center gap-2 rounded-full border border-black/15 px-4 py-2 text-sm font-medium text-black/75 transition-colors hover:border-black/30 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
-        >
-          <Pencil aria-hidden className="size-3.5" />
-          {td.editAssessment}
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/motioncore/assessment"
+            className="inline-flex items-center gap-2 rounded-full border border-black/15 px-4 py-2 text-sm font-medium text-black/75 transition-colors hover:border-black/30 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
+          >
+            <Pencil aria-hidden className="size-3.5" />
+            {td.editAssessment}
+          </Link>
+          {/* The plans live on the landing page, so this leaves MotionCore. */}
+          <Link
+            href="/#products"
+            className="inline-flex items-center rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+          >
+            {t.hero.cta}
+          </Link>
+        </div>
       </header>
 
       {nutrition.warnings.length > 0 ? (
