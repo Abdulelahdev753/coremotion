@@ -256,6 +256,32 @@ html[lang="ar"] .pricing-promo__heading {
   color: rgba(10, 11, 13, 0.55);
 }
 
+/* Gym-only notice between the promo header and the cards. */
+.pricing-note {
+  width: 100%;
+  max-width: 46rem;
+  margin: 0 auto 2rem;
+  padding: 0.85rem 1.15rem;
+  border: 1px solid rgba(10, 11, 13, 0.12);
+  border-radius: 14px;
+  background: rgba(10, 11, 13, 0.03);
+  color: rgba(10, 11, 13, 0.62);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.pricing-note__label {
+  color: #0a0b0d;
+  font-weight: 800;
+}
+
+@media (max-width: 420px) {
+  .pricing-note {
+    font-size: 0.84rem;
+  }
+}
+
 .tier-cards {
   width: 100%;
   max-width: 72rem;

@@ -77,6 +77,12 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
         <p className="pricing-promo__subheading">{p.promo[audience].subheading}</p>
       </div>
 
+      {/* Gym-only notice: sits between the promo header and the cards so buyers
+          read it before picking a tier. */}
+      <p className="pricing-note">
+        <strong className="pricing-note__label">{p.note.label}:</strong> {p.note.text}
+      </p>
+
       <div className="tier-cards" aria-label={p.heading}>
         {tierStyles.map((style) => {
           const tier = tiers[style.key];

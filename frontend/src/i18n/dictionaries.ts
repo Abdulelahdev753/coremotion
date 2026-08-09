@@ -129,6 +129,12 @@ export type Dictionary = {
       platform: string;
       after: string;
     };
+    /** Notice above the cards: the packages cover gym exercises only. `label`
+        renders bold ahead of the colon, `text` follows on the same line. */
+    note: {
+      label: string;
+      text: string;
+    };
     /** Promo header between the Men/Women pill and the cards. Audience-aware so
         the wording (and Arabic gendered endings) suit men vs women. */
     promo: Record<
@@ -612,6 +618,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
         before: 'نتبرّع بجزء من قيمة مشترياتكم صدقةً لوجه الله عبر منصة ',
         platform: 'إحسان',
         after: '، وسنوافيكم شهريًا عبر حساباتنا في وسائل التواصل بتفاصيل تبرعاتنا الخيرية.',
+      },
+      note: {
+        label: 'ملاحظة',
+        text: 'جميع التمارين المتوفرة في الباقات هي تمارين نادي رياضي (جيم). سنوفّر تمارين منزلية على موقعنا قريبًا، وسنعلمكم بذلك عبر حساباتنا في وسائل التواصل الاجتماعي.',
       },
       promo: {
         men: {
@@ -1220,6 +1230,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
         before: 'We donate a share of every purchase as charity, for the sake of Allah, through the ',
         platform: 'Ehsan',
         after: ' platform — and each month we post the details of our donations on our social accounts.',
+      },
+      note: {
+        label: 'NOTE',
+        text: 'All the exercises available in the packages are gym exercises. We will provide home exercises on our website soon, and we will inform you through our social media accounts.',
       },
       promo: {
         men: {
