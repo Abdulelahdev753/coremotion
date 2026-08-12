@@ -18,7 +18,7 @@ export function MotionCoreShell({
 }) {
   return (
     <main className="relative isolate min-h-[100svh] overflow-hidden px-4 pb-24 pt-32 sm:px-6">
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 print:hidden">
         <div className="absolute inset-0 bg-[radial-gradient(90%_60%_at_50%_-5%,rgba(22,146,78,0.09),transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(60%_40%_at_85%_110%,rgba(22,146,78,0.05),transparent_70%)]" />
       </div>

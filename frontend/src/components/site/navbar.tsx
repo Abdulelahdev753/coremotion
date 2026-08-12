@@ -43,7 +43,7 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[80]">
+    <header className="fixed inset-x-0 top-0 z-[80] print:hidden">
       <div className="relative mx-auto max-w-6xl px-4 pt-3 sm:px-6 sm:pt-4">
         <GlassSurface className="relative z-20" height={64} borderRadius={22} backgroundOpacity={0.06}>
           <nav

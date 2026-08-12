@@ -1,6 +1,6 @@
 'use client';
 
-import { Droplets, Flame, Footprints, Pencil, TriangleAlert, Zap } from 'lucide-react';
+import { Droplets, FileDown, Flame, Footprints, Pencil, TriangleAlert, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
@@ -183,7 +183,7 @@ export function Dashboard() {
           <h1 className="text-3xl font-extrabold text-black sm:text-4xl">{td.title}</h1>
           <p className="mt-2 text-sm text-black/55">{td.subtitle}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 print:hidden">
           <Link
             href="/motioncore/assessment"
             className="inline-flex items-center gap-2 rounded-full border border-black/15 px-4 py-2 text-sm font-medium text-black/75 transition-colors hover:border-black/30 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
@@ -191,6 +191,17 @@ export function Dashboard() {
             <Pencil aria-hidden className="size-3.5" />
             {td.editAssessment}
           </Link>
+          {/* Saving is the browser's print-to-PDF: the print stylesheet in
+              globals.css strips the site chrome, so the dialog previews the
+              plan alone. No PDF library, and the Arabic text stays real text. */}
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+          >
+            <FileDown aria-hidden className="size-3.5" />
+            {td.savePdf}
+          </button>
           {/* The plans live on the landing page, so this leaves MotionCore. */}
           <Link
             href="/#products"

@@ -291,6 +291,7 @@ export type Dictionary = {
       title: string;
       subtitle: string;
       editAssessment: string;
+      savePdf: string;
       targets: {
         calories: string;
         protein: string;
@@ -883,6 +884,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         title: 'لوحة MotionCore',
         subtitle: 'خطتك اليومية المبنية على تقييمك',
         editAssessment: 'عدّل التقييم',
+        savePdf: 'احفظ كـ PDF',
         targets: {
           calories: 'سعرات اليوم',
           protein: 'بروتين',
@@ -1499,6 +1501,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         title: 'MotionCore dashboard',
         subtitle: 'Your daily plan, built from your assessment',
         editAssessment: 'Edit assessment',
+        savePdf: 'Save as PDF',
         targets: {
           calories: 'Daily calories',
           protein: 'Protein',

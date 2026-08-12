@@ -4,9 +4,13 @@ import { useLanguage } from '@/components/providers/language-provider';
 import { formatNumber } from '@/lib/motioncore/format';
 import type { DailyTargets } from '@/lib/motioncore/types';
 
-// Circle radius chosen so the circumference is exactly 100 — segment
-// percentages map 1:1 onto stroke-dasharray units.
+// Segment percentages map 1:1 onto stroke-dasharray units. The radius alone
+// isn't enough for that: a browser renders a <circle> as Bézier arcs whose
+// measured length falls ~0.6% short of 2πr, so dash units drifted and the last
+// segment wrapped past 12 o'clock over the first one. `pathLength` below pins
+// the path to exactly 100 units, which removes the drift.
 const R = 15.9155;
+const PATH_LENGTH = 100;
 
 /** Three-segment SVG donut of the daily macro split. No chart library —
  * three static arcs don't justify one. */
@@ -16,27 +20,30 @@ export function MacroDonut({ targets }: { targets: DailyTargets }) {
 
   const kcalFromMacros =
     targets.proteinG * 4 + targets.carbsG * 4 + targets.fatG * 9;
+  // The three colours are meaning-carrying and fixed: protein red, carbs blue,
+  // fat yellow — the same convention nutrition apps use, so the split reads at
+  // a glance without consulting the legend.
   const segments = [
     {
       key: 'protein',
       label: td.targets.protein,
       grams: targets.proteinG,
       pct: ((targets.proteinG * 4) / kcalFromMacros) * 100,
-      color: '#16924e',
+      color: '#dc2626',
     },
     {
       key: 'carbs',
       label: td.targets.carbs,
       grams: targets.carbsG,
       pct: ((targets.carbsG * 4) / kcalFromMacros) * 100,
-      color: 'rgba(10,11,13,0.55)',
+      color: '#2563eb',
     },
     {
       key: 'fat',
       label: td.targets.fat,
       grams: targets.fatG,
       pct: ((targets.fatG * 9) / kcalFromMacros) * 100,
-      color: 'rgba(10,11,13,0.25)',
+      color: '#eab308',
     },
   ];
 
@@ -55,6 +62,7 @@ export function MacroDonut({ targets }: { targets: DailyTargets }) {
               cx="18"
               cy="18"
               r={R}
+              pathLength={PATH_LENGTH}
               fill="none"
               stroke={segment.color}
               strokeWidth="3.8"

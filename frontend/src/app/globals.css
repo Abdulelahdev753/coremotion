@@ -1205,3 +1205,44 @@ html[lang="ar"] .getit-stage__heading {
   }
 }
 
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Print / "Save as PDF"
+   The MotionCore dashboard's save button is plain window.print(), so this
+   block is what actually shapes the PDF: the site chrome and the page's own
+   controls carry `print:hidden`, and the rest is handled here — a printable
+   page box, colours that survive the printer's default background stripping
+   (the macro donut legend and the tinted cards are backgrounds), and panels
+   that stay whole instead of splitting across a page break.
+   ────────────────────────────────────────────────────────────────────────── */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #fff;
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Page shells reserve space for the fixed navbar and clip their decorative
+     backdrops — neither applies once the chrome is gone. */
+  main {
+    padding-top: 1rem !important;
+    padding-bottom: 0 !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  section,
+  li {
+    break-inside: avoid;
+  }
+}

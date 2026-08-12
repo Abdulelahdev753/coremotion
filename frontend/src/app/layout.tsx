@@ -76,6 +76,11 @@ export default function RootLayout({
       lang={locale}
       dir={getDirection(locale)}
       className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} h-full antialiased`}
+      // The paint-gate script below stamps data-locale-pending on this element
+      // before React hydrates, so the DOM legitimately carries an attribute the
+      // server HTML doesn't — a hydration mismatch React would otherwise log.
+      // This is shallow: it only covers <html>'s own attributes, never content.
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         {/* Locale paint-gate: runs before the body content paints. If the visitor
