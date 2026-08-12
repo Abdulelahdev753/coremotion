@@ -4,13 +4,25 @@ import { useLanguage } from '@/components/providers/language-provider';
 import { formatNumber } from '@/lib/motioncore/format';
 import type { DailyTargets } from '@/lib/motioncore/types';
 
-// Segment percentages map 1:1 onto stroke-dasharray units. The radius alone
-// isn't enough for that: a browser renders a <circle> as Bézier arcs whose
-// measured length falls ~0.6% short of 2πr, so dash units drifted and the last
-// segment wrapped past 12 o'clock over the first one. `pathLength` below pins
-// the path to exactly 100 units, which removes the drift.
 const R = 15.9155;
+
+// Segment percentages map 1:1 onto stroke-dasharray units, which takes two
+// things. `pathLength` pins the ring to exactly 100 units: a browser draws a
+// circle as Bézier arcs measuring ~0.6% short of 2πr, and without the pin every
+// segment ran long and the last wrapped over the first.
 const PATH_LENGTH = 100;
+
+// The second is that the ring is a <path> of two half-circle arcs rather than a
+// <circle>. A <circle> is a *closed* subpath, and the last segment's dash ends
+// exactly on its closing point — so the renderer joins that end back to the
+// path's start and mitres the corner, spiking yellow over red at 12 o'clock.
+// Whether the dash lands on the closure or a hair before it comes down to
+// floating-point luck, so the same code drew a clean seam locally and a spiked
+// one in production. This path is open: both ends take a butt cap and there is
+// no corner to mitre. It starts at 12 o'clock and sweeps clockwise, so it also
+// replaces the -90° rotation the circles needed. The two arcs meet at 6
+// o'clock, where their tangents are colinear and the join is invisible.
+const RING = `M 18 ${18 - R} a ${R} ${R} 0 0 1 0 ${R * 2} a ${R} ${R} 0 0 1 0 ${-R * 2}`;
 
 /** Three-segment SVG donut of the daily macro split. No chart library —
  * three static arcs don't justify one. */
@@ -57,18 +69,15 @@ export function MacroDonut({ targets }: { targets: DailyTargets }) {
           const offset = cumulative;
           cumulative += segment.pct;
           return (
-            <circle
+            <path
               key={segment.key}
-              cx="18"
-              cy="18"
-              r={R}
+              d={RING}
               pathLength={PATH_LENGTH}
               fill="none"
               stroke={segment.color}
               strokeWidth="3.8"
               strokeDasharray={`${segment.pct} ${100 - segment.pct}`}
               strokeDashoffset={-offset}
-              transform="rotate(-90 18 18)"
               strokeLinecap="butt"
             />
           );
