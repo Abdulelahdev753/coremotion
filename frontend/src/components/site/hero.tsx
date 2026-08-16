@@ -1,6 +1,6 @@
 'use client';
 
-import { ChartNoAxesCombined } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 import { useLanguage } from '@/components/providers/language-provider';
@@ -72,31 +72,36 @@ export function Hero() {
       <div className="relative z-10 flex w-full max-w-xl flex-col items-center text-center sm:max-w-2xl lg:mx-0 lg:mr-auto lg:max-w-md lg:items-start lg:text-start xl:max-w-lg">
         {/* Headline */}
         <h1 className="mt-6 text-balance text-4xl font-extrabold leading-[1.2] text-black ltr:tracking-tight sm:text-5xl rtl:leading-[1.4] lg:text-5xl xl:text-6xl">
-          {t.hero.headlineLead}{' '}
+          {/* The price leads in green, the pivot stays black, and the wasted
+              year lands in red. */}
           <span className="bg-gradient-to-br from-brand to-[#0f7a3f] bg-clip-text text-transparent">
-            {t.hero.headlineAccent}
-          </span>
+            {t.hero.headlineLead}
+          </span>{' '}
+          {t.hero.headlineAccent}{' '}
+          <span className="text-[#c1121f]">{t.hero.headlineContrast}</span>
         </h1>
 
         {/* Subheadline */}
-        <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-black/65 sm:text-lg rtl:leading-loose">
+        <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-black/65 sm:text-xl rtl:leading-loose">
           {t.hero.subheadline}
         </p>
 
-        {/* CTAs */}
-        <div className="mt-9 flex animate-in fade-in slide-in-from-bottom-3 flex-col items-center gap-3 fill-mode-both delay-300 duration-700 sm:flex-row">
+        {/* CTAs — one filled button only. The calculator sits beside it as a
+            plain text link so it never competes with the purchase action. On
+            phones the button goes full-width, so the link drops below it. */}
+        <div className="mt-9 flex w-full animate-in fade-in slide-in-from-bottom-3 flex-col items-center gap-4 fill-mode-both delay-300 duration-700 sm:flex-row sm:justify-center sm:gap-6 lg:justify-start">
           <a
             href="#products"
-            className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0f2f2]"
+            className="inline-flex min-h-14 w-full items-center justify-center rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0f2f2] sm:w-auto lg:px-10 lg:text-lg"
           >
             {t.hero.cta}
           </a>
           <Link
             href="/motioncore"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-black px-6 py-3.5 text-base font-semibold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
+            className="inline-flex items-center gap-1.5 text-[0.9375rem] font-normal text-black/55 underline-offset-4 transition-colors hover:text-brand hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
           >
             {t.hero.secondaryCta}
-            <ChartNoAxesCombined aria-hidden className="size-5 rtl:-scale-x-100" />
+            <ArrowLeft aria-hidden className="size-4 ltr:-scale-x-100" />
           </Link>
         </div>
       </div>

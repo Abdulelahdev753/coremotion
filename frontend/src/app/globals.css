@@ -347,12 +347,10 @@ html[lang="ar"] .tier-card__audience {
 
 .tier-card__audience--men {
   background: #16924e;
-  box-shadow: 0 4px 14px rgba(22, 146, 78, 0.45);
 }
 
 .tier-card__audience--women {
   background: #fc449a;
-  box-shadow: 0 4px 14px rgba(252, 68, 154, 0.45);
 }
 
 .glass-shell {
@@ -563,6 +561,55 @@ html[lang="ar"] .tier-card__price {
   font-size: 0.92rem;
   font-weight: 500;
   line-height: 1.5;
+}
+
+/* Free-gift banner, last row of every feature list. Amber/gold rather than the
+   tier green so the bonus reads as a gift instead of one more checklist line. */
+.tier-card__gift {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+  padding: 11px 13px;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  border-radius: 10px;
+  background: #fff3e2;
+  color: #7c2d12;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.tier-card__gift-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #0a0b0d;
+}
+
+.tier-card__gift-text {
+  flex: 1;
+}
+
+.tier-card__gift-label {
+  flex: none;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #ea580c;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Latin tracking breaks the connected Arabic script. */
+html[lang="ar"] .tier-card__gift-label {
+  letter-spacing: normal;
 }
 
 .tier-card__check {

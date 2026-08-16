@@ -26,9 +26,11 @@ export type Dictionary = {
   };
   hero: {
     eyebrow: string;
-    /** Headline is split so the closing phrase can be accented in brand color. */
+    /** Headline is split in three so each part carries its own color: the lead
+        in brand green, the middle in black, the closing phrase in red. */
     headlineLead: string;
     headlineAccent: string;
+    headlineContrast: string;
     subheadline: string;
     cta: string;
     secondaryCta: string;
@@ -132,6 +134,13 @@ export type Dictionary = {
     /** Notice above the cards: the packages cover gym exercises only. `label`
         renders bold ahead of the colon, `text` follows on the same line. */
     note: {
+      label: string;
+      text: string;
+    };
+    /** Free bonus that ships with every tier, in both audiences. Rendered as a
+        gold banner at the foot of each card's feature list — `label` is the
+        "free" pill, `text` names the gift. */
+    gift: {
       label: string;
       text: string;
     };
@@ -452,12 +461,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       eyebrow: 'نظام MotionCore التدريبي',
-      headlineLead: 'غيّر جسمك بخطة تدريب مدروسة',
-      headlineAccent: 'خلال 12 أسبوع',
-      subheadline:
-        'برنامج تمارين متكامل، فيديو شرح لكل تمرين، كتيب بناء العضلات، وخطة كارديو.',
+      headlineLead: 'دليل بـ39 ريال اليوم',
+      headlineAccent: 'أرخص',
+      headlineContrast: 'من سنة تمرين بلا نتيجة',
+      subheadline: 'تحميل فوري بعد الدفع، و وصول مدى الحياة.',
       cta: 'احصل على الدليل',
-      secondaryCta: 'احسب سعراتك',
+      secondaryCta: 'احسب سعراتك مجانًا',
       trustedBy: 'مبني على أبحاث ومراجع موثوقة',
     },
     about: {
@@ -624,6 +633,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
         label: 'ملاحظة',
         text: 'جميع التمارين المتوفرة في الباقات هي تمارين نادي رياضي (جيم). سنوفّر تمارين منزلية على موقعنا قريبًا، وسنعلمكم بذلك عبر حساباتنا في وسائل التواصل الاجتماعي.',
       },
+      gift: {
+        label: 'هدية مجانية',
+        text: 'كتيب كامل عن بناء العضلات',
+      },
       promo: {
         men: {
           eyebrow: 'اختر الباقة المناسبة لك',
@@ -647,7 +660,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول كارديو',
-              'كتيب كامل عن بناء العضلات',
             ],
           },
           pro: {
@@ -661,7 +673,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول كارديو',
-              'كتيب كامل عن بناء العضلات',
             ],
           },
           elite: {
@@ -676,7 +687,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'فيديو شرح لكل تمرين',
               'جدول غذائي متكامل يساعدك على تحقيق هدفك (تنشيف، بناء عضلات أو المحافظة على الوزن)',
               'جدول كارديو',
-              'كتيب كامل عن بناء العضلات',
             ],
           },
         },
@@ -690,7 +700,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول كارديو',
-              'كتيب كامل عن بناء العضلات',
             ],
           },
           pro: {
@@ -704,7 +713,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'الجداول تناسب للتنشيف والتضخيم والمحافظة',
               'فيديو شرح لكل تمرين',
               'جدول كارديو',
-              'كتيب كامل عن بناء العضلات',
             ],
           },
           elite: {
@@ -719,7 +727,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'فيديو شرح لكل تمرين',
               'جدول غذائي متكامل يساعدك على تحقيق هدفك (تنشيف، بناء عضلات أو المحافظة على الوزن)',
               'جدول كارديو',
-              'كتيب كامل عن بناء العضلات',
             ],
           },
         },
@@ -1069,12 +1076,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       eyebrow: 'The MotionCore training system',
-      headlineLead: 'Transform your body with a smart training plan',
-      headlineAccent: 'in 12 weeks',
-      subheadline:
-        'A complete workout program, an explainer video for every exercise, a muscle-building booklet, and a cardio plan.',
+      headlineLead: 'A 39 SAR guide today',
+      headlineAccent: 'is cheaper than',
+      headlineContrast: 'a year of training with no results',
+      subheadline: 'Instant download after payment, and lifetime access.',
       cta: 'Get the Guide',
-      secondaryCta: 'Calculate your calories',
+      secondaryCta: 'Calculate your calories free',
       trustedBy: 'Built on trusted research & references',
     },
     about: {
@@ -1241,6 +1248,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
         label: 'NOTE',
         text: 'All the exercises available in the packages are gym exercises. We will provide home exercises on our website soon, and we will inform you through our social media accounts.',
       },
+      gift: {
+        label: 'FREE GIFT',
+        text: 'Complete muscle-building handbook',
+      },
       promo: {
         men: {
           eyebrow: 'Choose the plan that fits you',
@@ -1264,7 +1275,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Cardio plan',
-              'Complete muscle-building handbook',
             ],
           },
           pro: {
@@ -1278,7 +1288,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Cardio plan',
-              'Complete muscle-building handbook',
             ],
           },
           elite: {
@@ -1293,7 +1302,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'Video explanation for every exercise',
               'Complete meal plan to help you reach your goal (cutting, muscle building, or weight maintenance)',
               'Cardio plan',
-              'Complete muscle-building handbook',
             ],
           },
         },
@@ -1307,7 +1315,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Cardio plan',
-              'Complete muscle-building handbook',
             ],
           },
           pro: {
@@ -1321,7 +1328,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'Plans suit cutting, bulking and maintenance',
               'Video explanation for every exercise',
               'Cardio plan',
-              'Complete muscle-building handbook',
             ],
           },
           elite: {
@@ -1336,7 +1342,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
               'Video explanation for every exercise',
               'Complete meal plan to help you reach your goal (cutting, muscle building, or weight maintenance)',
               'Cardio plan',
-              'Complete muscle-building handbook',
             ],
           },
         },

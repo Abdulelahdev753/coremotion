@@ -25,11 +25,7 @@ export function FaqSection() {
       <div className="mx-auto w-full max-w-3xl">
         {/* Intro */}
         <div className="flex flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-black/5 px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-black/60 rtl:tracking-normal">
-            <span className="size-1.5 rounded-full bg-brand shadow-[0_0_10px_#16924e]" />
-            {f.eyebrow}
-          </span>
-          <h2 className="mt-6 text-3xl font-bold text-black sm:text-4xl">{f.heading}</h2>
+          <h2 className="text-3xl font-bold text-black sm:text-4xl">{f.heading}</h2>
           <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-black/60 rtl:leading-loose">
             {f.subheading}
           </p>

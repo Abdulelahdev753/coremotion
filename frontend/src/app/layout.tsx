@@ -60,7 +60,7 @@ const EEA_UK_REGIONS = [
 ];
 
 export const metadata: Metadata = {
-  title: `${t.brand} — ${t.hero.headlineLead} ${t.hero.headlineAccent}`,
+  title: `${t.brand} — ${t.hero.headlineLead} ${t.hero.headlineAccent} ${t.hero.headlineContrast}`,
   description: t.hero.subheadline,
 };
 

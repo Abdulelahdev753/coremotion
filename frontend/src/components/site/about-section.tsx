@@ -55,9 +55,8 @@ export function AboutSection() {
         <div className="lg:col-span-7">
           <motion.span
             variants={riseVariants}
-            className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-black/5 px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-black/60 rtl:tracking-normal"
+            className="block text-4xl font-extrabold leading-tight text-black sm:text-5xl rtl:leading-snug"
           >
-            <span className="size-1.5 rounded-full bg-brand shadow-[0_0_10px_#16924e]" />
             {a.eyebrow}
           </motion.span>
 

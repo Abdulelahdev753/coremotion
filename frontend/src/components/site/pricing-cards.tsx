@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Download, Infinity as InfinityIcon, Headset, Loader2, ShieldCheck } from 'lucide-react';
+import { Check, Download, Gift, Infinity as InfinityIcon, Headset, Loader2, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import { useState, type CSSProperties, type ReactNode } from 'react';
 
@@ -132,6 +132,15 @@ export function PricingCards({ onAddToCart, selector, audience = 'men' }: Pricin
                     <span>{feature}</span>
                   </li>
                 ))}
+                {/* Free bonus, identical across tiers and audiences. Gold on
+                    purpose so it reads as a gift, not as another tier feature. */}
+                <li className="tier-card__gift">
+                  <span className="tier-card__gift-icon" aria-hidden="true">
+                    <Gift size={24} strokeWidth={2.25} />
+                  </span>
+                  <span className="tier-card__gift-text">{p.gift.text}</span>
+                  <span className="tier-card__gift-label">{p.gift.label}</span>
+                </li>
               </ul>
 
               <footer className="tier-card__footer">
