@@ -15,9 +15,9 @@ import { INSTAGRAM_URL, TIKTOK_URL, TWITTER_URL, WHATSAPP_URL } from '@/lib/site
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 // Structure lives here (hrefs + icons); the localized labels come from the
-// dictionary and are zipped in by index — the same pattern <WhatYouGet /> uses.
+// dictionary and are zipped in by index.
 const columnHrefs = [
-  ['/#products', '/#what-you-get', '/#faq'],
+  ['/#products', '/#reviews', '/#faq'],
   ['/motioncore', '/motioncore/assessment', '/motioncore/dashboard'],
   ['/#about', '/'],
 ] as const;

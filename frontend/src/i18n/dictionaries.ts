@@ -20,7 +20,7 @@ export type Dictionary = {
   brand: string;
   nav: {
     products: string;
-    whatYouGet: string;
+    reviews: string;
     about: string;
     motioncore: string;
   };
@@ -95,12 +95,17 @@ export type Dictionary = {
     men: string;
     women: string;
   };
-  /** "What you'll get" — package mockups (one per tier × gender) with captions. */
-  whatYouGet: {
+  /** Google-style customer reviews. Replaces the old "what you'll get" section. */
+  reviews: {
     heading: string;
-    subheading: string;
-    /** Six captions, ordered men: basic/pro/elite, then women: basic/pro/elite. */
-    items: Array<{ title: string; description: string }>;
+    /** Summary line beside the score; `{count}` is filled with items.length. */
+    ratingSummary: string;
+    /** Accessible name for a star row; `{rating}` is filled with the score. */
+    starsLabel: string;
+    /** Button that opens the Google Form where visitors leave a review. */
+    writeCta: string;
+    /** One card each — all five stars, so no per-item rating. */
+    items: Array<{ name: string; text: string }>;
   };
   pricing: {
     heading: string;
@@ -455,7 +460,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     brand: 'UltraFit',
     nav: {
       products: 'المنتجات',
-      whatYouGet: 'ماذا ستحصل عليه',
+      reviews: 'آراء العملاء',
       about: 'من نحن',
       motioncore: 'احسب سعراتك',
     },
@@ -573,33 +578,27 @@ export const dictionaries: Record<Locale, Dictionary> = {
       men: 'رجال',
       women: 'نساء',
     },
-    whatYouGet: {
-      heading: 'ماذا ستحصل عليه',
-      subheading: 'محتوى كل باقة بالتفصيل — للرجال والنساء، من الأساسية إلى النخبة.',
+    reviews: {
+      heading: 'تقييمات عملائنا على Google Forms',
+      ratingSummary: 'بناءً على {count} تقييمات',
+      starsLabel: '{rating} من 5 نجوم',
+      writeCta: 'اكتب تقييمًا',
       items: [
         {
-          title: 'الباقة الأساسية — رجال',
-          description: 'ملف تدريبي كامل + دليل تعليمي مع فيديو لكل تمرين وخطة كارديو للمبتدئين.',
+          name: 'عبدالله القحطاني',
+          text: 'اشتريت باقة النخبة وصراحة تستاهل كل ريال. الجداول واضحة والفيديوهات ساعدتني افهم تكنيك التمارين من أول أسبوع.',
         },
         {
-          title: 'باقة برو — رجال',
-          description: 'تحدّي 12 أسبوعًا بجداول تدريب متدرّجة والملف التعليمي الشامل المبني على الأبحاث.',
+          name: 'نورة العتيبي',
+          text: 'أفضل شي إن كل شيء مرتب وسهل التطبيق، وتحدي الـ12 أسبوع خلاني ألتزم لأول مرة من زمان.',
         },
         {
-          title: 'باقة النخبة — رجال',
-          description: 'تدريب + تغذية + تعليم في ثلاثة ملفات متكاملة لتحويل جسمك بالكامل.',
+          name: 'فيصل الشمري',
+          text: 'جربت كم دليل قبله وما وصلوا لمستواه، هذا أفضل دليل مرّ عليّ وكل شي فيه واضح ومشروح.',
         },
         {
-          title: 'الباقة الأساسية — نساء',
-          description: 'جداول تدريب كاملة (3-4-5 أيام) + دليل تعليمي مبسّط مناسب للمبتدئات.',
-        },
-        {
-          title: 'باقة برو — نساء',
-          description: 'تحدّي 12 أسبوعًا لنحت الجسم خطوة بخطوة مع دليل تدريبي وتعليمي متكامل.',
-        },
-        {
-          title: 'باقة النخبة — نساء',
-          description: 'تدريب وتغذية وتعليم متقدّم — النظام المتكامل للوصول إلى هدفك.',
+          name: 'سارة الدوسري',
+          text: 'حاسبة السعرات ودليل التغذية غيّروا طريقة أكلي بالكامل، والدعم بالواتس ردّوا عليّ بسرعة وما قصّروا معي.',
         },
       ],
     },
@@ -738,7 +737,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       columns: [
         {
           title: 'المنتجات',
-          links: ['الباقات', 'ماذا ستحصل عليه', 'الأسئلة الشائعة'],
+          links: ['الباقات', 'آراء العملاء', 'الأسئلة الشائعة'],
         },
         {
           title: 'MotionCore',
@@ -1070,7 +1069,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     brand: 'UltraFit',
     nav: {
       products: 'Products',
-      whatYouGet: "What You'll Get",
+      reviews: 'Reviews',
       about: 'About Us',
       motioncore: 'Calculate your calories',
     },
@@ -1188,33 +1187,27 @@ export const dictionaries: Record<Locale, Dictionary> = {
       men: 'Men',
       women: 'Women',
     },
-    whatYouGet: {
-      heading: "What You'll Get",
-      subheading: "Exactly what's inside each plan — for men and women, from Basic to Elite.",
+    reviews: {
+      heading: 'Our Google Forms reviews',
+      ratingSummary: 'Based on {count} reviews',
+      starsLabel: '{rating} out of 5 stars',
+      writeCta: 'Write a review',
       items: [
         {
-          title: 'Basic — Men',
-          description: 'Full training file + educational guide, with a video for every exercise and a beginner cardio plan.',
+          name: 'Abdullah Al-Qahtani',
+          text: 'I bought the Elite plan and it is worth every riyal. The splits are clear and the exercise videos fixed my form in the first week.',
         },
         {
-          title: 'Pro — Men',
-          description: '12-week challenge with progressive training splits and the complete research-based guide.',
+          name: 'Noura Al-Otaibi',
+          text: 'Everything is organised and easy to follow, and the 12-week challenge is the first program I have actually stuck with.',
         },
         {
-          title: 'Elite — Men',
-          description: 'Training + nutrition + education across three complete files to transform your whole body.',
+          name: 'Faisal Al-Shammari',
+          text: 'I tried a few other guides before this one and none of them came close. This is the best guide I have come across, everything in it is clear and well explained.',
         },
         {
-          title: 'Basic — Women',
-          description: 'Complete training schedules (3-4-5 days) + a simplified educational guide for beginners.',
-        },
-        {
-          title: 'Pro — Women',
-          description: '12-week challenge to sculpt your body step by step, with a full training and education guide.',
-        },
-        {
-          title: 'Elite — Women',
-          description: 'Advanced training, nutrition, and education — the complete system to reach your goal.',
+          name: 'Sarah Al-Dossari',
+          text: 'The calorie calculator plus the nutrition guide completely changed how I eat, and support on WhatsApp replied fast.',
         },
       ],
     },
@@ -1353,7 +1346,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       columns: [
         {
           title: 'Product',
-          links: ['Packages', "What You'll Get", 'FAQ'],
+          links: ['Packages', 'Reviews', 'FAQ'],
         },
         {
           title: 'MotionCore',

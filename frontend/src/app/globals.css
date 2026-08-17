@@ -1192,61 +1192,208 @@ html[lang="ar"] .tier-card__gift-label {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   "What you'll get" — package mockups
-   Six product-card images (basic/pro/elite × men/women), each on a dark glassy
-   tile with a short caption. The grid reads as tier columns × gender rows.
-   Tier accent is set per card via --tier-rgb (matches the pricing tiers).
+   Google reviews
+   Rating summary + a link out to the review form + one card per review.
+   Intentionally cheap: no images, no shadows that repaint on scroll, and the
+   only transition is the card border on hover — this block sits low on the
+   page and must not cost anything to render.
    ────────────────────────────────────────────────────────────────────────── */
-.getit-stage {
+.reviews-section {
   width: 100%;
   padding: 6rem 1.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   scroll-margin-top: 5.5rem;
 }
 
-.getit-stage__intro {
-  margin: 0 auto 3rem;
+.reviews-head {
+  margin: 0 auto 2.75rem;
   max-width: 42rem;
   text-align: center;
 }
 
-.getit-stage__heading {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 700;
+.reviews-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
   letter-spacing: -0.01em;
   color: #0a0b0d;
 }
 
-html[lang="ar"] .getit-stage__heading {
+html[lang="ar"] .reviews-title {
   letter-spacing: normal;
 }
 
-.getit-stage__subheading {
-  margin-top: 0.85rem;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: rgba(10, 11, 13, 0.6);
+/* The Forms mark is a portrait sheet (48×64), so height drives it and the
+   width follows the viewBox — a square box would letterbox it. */
+.reviews-title__mark {
+  height: 1em;
+  width: auto;
+  flex: none;
 }
 
-.getit-grid {
+.reviews-summary {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 0.75rem;
+}
+
+/* Both header rows lead with a Latin element — the Forms mark, which belongs
+   beside the word "Google" at the end of the Arabic heading, and the numeric
+   score. Reversing them in Arabic keeps that arrangement instead of flipping
+   the mark away from "Google" and pushing the score to the far right. */
+html[lang="ar"] .reviews-title,
+html[lang="ar"] .reviews-summary {
+  flex-direction: row-reverse;
+}
+
+.reviews-score {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0a0b0d;
+}
+
+.reviews-count {
+  font-size: 1rem;
+  color: rgba(10, 11, 13, 0.55);
+}
+
+/* Star rows scale off the SVG's own 128×24 viewBox, so one height rule sizes
+   the whole row; `fill` is inherited by the <use> instances. */
+.reviews-stars {
+  display: block;
+  height: 18px;
+  width: auto;
+  fill: #fbbc04;
+}
+
+/* Inside a card the row is a column-flex item, so it would otherwise stretch
+   to the full width and centre the stars; pinning it to the inline start puts
+   them under the name — left in English, right in Arabic. Scoped to the card
+   so it can't override the summary row's vertical centring. */
+.reviews-card .reviews-stars {
+  align-self: flex-start;
+}
+
+.reviews-cta {
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1.5rem;
+  border-radius: 8px;
+  background: #1a73e8;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 150ms ease;
+}
+
+.reviews-cta:hover {
+  background: #1666d0;
+}
+
+.reviews-cta:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 3px;
+}
+
+.reviews-grid {
   width: 100%;
-  max-width: 72rem;
+  max-width: 76rem;
   margin: 0 auto;
+  padding: 0;
+  list-style: none;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: stretch;
   gap: 20px;
 }
 
-@media (max-width: 960px) {
-  .getit-grid {
+.reviews-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.35rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
+  background: #fff;
+  transition: border-color 150ms ease;
+}
+
+.reviews-card:hover {
+  border-color: rgba(0, 0, 0, 0.22);
+}
+
+.reviews-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.reviews-avatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* The initial carries a measured translateY (see the Avatar component) that
+   centres its ink rather than its line box. */
+.reviews-avatar__initial {
+  display: block;
+  line-height: 1;
+}
+
+.reviews-name {
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0a0b0d;
+}
+
+/* Pinned to the card's trailing edge — logical property, so it lands on the
+   left in Arabic without a separate RTL rule. */
+.reviews-card__mark {
+  flex: none;
+  height: 22px;
+  width: auto;
+  margin-inline-start: auto;
+  align-self: flex-start;
+}
+
+.reviews-text {
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(10, 11, 13, 0.75);
+}
+
+html[lang="ar"] .reviews-text {
+  line-height: 1.9;
+}
+
+@media (max-width: 1100px) {
+  .reviews-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     max-width: 44rem;
   }
 }
 
 @media (max-width: 600px) {
-  .getit-grid {
+  .reviews-grid {
     grid-template-columns: 1fr;
     max-width: 26rem;
   }

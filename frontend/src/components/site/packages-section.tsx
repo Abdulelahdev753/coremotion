@@ -8,15 +8,14 @@ import {
   type PackageAudience,
 } from '@/components/site/package-audience-pill';
 import { PricingCards } from '@/components/site/pricing-cards';
-import { WhatYouGet } from '@/components/site/what-you-get';
 import { trackBeginCheckout } from '@/lib/analytics';
 import { startCheckout } from '@/lib/checkout';
 import { type PricingTierId } from '@/lib/payment-links';
 
 /**
- * Owns the Men/Women audience selection and shares it across the packages
- * experience: the pill renders above the pricing cards, and the same value
- * filters "What You'll Get" down to that audience's three packages.
+ * Owns the Men/Women audience selection for the packages experience: the pill
+ * renders above the pricing cards and decides which audience's tiers are
+ * priced, shown, and sent to checkout.
  */
 export function PackagesSection() {
   const { t } = useLanguage();
@@ -41,20 +40,17 @@ export function PackagesSection() {
   );
 
   return (
-    <>
-      <PricingCards
-        onAddToCart={handleAddToCart}
-        audience={audience}
-        selector={
-          <PackageAudiencePill
-            value={audience}
-            onValueChange={setAudience}
-            labels={{ men: t.packages.men, women: t.packages.women }}
-            ariaLabel={t.packages.audienceLabel}
-          />
-        }
-      />
-      <WhatYouGet audience={audience} />
-    </>
+    <PricingCards
+      onAddToCart={handleAddToCart}
+      audience={audience}
+      selector={
+        <PackageAudiencePill
+          value={audience}
+          onValueChange={setAudience}
+          labels={{ men: t.packages.men, women: t.packages.women }}
+          ariaLabel={t.packages.audienceLabel}
+        />
+      }
+    />
   );
 }
