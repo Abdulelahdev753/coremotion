@@ -22,7 +22,8 @@ const columnHrefs = [
   ['/#about', '/'],
 ] as const;
 
-const legalHrefs = ['#', '#'] as const;
+// Order matches `footer.legal` in the dictionary: privacy policy, then terms.
+const legalHrefs = ['/privacy', '/terms'] as const;
 
 type SocialKey = 'instagram' | 'twitter' | 'tiktok' | 'whatsapp';
 

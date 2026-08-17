@@ -35,6 +35,7 @@ export const WHATSAPP_URL = whatsappUrl();
 
 export const TIKTOK_URL = 'https://www.tiktok.com/@ultra.fit';
 
-// Not live yet — the footer renders these as inert placeholders.
-export const INSTAGRAM_URL = '#';
+export const INSTAGRAM_URL = 'https://www.instagram.com/ultrafit120/';
+
+// Not live yet — the footer renders this as an inert placeholder.
 export const TWITTER_URL = '#';

@@ -478,8 +478,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       eyebrow: 'من نحن',
       headingLead: 'تدريب مبني على العلم،',
       headingAccent: 'مصمم لهدفك',
-      lead: 'UltraFit فريق شغوف بالتدريب الصحيح. نحوّل الأبحاث العلمية الموثوقة إلى أدلة تدريب وتغذية عملية وواضحة — بدون تعقيد وبدون اجتهادات عشوائية.',
-      body: 'بدأنا UltraFit لأننا رأينا كثيرين يضيّعون شهورًا بين تمارين خاطئة ومعلومات متضاربة. مهمتنا أن نختصر عليك الطريق: خطط مدروسة خطوة بخطوة، شرح واضح لكل حركة، ونظام MotionCore الذي يساعدك على اختيار ما يناسب جسمك وهدفك.',
+      lead: 'UltraFit فريق يحب التمرين الصح. ناخذ الأبحاث العلمية الموثوقة ونحوّلها لأدلة تمرين وتغذية واضحة وعملية.',
+      body: 'بدينا UltraFit لأننا شفنا ناس كثير يضيّعون شهور بين تمارين غلط ومعلومات متضاربة. هدفنا نختصر عليك الطريق: خطة مدروسة خطوة بخطوة، وشرح واضح لكل حركة، وحاسبة سعرات مجانية في الموقع تحسب لك سعراتك وتوزيع الماكروز قبل لا تبدأ.',
       values: [
         {
           title: 'مبني على الأبحاث',
@@ -1088,7 +1088,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       headingLead: 'Training built on science,',
       headingAccent: 'designed for your goal',
       lead: 'UltraFit is a team obsessed with training done right. We turn trusted research into clear, practical training and nutrition guides — no fluff, no guesswork.',
-      body: 'We started UltraFit after watching too many people lose months to wrong exercises and conflicting advice. Our mission is to shortcut that path: structured step-by-step plans, a clear breakdown of every movement, and the MotionCore system to match you with what fits your body and goal.',
+      body: 'We started UltraFit after watching too many people lose months to wrong exercises and conflicting advice. Our mission is to shortcut that path: structured step-by-step plans, a clear breakdown of every movement, and a free calorie calculator that works out your daily calories and macro split before you start.',
       values: [
         {
           title: 'Research-based',
