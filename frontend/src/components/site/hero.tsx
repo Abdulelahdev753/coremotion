@@ -48,18 +48,18 @@ export function Hero() {
       id="top"
       className="relative isolate flex min-h-[100svh] w-full flex-col items-center justify-start overflow-hidden px-6 pb-10 pt-28 lg:justify-center lg:px-12 lg:pb-32 lg:pt-36"
     >
-      {/* Desktop backdrop: the pre-composed couple + green shape. `cover` fills
+      {/* Desktop backdrop: the pre-composed lifter + green shape. `cover` fills
           the whole hero at every window aspect ratio — no letter-box bands or
-          hard seams on the sides. Anchored bottom-right so the athletes stay
+          hard seams on the sides. Anchored bottom-right so the athlete stays
           framed on the right; the left edge it crops sits under the copy and the
           legibility wash, so nothing important is lost. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 hidden lg:block">
         {/* eslint-disable-next-line @next/next/no-img-element -- full-bleed hero art */}
         <img
-          src={`${basePath}/hero-couple-desktop.webp`}
+          src={`${basePath}/hero-man-desktop.webp`}
           alt=""
-          width={1920}
-          height={1080}
+          width={1673}
+          height={941}
           fetchPriority="high"
           className="absolute inset-0 h-full w-full object-cover object-right-bottom"
         />
@@ -106,9 +106,9 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Mobile / tablet: the pre-composed couple + green shape, in flow so it
+      {/* Mobile / tablet: the pre-composed lifter + green shape, in flow so it
           always sits below the copy (never behind it). The source art has a
-          tall empty band above the heads — we crop it out with a bottom-
+          tall empty band above the head — we crop it out with a bottom-
           anchored aspect-ratio window so there's no dead white gap. */}
       <div
         aria-hidden
@@ -116,7 +116,7 @@ export function Hero() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- hero art */}
         <img
-          src={`${basePath}/hero-couple-mobile.webp`}
+          src={`${basePath}/hero-man-mobile.webp`}
           alt=""
           width={941}
           height={1672}
@@ -125,7 +125,7 @@ export function Hero() {
         />
       </div>
 
-      {/* Source / research marquee — in flow beneath the couple on mobile,
+      {/* Source / research marquee — in flow beneath the athlete on mobile,
           pinned to the bottom of the hero on desktop. Visible at every size. */}
       <div className="relative z-10 mt-8 flex w-full flex-col items-center gap-4 lg:absolute lg:inset-x-0 lg:bottom-0 lg:mt-0 lg:pb-8">
         <span className="text-[0.7rem] font-medium uppercase tracking-[0.2em] text-black/40">
