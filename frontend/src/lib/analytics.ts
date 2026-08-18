@@ -31,9 +31,9 @@ export const CURRENCY = 'SAR';
  * prices change, update the backend catalogue and this map together.
  */
 const TIER_PRICES_SAR: Record<string, number> = {
-  basic: 39.99,
-  pro: 49.99,
-  elite: 59.99,
+  basic: 19.99,
+  pro: 29.99,
+  elite: 39.99,
 };
 
 function track(event: string, params: GtagParams): void {

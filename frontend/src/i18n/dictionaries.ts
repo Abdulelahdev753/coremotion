@@ -466,7 +466,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       eyebrow: 'نظام MotionCore التدريبي',
-      headlineLead: 'دليل بـ39 ريال اليوم',
+      headlineLead: 'دليل بـ19 ريال اليوم',
       headlineAccent: 'أرخص',
       headlineContrast: 'من سنة تمرين بلا نتيجة',
       subheadline: 'تحميل فوري بعد الدفع، و وصول مدى الحياة.',
@@ -1075,7 +1075,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       eyebrow: 'The MotionCore training system',
-      headlineLead: 'A 39 SAR guide today',
+      headlineLead: 'A 19 SAR guide today',
       headlineAccent: 'is cheaper than',
       headlineContrast: 'a year of training with no results',
       subheadline: 'Instant download after payment, and lifetime access.',

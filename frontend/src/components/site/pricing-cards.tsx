@@ -13,12 +13,15 @@ import { trackAddToCart } from '@/lib/analytics';
  * Visual + non-translatable config per tier. The copy (names, features, button
  * labels) lives in the i18n dictionary so the cards render in Arabic and English;
  * only the prices, accent color and its rgb triple are fixed here. `wasPrice` is
- * the pre-discount price shown struck through next to the live one.
+ * the pre-discount price shown struck through next to the live one — here, the
+ * price these packages sold at before the cut. `price` must match the StreamPay
+ * product exactly (see backend/src/config/packages.ts); the card is the only
+ * place a buyer sees the figure before the hosted checkout charges it.
  */
 const tierStyles = [
-  { key: 'basic', price: '39', wasPrice: '59', color: '#16924e', rgb: '22, 146, 78' },
-  { key: 'pro', price: '49', wasPrice: '69', color: '#16924e', rgb: '22, 146, 78' },
-  { key: 'elite', price: '59', wasPrice: '79', color: '#16924e', rgb: '22, 146, 78' },
+  { key: 'basic', price: '19.99', wasPrice: '39.99', color: '#16924e', rgb: '22, 146, 78' },
+  { key: 'pro', price: '29.99', wasPrice: '49.99', color: '#16924e', rgb: '22, 146, 78' },
+  { key: 'elite', price: '39.99', wasPrice: '59.99', color: '#16924e', rgb: '22, 146, 78' },
 ] as const;
 
 type PlanId = (typeof tierStyles)[number]['key'];
